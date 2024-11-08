@@ -1,5 +1,5 @@
+import Image from 'next/image';
 import styles from './page.module.css';
-import logoPng from '@public/logo.png';
 
 export default function Home() {
   return (
@@ -14,7 +14,7 @@ export default function Home() {
             gap: '10px',
           }}
         >
-          <img src={logoPng.src} alt="Endur" width={'63px'} />
+          <Image src={'/logo.png'} alt="Endur" width={63} height={63} />
           {/* <div>
           <h1 style={{ marginBottom: 10, fontSize: '50px'}}>Endur</h1>
           <p>xSTRK {'->'} Liquid Staked STRK</p>
