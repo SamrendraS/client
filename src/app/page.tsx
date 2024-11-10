@@ -1,15 +1,21 @@
-import Image from 'next/image';
-
 import { AppSidebar } from '@/components/app-sidebar';
+import Navbar from '@/components/navbar';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 export default function Home() {
   return (
-    <div className="">
-      <SidebarProvider>
-        <AppSidebar />
-        <div>
+    <div className="flex">
+      <SidebarProvider className="w-fit">
+        <div className="flex">
+          <AppSidebar />
           <SidebarTrigger />
+        </div>
+      </SidebarProvider>
+
+      <div className="flex-1 p-7">
+        <Navbar />
+      </div>
+      {/* <div>
           <main>
             <div
               style={{
@@ -26,8 +32,7 @@ export default function Home() {
               </p>
             </div>
           </main>
-        </div>
-      </SidebarProvider>
+        </div> */}
     </div>
   );
 }

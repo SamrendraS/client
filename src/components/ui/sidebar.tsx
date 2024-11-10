@@ -2,7 +2,7 @@
 
 import { Slot } from '@radix-ui/react-slot';
 import { VariantProps, cva } from 'class-variance-authority';
-import { PanelLeft } from 'lucide-react';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -245,7 +245,7 @@ const Sidebar = React.forwardRef<
           className={cn(
             'duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex',
             side === 'left'
-              ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]'
+              ? 'left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-2)]'
               : 'right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]',
             // Adjust the padding for floating and inset variants.
             variant === 'floating' || variant === 'inset'
@@ -272,7 +272,7 @@ const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, open } = useSidebar();
 
   return (
     <Button
@@ -280,14 +280,38 @@ const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn('h-7 w-7', className)}
+      className={cn(
+        'group h-[calc(100vh-41px)] mt-[21px] bg-[#cbe1dd33] w-10 ml-1 hover:ml-4 transition-all rounded-l-none border border-[#b9d1cc80]',
+        className,
+        {
+          'h-full mt-0 ml-0 w-7 hover:w-9 hover:ml-0 rounded-none': !open,
+        },
+      )}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
     >
-      <PanelLeft />
+      {open ? (
+        <ChevronsLeft
+          className={cn(
+            'ml-3 group-hover:ml-1 transition-all text-foreground opacity-50 group-hover:opacity-70',
+            {
+              'ml-0': !open,
+            },
+          )}
+        />
+      ) : (
+        <ChevronsRight
+          className={cn(
+            'ml-3 group-hover:ml-1 transition-all text-foreground opacity-50 group-hover:opacity-70',
+            {
+              'ml-0': !open,
+            },
+          )}
+        />
+      )}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
