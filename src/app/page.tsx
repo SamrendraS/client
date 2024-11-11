@@ -1,6 +1,6 @@
 import { AppSidebar } from '@/components/app-sidebar';
 import Navbar from '@/components/navbar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 export default function Home() {
   return (
@@ -8,11 +8,11 @@ export default function Home() {
       <SidebarProvider className="w-fit">
         <div className="flex">
           <AppSidebar />
-          <SidebarTrigger />
+          {/* <SidebarTrigger /> */}
         </div>
       </SidebarProvider>
 
-      <div className="flex-1 p-7">
+      <div className="flex-1 py-3 px-7">
         <Navbar />
       </div>
       {/* <div>
