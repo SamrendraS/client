@@ -1,7 +1,7 @@
-import { AppSidebar } from '@/components/app-sidebar';
-import Navbar from '@/components/navbar';
-import Tabs from '@/components/Tabs';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from "@/components/app-sidebar";
+import Navbar from "@/components/navbar";
+import Tabs from "@/components/Tabs";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function Home() {
   return (
@@ -13,7 +13,7 @@ export default function Home() {
         </div>
       </SidebarProvider>
 
-      <div className="flex-1 py-3 px-7 overflow-hidden flex flex-col items-center">
+      <div className="flex flex-1 flex-col items-center overflow-hidden px-7 py-3">
         <Navbar />
 
         <Tabs />
