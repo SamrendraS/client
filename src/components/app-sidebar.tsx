@@ -32,7 +32,7 @@ export function AppSidebar() {
         <SidebarGroup className="text-[#03624C] text-xl cursor-pointer font-semibold transition-all hover:bg-[#17876D] hover:text-white rounded-md">
           Dashboard
         </SidebarGroup>
-        <SidebarGroup className="text-[#03624C] text-xl cursor-pointer font-semibold transition-all hover:bg-[#17876D] hover:text-white rounded-md">
+        <SidebarGroup className="text-xl cursor-pointer font-semibold transition-all bg-[#17876D] text-white rounded-md">
           Staking
         </SidebarGroup>
         <SidebarGroup className="cursor-pointer transition-all hover:bg-[#17876D] hover:text-white rounded-md pointer-events-none flex justify-between flex-row items-center gap-2">

@@ -7,7 +7,7 @@ import { Input } from './ui/input';
 const Unstake = () => {
   return (
     <div className="w-full h-full">
-      <div className="py-12 flex items-center justify-between px-5 border-b">
+      <div className="py-12 flex items-center justify-between px-5 border-b bg-gradient-to-t from-[#E9F3F0] to-white">
         <div className="flex items-center gap-4 text-2xl text-black font-semibold">
           <Icons.strkLogo />
           STRK
@@ -46,17 +46,17 @@ const Unstake = () => {
       <div className="mt-7 px-7 space-y-3">
         <div className="bg-[#17876D1A] text-[#939494] rounded-md px-3 py-2 font-medium flex items-center justify-between text-sm">
           You will get
-          <span>0 KSTRK</span>
+          <span>0 xSTRK</span>
         </div>
 
         <div className="bg-[#17876D1A] text-[#939494] rounded-md px-3 py-2 font-medium flex items-center justify-between text-sm">
           Exchange rate
-          <span>1 STRK = 0.9848 KSTRK</span>
+          <span>1 STRK = 0.9848 xSTRK</span>
         </div>
 
         <div className="bg-[#17876D1A] text-[#939494] rounded-md px-3 py-2 font-medium flex items-center justify-between text-sm">
-          KSTRK burnt
-          <span>560 KSTRK</span>
+          xSTRK burnt
+          <span>560 xSTRK</span>
         </div>
 
         <div className="bg-[#17876D1A] text-[#939494] rounded-md px-3 py-2 font-medium flex items-center justify-between text-sm">
