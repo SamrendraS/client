@@ -1,19 +1,22 @@
-import { Analytics } from "@vercel/analytics/react";
-import type { Metadata } from "next";
-import { Figtree } from "next/font/google";
-import React from "react";
+import type { Metadata } from 'next';
+import localFont from 'next/font/local';
+import './globals.css';
+import React from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
-import Providers from "@/components/providers";
-import { Toaster } from "@/components/ui/toaster";
-
-import "./globals.css";
-
-const font = Figtree({
-  subsets: ["latin"],
+const geistSans = localFont({
+  src: './fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
+  weight: '100 900',
+});
+const geistMono = localFont({
+  src: './fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900',
 });
 
 export const metadata: Metadata = {
-  title: "Endur | Liquid Staked STRK",
+  title: 'Endur | Liquid Staked STRK',
   description:
     "Stake your STRK to support Starknet's decentralization with xSTRK—a liquid staking token (LST) that empowers you to actively engage in DeFi, retain flexibility, and use your xSTRK across various protocols just like STRK. From the buidlers of Karnot and STRKFarm",
 };
@@ -25,12 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${font.className} bg-[#F1F7F6]`}>
-        <Analytics />
-        <Providers>
-          {children}
-          <Toaster />
-        </Providers>
+      <Analytics />
+      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        {children}
       </body>
     </html>
   );
