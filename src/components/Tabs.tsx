@@ -45,7 +45,7 @@ const Tabs: React.FC = () => {
               value="withdraw"
               className="group data-[state=active]:border-t-0 data-[state=active]:shadow-none text-[#8D9C9C] font-medium text-base bg-transparent rounded-none relative border-none focus-visible:ring-0 focus-visible:ring-offset-0"
             >
-              Withdraw
+              Withdraw log
               <div className="absolute -bottom-[5.5px] left-[16px] rounded-full bg-black w-[3.8rem] h-[2px] hidden group-data-[state=active]:flex" />
             </TabsTrigger>
           </TabsList>
