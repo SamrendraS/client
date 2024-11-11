@@ -42,7 +42,7 @@ const Stake = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     values: {
-      stakeAmount: "",
+      stakeAmount: "0",
     },
     mode: "onChange",
   });
@@ -65,6 +65,7 @@ const Stake = () => {
         ((Number(data?.formatted) * percentage) / 100).toString(),
       );
       form.clearErrors("stakeAmount");
+      console.log(form.formState.errors);
     }
   };
 
@@ -132,25 +133,25 @@ const Stake = () => {
           <div className="text-[#8D9C9C]">
             <button
               onClick={() => handleQuickStakePrice(25)}
-              className="rounded-md rounded-r-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C]"
+              className="rounded-md rounded-r-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               25%
             </button>
             <button
               onClick={() => handleQuickStakePrice(50)}
-              className="border border-x-0 border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C]"
+              className="border border-x-0 border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               50%
             </button>
             <button
               onClick={() => handleQuickStakePrice(75)}
-              className="border border-r-0 border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C]"
+              className="border border-r-0 border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               75%
             </button>
             <button
               onClick={() => handleQuickStakePrice(100)}
-              className="rounded-md rounded-l-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C]"
+              className="rounded-md rounded-l-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               Max
             </button>
@@ -181,7 +182,10 @@ const Stake = () => {
       </div>
 
       <div className="mt-8 px-5">
-        <Button className="w-full rounded-2xl bg-[#03624C4D] py-6 text-sm font-semibold text-[#17876D] hover:bg-[#03624C4D]">
+        <Button
+          type="submit"
+          className="w-full rounded-2xl bg-[#03624C4D] py-6 text-sm font-semibold text-[#17876D] hover:bg-[#03624C4D]"
+        >
           Stake
         </Button>
       </div>
