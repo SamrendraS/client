@@ -12,7 +12,7 @@ import {
   TabsTrigger,
 } from './ui/tabs';
 import Unstake from './unstake';
-import Withdraw from './withdraw';
+import WithdrawLog from './withdraw-log';
 
 const Tabs: React.FC = () => {
   const [tabs, setTabs] = React.useState('unstake');
@@ -46,7 +46,7 @@ const Tabs: React.FC = () => {
               className="group data-[state=active]:border-t-0 data-[state=active]:shadow-none text-[#8D9C9C] font-medium text-base bg-transparent rounded-none relative border-none focus-visible:ring-0 focus-visible:ring-offset-0"
             >
               Withdraw log
-              <div className="absolute -bottom-[5.5px] left-[16px] rounded-full bg-black w-[3.8rem] h-[2px] hidden group-data-[state=active]:flex" />
+              <div className="absolute -bottom-[5.5px] left-[16px] rounded-full bg-black w-[5rem] h-[2px] hidden group-data-[state=active]:flex" />
             </TabsTrigger>
           </TabsList>
 
@@ -58,8 +58,11 @@ const Tabs: React.FC = () => {
             <Unstake />
           </TabsContent>
 
-          <TabsContent value="withdraw" className="">
-            <Withdraw />
+          <TabsContent
+            value="withdraw"
+            className="overflow-y-auto h-[89%] px-3"
+          >
+            <WithdrawLog />
           </TabsContent>
         </ShadCNTabs>
       </div>

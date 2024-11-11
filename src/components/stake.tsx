@@ -1,11 +1,41 @@
+'use client';
+
 import { Info } from 'lucide-react';
 import React from 'react';
+import * as z from 'zod';
 
+import { useAccount, useBalance } from '@starknet-react/core';
 import { Icons } from './Icons';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 
+const formSchema = z.object({
+  stakeAmount: z.string().refine(
+    (v) => {
+      let n = Number(v);
+      return !isNaN(n) && v?.length > 0;
+    },
+    { message: 'Invalid eth amount' },
+  ),
+});
+
+export type FormValues = z.infer<typeof formSchema>;
+
 const Stake = () => {
+  const { address } = useAccount();
+
+  const { data } = useBalance({
+    address,
+  });
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    values: {
+      ethAmount: ethAmount,
+    },
+    mode: 'onChange',
+  });
+
   return (
     <div className="w-full h-full">
       <div className="flex items-center justify-between px-6 py-2">
