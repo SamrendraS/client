@@ -21,7 +21,7 @@ const provider = jsonRpcProvider({
   rpc: () => {
     const args: RpcProviderOptions = {
       nodeUrl:
-        "https://starknet-mainnet.blastapi.io/4ea5a9e5-6e2b-4e4d-8f0a-a87f5cb84914",
+        "https://starknet-sepolia.infura.io/v3/b76d478d59eb4ba4ba86f39fd728f932",
       chainId: constants.StarknetChainId.SN_SEPOLIA,
     };
     return args;

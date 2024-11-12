@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -6,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useReadContract } from "@starknet-react/core";
 import React from "react";
 
 const invoices = [
@@ -54,6 +57,14 @@ const invoices = [
 ];
 
 const WithdrawLog: React.FC = () => {
+  const { data } = useReadContract({
+    functionName: "withdrawalQueue",
+    address:
+      "0x4b55e5722cdc06d585862f4fb4952f5471bacfb5d8870569183e1bf88cf01c9",
+  });
+
+  console.log(data);
+
   return (
     <Table>
       <TableHeader>

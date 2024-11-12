@@ -1,7 +1,13 @@
 "use client";
 
+import erc4626Abi from "@/abi/erc4626.abi.json";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAccount, useBalance } from "@starknet-react/core";
+import {
+  useAccount,
+  useBalance,
+  useReadContract,
+  useSendTransaction,
+} from "@starknet-react/core";
 import { Info } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -15,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
+import { Contract, RpcProvider } from "starknet";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -38,6 +45,16 @@ const Unstake = () => {
     address,
     token: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
   });
+
+  const { data: balance } = useReadContract({
+    abi: erc4626Abi,
+    functionName: "balance_of",
+    address:
+      "0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb",
+    args: [address],
+  });
+
+  console.log(balance);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -68,8 +85,47 @@ const Unstake = () => {
     }
   };
 
+  const provider = new RpcProvider({
+    nodeUrl:
+      "https://starknet-sepolia.infura.io/v3/b76d478d59eb4ba4ba86f39fd728f932",
+  });
+
+  const contract = new Contract(
+    erc4626Abi,
+    "0x42de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb",
+    provider,
+  );
+
+  // const call1 = React.useMemo(() => {
+  //   return contract.populate("approve", [
+  //     "0x0129e54aab55fa4b180aa1ed56d13686d4347fc2cb0f2fb23604621526bf498d",
+
+  //     uint256.bnToUint256(
+  //       (Number(form.getValues("unstakeAmount")) * 1.5 * 10 ** 18).toFixed(0),
+  //     ),
+  //   ]);
+  // }, [form]);
+
+  // const call2 = React.useMemo(() => {
+  //   return contract.populate("redeem", [
+  //     "0x0129e54aab55fa4b180aa1ed56d13686d4347fc2cb0f2fb23604621526bf498d",
+
+  //     uint256.bnToUint256(
+  //       (Number(form.getValues("unstakeAmount")) * 1.5 * 10 ** 18).toFixed(0),
+  //     ),
+  //   ]);
+  // }, [form]);
+
+  const { sendAsync } = useSendTransaction({
+    // calls: [call1, call2],
+  });
+
   const onSubmit = async (values: FormValues) => {
     const { unstakeAmount } = values;
+
+    const res = sendAsync();
+
+    console.log(res);
 
     console.log(unstakeAmount);
   };
@@ -82,7 +138,7 @@ const Unstake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked - 328 STRK
+          Current staked - {Number(balance)} STRK
         </div>
       </div>
 
