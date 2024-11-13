@@ -22,6 +22,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { Contract, RpcProvider } from "starknet";
+import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -35,9 +36,6 @@ const formSchema = z.object({
     { message: "Invalid input" },
   ),
 });
-
-const STRK_TOKEN =
-  "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d" as const;
 
 export type FormValues = z.infer<typeof formSchema>;
 

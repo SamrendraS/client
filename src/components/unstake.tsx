@@ -1,18 +1,18 @@
 "use client";
 
-import erc4626Abi from "@/abi/erc4626.abi.json";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useAccount,
-  useBalance,
   useReadContract,
   useSendTransaction,
 } from "@starknet-react/core";
 import { Info } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { Contract, RpcProvider } from "starknet";
 import * as z from "zod";
 
+import erc4626Abi from "@/abi/erc4626.abi.json";
 import {
   Form,
   FormControl,
@@ -21,7 +21,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
-import { Contract, RpcProvider } from "starknet";
+import MyNumber from "@/lib/MyNumber";
+
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -41,18 +42,14 @@ export type FormValues = z.infer<typeof formSchema>;
 const Unstake = () => {
   const { address } = useAccount();
 
-  const { data } = useBalance({
-    address,
-    token: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-  });
-
-  const { data: balance } = useReadContract({
+  const { data } = useReadContract({
     abi: erc4626Abi,
     functionName: "balance_of",
-    address:
-      "0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb",
+    address: process.env.NEXT_PUBLIC_LST_ADDRESS as `0x${string}`,
     args: [address],
   });
+
+  const balance = new MyNumber(data, 18);
 
   console.log(balance);
 
@@ -76,58 +73,47 @@ const Unstake = () => {
       });
     }
 
-    if (data) {
-      form.setValue(
-        "unstakeAmount",
-        ((Number(data?.formatted) * percentage) / 100).toString(),
-      );
-      form.clearErrors("unstakeAmount");
-    }
+    // if (balance) {
+    //   form.setValue(
+    //     "unstakeAmount",
+    //     ((Number(balance?.formatted) * percentage) / 100).toString(),
+    //   );
+    // }
   };
 
   const provider = new RpcProvider({
-    nodeUrl:
-      "https://starknet-sepolia.infura.io/v3/b76d478d59eb4ba4ba86f39fd728f932",
+    nodeUrl: process.env.RPC_URL,
   });
 
   const contract = new Contract(
     erc4626Abi,
-    "0x42de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb",
+    process.env.NEXT_PUBLIC_LST_ADDRESS as string,
     provider,
   );
 
-  // const call1 = React.useMemo(() => {
-  //   return contract.populate("approve", [
-  //     "0x0129e54aab55fa4b180aa1ed56d13686d4347fc2cb0f2fb23604621526bf498d",
-
-  //     uint256.bnToUint256(
-  //       (Number(form.getValues("unstakeAmount")) * 1.5 * 10 ** 18).toFixed(0),
-  //     ),
-  //   ]);
-  // }, [form]);
-
-  // const call2 = React.useMemo(() => {
-  //   return contract.populate("redeem", [
-  //     "0x0129e54aab55fa4b180aa1ed56d13686d4347fc2cb0f2fb23604621526bf498d",
-
-  //     uint256.bnToUint256(
-  //       (Number(form.getValues("unstakeAmount")) * 1.5 * 10 ** 18).toFixed(0),
-  //     ),
-  //   ]);
-  // }, [form]);
-
-  const { sendAsync } = useSendTransaction({
-    // calls: [call1, call2],
-  });
+  const { sendAsync } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
-    const { unstakeAmount } = values;
+    if (!address) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Please connect your wallet
+          </div>
+        ),
+      });
+    }
 
-    const res = sendAsync();
+    console.log(values, "values");
 
-    console.log(res);
+    const call1 = contract.populate("withdraw", [
+      MyNumber.fromEther(values.unstakeAmount, 18),
+      address,
+      address,
+    ]);
 
-    console.log(unstakeAmount);
+    sendAsync([call1]);
   };
 
   return (
@@ -138,7 +124,7 @@ const Unstake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked - {Number(balance)} STRK
+          Current staked - {balance ? balance?.toString() : 0} STRK
         </div>
       </div>
 
@@ -218,6 +204,7 @@ const Unstake = () => {
       <div className="mt-28 px-5">
         <Button
           type="submit"
+          onClick={form.handleSubmit(onSubmit)}
           className="w-full rounded-2xl bg-[#03624C4D] py-6 text-sm font-semibold text-[#17876D] hover:bg-[#03624C4D]"
         >
           Unstake
