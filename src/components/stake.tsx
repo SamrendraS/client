@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useAccount,
   useBalance,
+  useReadContract,
   useSendTransaction,
 } from "@starknet-react/core";
 import { Info } from "lucide-react";
@@ -45,6 +46,13 @@ const Stake = () => {
   const { data } = useBalance({
     address,
     token: STRK_TOKEN,
+  });
+
+  const { data: currentStaked } = useReadContract({
+    abi: erc4626Abi,
+    functionName: "balance_of",
+    address: process.env.NEXT_PUBLIC_LST_ADDRESS as `0x${string}`,
+    args: [address],
   });
 
   const form = useForm<FormValues>({
@@ -137,7 +145,9 @@ const Stake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked - 328 STRK
+          Current staked -{" "}
+          {currentStaked ? (Number(currentStaked) / 10 ** 18).toFixed(2) : 0}{" "}
+          STRK
         </div>
       </div>
 

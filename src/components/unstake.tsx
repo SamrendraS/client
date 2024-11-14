@@ -42,16 +42,12 @@ export type FormValues = z.infer<typeof formSchema>;
 const Unstake = () => {
   const { address } = useAccount();
 
-  const { data } = useReadContract({
+  const { data: currentStaked } = useReadContract({
     abi: erc4626Abi,
     functionName: "balance_of",
     address: process.env.NEXT_PUBLIC_LST_ADDRESS as `0x${string}`,
     args: [address],
   });
-
-  const balance = new MyNumber(data, 18);
-
-  console.log(balance);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -73,12 +69,12 @@ const Unstake = () => {
       });
     }
 
-    // if (balance) {
-    //   form.setValue(
-    //     "unstakeAmount",
-    //     ((Number(balance?.formatted) * percentage) / 100).toString(),
-    //   );
-    // }
+    if (Number(currentStaked) / 10 ** 18) {
+      form.setValue(
+        "unstakeAmount",
+        (((Number(currentStaked) / 10 ** 18) * percentage) / 100).toString(),
+      );
+    }
   };
 
   const provider = new RpcProvider({
@@ -124,7 +120,9 @@ const Unstake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked - {balance ? balance?.toString() : 0} STRK
+          Current staked -{" "}
+          {currentStaked ? (Number(currentStaked) / 10 ** 18).toFixed(2) : 0}{" "}
+          STRK
         </div>
       </div>
 
