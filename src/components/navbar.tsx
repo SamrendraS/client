@@ -1,9 +1,14 @@
 "use client";
 
-import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
+import {
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useProvider,
+} from "@starknet-react/core";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 
 import {
   DropdownMenu,
@@ -12,18 +17,39 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn, shortAddress } from "@/lib/utils";
+import { providerAtom, userAddressAtom } from "@/store/common.store";
+import { useAtom, useSetAtom } from "jotai";
 import Link from "next/link";
+import { RpcProvider } from "starknet";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
-import { Skeleton } from "./ui/skeleton";
 
 const Navbar = () => {
   const { address } = useAccount();
+  const { provider } = useProvider();
   const { connect, connectors } = useConnect();
   const { disconnectAsync } = useDisconnect();
 
   const { isMobile } = useSidebar();
+
+  // todo remove later
+  useEffect(() => {
+    if (connectors && connectors.length > 0) {
+      connect({ connector: connectors[0] });
+    }
+  }, [connectors]);
+
+  const [, setAddress] = useAtom(userAddressAtom);
+  const setProvider = useSetAtom(providerAtom);
+
+  useEffect(() => {
+    setAddress(address);
+  }, [address]);
+
+  useEffect(() => {
+    setProvider(provider as RpcProvider);
+  }, [provider]);
 
   return (
     <div

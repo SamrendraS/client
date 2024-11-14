@@ -28,6 +28,8 @@ import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useAtomValue } from "jotai";
+import { totalStakedAtom, userSTRKBalanceAtom, userXSTRKBalanceAtom } from "@/store/lst.store";
 
 const formSchema = z.object({
   stakeAmount: z.string().refine(
@@ -49,12 +51,8 @@ const Stake = () => {
     token: STRK_TOKEN,
   });
 
-  const { data: currentStaked } = useReadContract({
-    abi: erc4626Abi,
-    functionName: "balance_of",
-    address: process.env.NEXT_PUBLIC_LST_ADDRESS as `0x${string}`,
-    args: [address],
-  });
+  const currentStaked = useAtomValue(userSTRKBalanceAtom);
+  const totalStaked = useAtomValue(totalStakedAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -135,7 +133,7 @@ const Stake = () => {
         </p>
         <p className="flex items-center gap-2 text-xs font-semibold text-[#8D9C9C]">
           Total value locked
-          <span>243,878.05 STRK</span>
+          <span>{totalStaked.balance.toEtherToFixedDecimals(2)} STRK</span>
           <span className="font-medium">| $656,022,939</span>
         </p>
       </div>
@@ -146,9 +144,9 @@ const Stake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked -{" "}
-          {currentStaked ? (Number(currentStaked) / 10 ** 18).toFixed(2) : 0}{" "}
-          STRK
+          Current staked:{" "}
+          {currentStaked.balance.toEtherToFixedDecimals(2)}
+          {" "}STRK
         </div>
       </div>
 
