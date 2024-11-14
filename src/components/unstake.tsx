@@ -128,7 +128,7 @@ const Unstake = () => {
 
       <div className="flex w-full items-center gap-2 px-7 py-3">
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-xs text-[#8D9C9C]">Enter Amount (xSTRK)</p>
+          <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
@@ -184,7 +184,7 @@ const Unstake = () => {
 
       <div className="mt-[2.75rem] space-y-3 px-7">
         <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
-          You will get
+          xSTRK burnt
           <span>
             {form.watch("unstakeAmount")
               ? (Number(form.watch("unstakeAmount")) * 0.9848).toFixed(2)

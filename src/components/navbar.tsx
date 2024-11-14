@@ -1,9 +1,10 @@
 "use client";
 
-import { useAccount, useConnect, useDisconnect } from "@starknet-react/core";
+import { useAccount, useConnect, useDisconnect, useProvider } from "@starknet-react/core";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import { useEffect } from "react";
 
 import {
   DropdownMenu,
@@ -14,16 +15,34 @@ import {
 import { cn, shortAddress } from "@/lib/utils";
 import { Icons } from "./Icons";
 import { Skeleton } from "./ui/skeleton";
+import { useAtom, useSetAtom } from "jotai";
+import { providerAtom, userAddressAtom } from "@/store/common.store";
+import { RpcProvider } from "starknet";
 
 const Navbar = () => {
   const { address, isConnecting } = useAccount();
+  const { provider } = useProvider();
   const { connect, connectors } = useConnect();
   const { disconnectAsync } = useDisconnect();
 
-  // const { data: starkProfile } = useStarkProfile({
-  //   address,
-  //   useDefaultPfp: true,
-  // });
+  // todo remove later
+  useEffect(() => {
+    if (connectors && connectors.length > 0) {
+      connect({ connector: connectors[0] });
+    }
+  }, [connectors]);
+
+
+  const [, setAddress] = useAtom(userAddressAtom);
+  const setProvider = useSetAtom(providerAtom)
+
+  useEffect(() => {
+    setAddress(address);
+  }, [address]);
+
+  useEffect(() => {
+    setProvider(provider as RpcProvider);
+  }, [provider]);
 
   return (
     <div className="flex h-20 w-full items-center justify-end">
