@@ -2,7 +2,6 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { Icons } from "../Icons";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -184,13 +184,28 @@ const Sidebar = React.forwardRef<
     },
     ref,
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+    const { isMobile, state, openMobile, setOpenMobile, open } = useSidebar();
 
     if (collapsible === "none") {
       return (
         <div
           className={cn(
             "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+            className,
+          )}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </div>
+      );
+    }
+
+    if (!open) {
+      return (
+        <div
+          className={cn(
+            "flex h-full w-[3rem] flex-col bg-sidebar text-sidebar-foreground",
             className,
           )}
           ref={ref}
@@ -280,38 +295,14 @@ const SidebarTrigger = React.forwardRef<
       data-sidebar="trigger"
       variant="ghost"
       size="icon"
-      className={cn(
-        "group ml-1 mt-[21px] h-[calc(100vh-41px)] w-10 rounded-l-none border border-[#b9d1cc80] bg-[#cbe1dd33] transition-all hover:ml-4",
-        className,
-        {
-          "ml-0 mt-0 h-full w-7 rounded-none hover:ml-0 hover:w-9": !open,
-        },
-      )}
+      className={cn("h-fit w-fit hover:bg-transparent", className, {})}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
     >
-      {open ? (
-        <ChevronsLeft
-          className={cn(
-            "ml-3 text-foreground opacity-50 transition-all group-hover:ml-1 group-hover:opacity-70",
-            {
-              "ml-0": !open,
-            },
-          )}
-        />
-      ) : (
-        <ChevronsRight
-          className={cn(
-            "ml-3 text-foreground opacity-50 transition-all group-hover:ml-1 group-hover:opacity-70",
-            {
-              "ml-0": !open,
-            },
-          )}
-        />
-      )}
+      {open ? <Icons.collpase /> : <Icons.collpaseInverse />}
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

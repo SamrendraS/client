@@ -2,8 +2,10 @@
 
 import React from "react";
 
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Stake from "./stake";
+import { useSidebar } from "./ui/sidebar";
 import {
   Tabs as ShadCNTabs,
   TabsContent,
@@ -15,10 +17,18 @@ import WithdrawLog from "./withdraw-log";
 
 const Tabs: React.FC = () => {
   const [tabs, setTabs] = React.useState("stake");
+  const { open } = useSidebar();
 
   return (
     <>
-      <div className="-ml-40 mt-12 h-[37rem] w-full max-w-xl rounded-xl bg-white shadow-xl">
+      <div
+        className={cn(
+          "mt-12 h-[37rem] w-full max-w-xl rounded-xl bg-white shadow-xl",
+          {
+            "-ml-40": open,
+          },
+        )}
+      >
         <ShadCNTabs
           onValueChange={(value) => setTabs(value)}
           value={tabs}
@@ -94,7 +104,15 @@ const Tabs: React.FC = () => {
       )}
 
       {tabs === "unstake" && (
-        <p className="-ml-40 mt-8 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-sm text-[#D69733]">
+        <p
+          className={cn(
+            "mt-8 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-sm text-[#D69733]",
+            {
+              "-ml-40": open,
+              "ml-40": !open,
+            },
+          )}
+        >
           <div className="mr-2 size-6 shrink-0 rounded-full bg-[#D69733]" />
           Unstake requests are based on Withdrawal Queue. It can take up to 1 to
           21 days. Learn more.

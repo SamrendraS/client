@@ -20,7 +20,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
-import { Contract, RpcProvider, uint256 } from "starknet";
+import MyNumber from "@/lib/MyNumber";
+import { Contract, RpcProvider } from "starknet";
+import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -38,21 +40,17 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const Stake = () => {
-  const [stakeAmount, setStakeAmount] = React.useState("0");
-
   const { address } = useAccount();
 
   const { data } = useBalance({
     address,
-    token: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+    token: STRK_TOKEN,
   });
-
-  console.log(Number(data?.formatted), "data");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     values: {
-      stakeAmount,
+      stakeAmount: "",
     },
     mode: "onChange",
   });
@@ -70,60 +68,50 @@ const Stake = () => {
     }
 
     if (data) {
-      // form.setValue(
-      //   "stakeAmount",
-      //   ((Number(data?.formatted) * percentage) / 100).toString(),
-      // );
-      setStakeAmount(((Number(data?.formatted) * percentage) / 100).toString());
-      form.clearErrors("stakeAmount");
-      console.log(form.formState.errors);
+      form.setValue(
+        "stakeAmount",
+        ((Number(data?.formatted) * percentage) / 100).toString(),
+      );
     }
   };
 
   const provider = new RpcProvider({
-    nodeUrl:
-      "https://starknet-sepolia.infura.io/v3/b76d478d59eb4ba4ba86f39fd728f932",
+    nodeUrl: process.env.RPC_URL,
   });
+
+  const contractSTRK = new Contract(erc4626Abi, STRK_TOKEN, provider);
 
   const contract = new Contract(
     erc4626Abi,
-    "0x042de5b868da876768213c48019b8d46cd484e66013ae3275f8a4b97b31fc7eb",
+    process.env.NEXT_PUBLIC_LST_ADDRESS as string,
     provider,
   );
 
-  const call1 = React.useMemo(() => {
-    return contract.populate("approve", [
-      "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-      uint256.bnToUint256(stakeAmount),
-      stakeAmount,
-    ]);
-  }, [form]);
-
-  const call2 = React.useMemo(() => {
-    return contract.populate("deposit", [
-      uint256.bnToUint256(stakeAmount),
-      "0x0129e54aab55fa4b180aa1ed56d13686d4347fc2cb0f2fb23604621526bf498d",
-    ]);
-  }, [form]);
-
-  const { sendAsync } = useSendTransaction({
-    calls: [call1, call2],
-  });
-
-  // console.log(Number(stakeAmount) / 10 ** 18);
-  // console.log(etherToWeiBN(stakeAmount));
-  console.log(uint256.bnToUint256(stakeAmount));
+  const { sendAsync } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
-    // const { stakeAmount } = values;
+    if (!address) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Please connect your wallet
+          </div>
+        ),
+      });
+    }
 
-    // setStakeAmount(stakeAmount);
+    const call1 = contractSTRK.populate("approve", [
+      contract.address,
+      MyNumber.fromEther(values.stakeAmount, 18),
+    ]);
 
-    const res = sendAsync();
+    const call2 = contract.populate("deposit", [
+      MyNumber.fromEther(values.stakeAmount, 18),
+      address,
+    ]);
 
-    console.log(res);
-
-    console.log(stakeAmount);
+    sendAsync([call1, call2]);
   };
 
   return (
@@ -169,8 +157,6 @@ const Stake = () => {
                           className="h-fit border-none px-0 !text-3xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0"
                           placeholder="0.00"
                           {...field}
-                          value={stakeAmount}
-                          onChange={(e) => setStakeAmount(e.target.value)}
                         />
                       </div>
                     </FormControl>
