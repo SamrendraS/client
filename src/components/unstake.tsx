@@ -1,11 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useAccount,
-  useReadContract,
-  useSendTransaction,
-} from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { Info } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -26,6 +22,8 @@ import MyNumber from "@/lib/MyNumber";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useAtomValue } from "jotai";
+import { exchangeRateAtom, userSTRKBalanceAtom } from "@/store/lst.store";
 
 const formSchema = z.object({
   unstakeAmount: z.string().refine(
@@ -42,12 +40,8 @@ export type FormValues = z.infer<typeof formSchema>;
 const Unstake = () => {
   const { address } = useAccount();
 
-  const { data: currentStaked } = useReadContract({
-    abi: erc4626Abi,
-    functionName: "balance_of",
-    address: process.env.NEXT_PUBLIC_LST_ADDRESS as `0x${string}`,
-    args: [address],
-  });
+  const currentStaked = useAtomValue(userSTRKBalanceAtom);
+  const exRate = useAtomValue(exchangeRateAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -69,11 +63,9 @@ const Unstake = () => {
       });
     }
 
-    if (Number(currentStaked) / 10 ** 18) {
-      form.setValue(
-        "unstakeAmount",
-        (((Number(currentStaked) / 10 ** 18) * percentage) / 100).toString(),
-      );
+    const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
+    if (amount) {
+      form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
     }
   };
 
@@ -118,9 +110,7 @@ const Unstake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked -{" "}
-          {currentStaked ? (Number(currentStaked) / 10 ** 18).toFixed(2) : 0}{" "}
-          STRK
+          Current staked: {currentStaked.value.toEtherToFixedDecimals(2)} STRK
         </div>
       </div>
 
@@ -185,7 +175,7 @@ const Unstake = () => {
           xSTRK burnt
           <span>
             {form.watch("unstakeAmount")
-              ? (Number(form.watch("unstakeAmount")) * 0.9848).toFixed(2)
+              ? (Number(form.watch("unstakeAmount")) / exRate.rate).toFixed(2)
               : 0}{" "}
             xSTRK
           </span>
@@ -193,7 +183,11 @@ const Unstake = () => {
 
         <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
           Exchange rate
-          <span>1 STRK = 0.9848 xSTRK</span>
+          <span>
+            {exRate.rate == 0
+              ? "-"
+              : `1 xSTRK = ${exRate.rate.toFixed(4)} STRK`}
+          </span>
         </div>
       </div>
 

@@ -4,13 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useAccount,
   useBalance,
-  useReadContract,
   useSendTransaction,
 } from "@starknet-react/core";
 import { Info } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract, RpcProvider } from "starknet";
+import { Contract } from "starknet";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -29,7 +28,13 @@ import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useAtomValue } from "jotai";
-import { totalStakedAtom, userSTRKBalanceAtom, userXSTRKBalanceAtom } from "@/store/lst.store";
+import {
+  exchangeRateAtom,
+  totalStakedAtom,
+  totalStakedUSDAtom,
+  userSTRKBalanceAtom,
+} from "@/store/lst.store";
+import { providerAtom } from "@/store/common.store";
 
 const formSchema = z.object({
   stakeAmount: z.string().refine(
@@ -53,6 +58,9 @@ const Stake = () => {
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
+  const exchangeRate = useAtomValue(exchangeRateAtom);
+  const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
+  const provider = useAtomValue(providerAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -82,16 +90,11 @@ const Stake = () => {
     }
   };
 
-  const provider = new RpcProvider({
-    nodeUrl: process.env.RPC_URL,
-  });
-
-  const contractSTRK = new Contract(erc4626Abi, STRK_TOKEN, provider);
+  const contractSTRK = new Contract(erc4626Abi, STRK_TOKEN);
 
   const contract = new Contract(
     erc4626Abi,
     process.env.NEXT_PUBLIC_LST_ADDRESS as string,
-    provider,
   );
 
   const { sendAsync } = useSendTransaction({});
@@ -133,8 +136,10 @@ const Stake = () => {
         </p>
         <p className="flex items-center gap-2 text-xs font-semibold text-[#8D9C9C]">
           Total value locked
-          <span>{totalStaked.balance.toEtherToFixedDecimals(2)} STRK</span>
-          <span className="font-medium">| $656,022,939</span>
+          <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
+          <span className="font-medium">
+            | ${totalStakedUSD.value.toFixed(2)}
+          </span>
         </p>
       </div>
 
@@ -144,9 +149,7 @@ const Stake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked:{" "}
-          {currentStaked.balance.toEtherToFixedDecimals(2)}
-          {" "}STRK
+          Current staked: {currentStaked.value.toEtherToFixedDecimals(2)} STRK
         </div>
       </div>
 
@@ -225,7 +228,7 @@ const Stake = () => {
 
         <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
           Exchange rate
-          <span>1 STRK = 0.9848 xSTRK</span>
+          <span>1 xSTRK = {exchangeRate.rate.toFixed(4)} xSTRK</span>
         </div>
       </div>
 

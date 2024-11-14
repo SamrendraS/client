@@ -1,7 +1,6 @@
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -64,7 +63,8 @@ const WithdrawLog: React.FC = () => {
         </TableRow>
       </TableHeader>
       <TableBody className="overflow-y-auto">
-        {invoices.map((invoice) => (
+        <p style={{ margin: "10px 0" }}>Coming soon</p>
+        {/* {invoices.map((invoice) => (
           <TableRow key={invoice.invoice}>
             <TableCell className="font-medium">{invoice.invoice}</TableCell>
             <TableCell>{invoice.totalAmount}</TableCell>
@@ -90,7 +90,7 @@ const WithdrawLog: React.FC = () => {
               {invoice.paymentMethod}
             </TableCell>
           </TableRow>
-        ))}
+        ))} */}
       </TableBody>
     </Table>
   );
