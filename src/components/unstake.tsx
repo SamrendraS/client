@@ -105,8 +105,8 @@ const Unstake = () => {
   return (
     <div className="h-full w-full">
       <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12">
-        <div className="flex items-center gap-4 text-2xl font-semibold text-black">
-          <Icons.strkLogo />
+        <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
+          <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
@@ -127,7 +127,7 @@ const Unstake = () => {
                     <FormControl>
                       <div className="relative">
                         <Input
-                          className="h-fit border-none px-0 !text-3xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0"
+                          className="h-fit border-none px-0 pr-1 text-2xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0 lg:pr-0 lg:!text-3xl"
                           placeholder="0.00"
                           {...field}
                         />
@@ -140,8 +140,9 @@ const Unstake = () => {
             </form>
           </Form>
         </div>
+
         <div className="flex flex-col items-end">
-          <div className="text-[#8D9C9C]">
+          <div className="hidden text-[#8D9C9C] lg:block">
             <button
               onClick={() => handleQuickUnstakePrice(25)}
               className="rounded-md rounded-r-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
@@ -167,11 +168,18 @@ const Unstake = () => {
               Max
             </button>
           </div>
+
+          <button
+            onClick={() => handleQuickUnstakePrice(100)}
+            className="rounded-md bg-[#BBE7E7] px-2 py-1 text-xs font-semibold text-[#215959] transition-all hover:bg-[#BBE7E7] hover:opacity-80 lg:hidden"
+          >
+            Max
+          </button>
         </div>
       </div>
 
       <div className="mt-[2.75rem] space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
+        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
           xSTRK burnt
           <span>
             {form.watch("unstakeAmount")
@@ -181,7 +189,7 @@ const Unstake = () => {
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
+        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
           Exchange rate
           <span>
             {exRate.rate == 0
@@ -191,7 +199,7 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="mt-28 px-5">
+      <div className="mt-12 px-5 lg:mt-28">
         <Button
           type="submit"
           onClick={form.handleSubmit(onSubmit)}
