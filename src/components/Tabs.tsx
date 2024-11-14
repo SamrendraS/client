@@ -69,7 +69,7 @@ const Tabs: React.FC = () => {
 
           <TabsContent
             value="unstake"
-            className="pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
+            className="h-[20%] pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
             <Unstake />
           </TabsContent>
