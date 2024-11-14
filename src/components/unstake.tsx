@@ -57,7 +57,7 @@ const Unstake = () => {
     mode: "onChange",
   });
 
-  const handleQuickStakePrice = (percentage: number) => {
+  const handleQuickUnstakePrice = (percentage: number) => {
     if (!address) {
       return toast({
         description: (
@@ -100,8 +100,6 @@ const Unstake = () => {
         ),
       });
     }
-
-    console.log(values, "values");
 
     const call1 = contract.populate("withdraw", [
       MyNumber.fromEther(values.unstakeAmount, 18),
@@ -155,25 +153,25 @@ const Unstake = () => {
         <div className="flex flex-col items-end">
           <div className="text-[#8D9C9C]">
             <button
-              onClick={() => handleQuickStakePrice(25)}
+              onClick={() => handleQuickUnstakePrice(25)}
               className="rounded-md rounded-r-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               25%
             </button>
             <button
-              onClick={() => handleQuickStakePrice(50)}
+              onClick={() => handleQuickUnstakePrice(50)}
               className="border border-x-0 border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               50%
             </button>
             <button
-              onClick={() => handleQuickStakePrice(75)}
+              onClick={() => handleQuickUnstakePrice(75)}
               className="border border-r-0 border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               75%
             </button>
             <button
-              onClick={() => handleQuickStakePrice(100)}
+              onClick={() => handleQuickUnstakePrice(100)}
               className="rounded-md rounded-l-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
             >
               Max

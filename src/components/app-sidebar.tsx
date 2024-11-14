@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { Fira_Sans } from "next/font/google";
 import Image from "next/image";
 
@@ -13,7 +14,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { ChevronDown } from "lucide-react";
+
 import { Icons } from "./Icons";
 
 const font = Fira_Sans({
@@ -22,7 +23,9 @@ const font = Fira_Sans({
 });
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, isMobile } = useSidebar();
+
+  if (isMobile) return null;
 
   return (
     <Sidebar
