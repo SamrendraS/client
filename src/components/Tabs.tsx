@@ -97,13 +97,13 @@ const Tabs: React.FC = () => {
           <p>
             Unstake requests are placed in a Withdrawal Queue, with STRK
             available in 1 to 21 days due to Starknet{"'"}s staking mechanics.{" "}
-            <a
-              style={{ textDecoration: "underline" }}
+            <Link
               href="https://docs.starknet.io/staking/overview/#economic_parameters"
               target="_blank"
+              className="underline"
             >
               Learn more.
-            </a>
+            </Link>
           </p>
         </p>
       )}
