@@ -1,14 +1,23 @@
 "use client";
 
 import {
+  InjectedConnector,
   useAccount,
   useConnect,
   useDisconnect,
   useProvider,
 } from "@starknet-react/core";
+import { useAtom, useSetAtom } from "jotai";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect } from "react";
+import { RpcProvider } from "starknet";
+import {
+  ArgentMobileConnector,
+  isInArgentMobileAppBrowser,
+} from "starknetkit/argentMobile";
+import { WebWalletConnector } from "starknetkit/webwallet";
 
 import {
   DropdownMenu,
@@ -17,39 +26,91 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn, shortAddress } from "@/lib/utils";
-import { providerAtom, userAddressAtom } from "@/store/common.store";
-import { useAtom, useSetAtom } from "jotai";
-import Link from "next/link";
-import { RpcProvider } from "starknet";
+import {
+  lastWalletAtom,
+  providerAtom,
+  userAddressAtom,
+} from "@/store/common.store";
+import { ARGENT_MOBILE_BASE64_ICON } from "../../constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
 
+export const CONNECTOR_NAMES = ["Braavos", "Argent X", "Argent (mobile)"];
+
+export const MYCONNECTORS: any[] = isInArgentMobileAppBrowser()
+  ? [
+      ArgentMobileConnector.init({
+        options: {
+          dappName: "Endurfi",
+          projectId: "endurfi",
+          url: "https://app.endur.fi",
+        },
+        inAppBrowserOptions: {},
+      }),
+    ]
+  : [
+      new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
+      new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
+      new WebWalletConnector({
+        url: "https://web.argent.xyz",
+      }),
+      ArgentMobileConnector.init({
+        options: {
+          dappName: "Endurfi",
+          projectId: "endurfi",
+          url: "https://app.endur.fi",
+        },
+        inAppBrowserOptions: {
+          icon: ARGENT_MOBILE_BASE64_ICON,
+        },
+      }),
+    ];
+
 const Navbar = () => {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { provider } = useProvider();
-  const { connect, connectors } = useConnect();
+  const { connect } = useConnect();
   const { disconnectAsync } = useDisconnect();
 
   const { isMobile } = useSidebar();
 
-  // todo remove later
-  useEffect(() => {
-    if (connectors && connectors.length > 0) {
-      connect({ connector: connectors[0] });
-    }
-  }, [connectors]);
-
-  const [, setAddress] = useAtom(userAddressAtom);
+  const [_, setAddress] = useAtom(userAddressAtom);
   const setProvider = useSetAtom(providerAtom);
+  const [lastWallet, setLastWallet] = useAtom(lastWalletAtom);
+
+  const autoConnect = (retry = 0) => {
+    try {
+      if (!address && lastWallet) {
+        const connectorIndex = CONNECTOR_NAMES.findIndex(
+          (name) => name === lastWallet,
+        );
+        if (connectorIndex >= 0) {
+          connect({ connector: MYCONNECTORS[connectorIndex] });
+        }
+      }
+    } catch (error) {
+      console.error("lastWallet error", error);
+      if (retry < 10) {
+        setTimeout(() => {
+          autoConnect(retry + 1);
+        }, 1000);
+      }
+    }
+  };
 
   useEffect(() => {
+    if (connector) {
+      const name: string = connector.name;
+      setLastWallet(name);
+    }
+  }, [connector]);
+
+  useEffect(() => {
+    autoConnect();
     setAddress(address);
-  }, [address]);
-
-  useEffect(() => {
     setProvider(provider as RpcProvider);
-  }, [provider]);
+  }, [lastWallet, address, provider]);
 
   return (
     <div
@@ -140,7 +201,7 @@ const Navbar = () => {
 
           <DropdownMenuContent className="min-w-[10rem] border border-[#03624C] bg-[#AACBC433] text-white">
             {!address ? (
-              connectors?.map((connector) => (
+              MYCONNECTORS?.map((connector) => (
                 <DropdownMenuItem
                   key={connector.id}
                   className="text-[#03624C] hover:!bg-[#339d84] hover:!text-white"
@@ -148,12 +209,32 @@ const Navbar = () => {
                     connect({ connector });
                   }}
                 >
-                  <Image
-                    src={connector.icon as string}
-                    width={15}
-                    height={15}
-                    alt="icon"
-                  />
+                  {connector.id === "argentX" && (
+                    <Image
+                      src={connector.icon}
+                      width={15}
+                      height={15}
+                      alt="icon"
+                    />
+                  )}
+
+                  {connector.id === "braavos" && (
+                    <Image
+                      src={connector.icon}
+                      width={15}
+                      height={15}
+                      alt="icon"
+                    />
+                  )}
+
+                  {connector.id === "argentWebWallet" && (
+                    <Icons.email className="size-[15px]" />
+                  )}
+
+                  {connector.id === "argentMobile" && (
+                    <Icons.argentMobile className="size-[15px]" />
+                  )}
+
                   <p>{connector.name}</p>
                 </DropdownMenuItem>
               ))

@@ -1,6 +1,7 @@
-import { Provider } from "starknet";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
+import { Provider } from "starknet";
 
 export const providerAtom = atom<Provider | null>(null);
 
@@ -29,3 +30,30 @@ export const strkPriceAtom = atomWithQuery((get) => {
     refetchInterval: 60000,
   };
 });
+
+export const lastWalletAtom = createAtomWithStorage<null | string>(
+  "ENDURFI_LAST_WALLET",
+  null,
+);
+
+export function createAtomWithStorage<T>(
+  key: string,
+  defaultValue: T,
+  getter?: (key: string, initialValue: T) => PromiseLike<T>,
+) {
+  const ISSERVER = typeof window === "undefined";
+  let localStorage: any;
+
+  let storageConfig = createJSONStorage<T>(() => {
+    if (!ISSERVER) return localStorage;
+    return null;
+  });
+
+  if (getter) {
+    storageConfig = { ...storageConfig, getItem: getter };
+  }
+
+  return atomWithStorage<T>(key, defaultValue, storageConfig, {
+    getOnInit: true,
+  });
+}
