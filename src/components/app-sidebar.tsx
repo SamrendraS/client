@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import { Fira_Sans } from "next/font/google";
 import Image from "next/image";
 
@@ -44,10 +43,6 @@ export function AppSidebar() {
       >
         {open ? (
           <>
-            <SidebarGroup className="group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-              <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
-              Dashboard
-            </SidebarGroup>
             <SidebarGroup className="flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] text-xl font-semibold text-white transition-all">
               <Icons.staking className="size-5" /> Staking
             </SidebarGroup>
@@ -55,16 +50,22 @@ export function AppSidebar() {
               <p className="text-xl font-semibold text-[#03624C]">
                 Defi <span className="text-sm font-thin">(coming soon)</span>
               </p>
-              <ChevronDown className="size-4 text-[#03624C]" />
+              {/* <ChevronDown className="size-4 text-[#03624C]" /> */}
+            </SidebarGroup>
+            <hr />
+            <SidebarGroup className="group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+              <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
+              Dashboard
             </SidebarGroup>
           </>
         ) : (
           <>
-            <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-              <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
-            </SidebarGroup>
             <SidebarGroup className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md bg-[#17876D] text-xl font-semibold text-white transition-all">
               <Icons.staking className="size-5" />
+            </SidebarGroup>
+            <hr />
+            <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+              <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
             </SidebarGroup>
           </>
         )}

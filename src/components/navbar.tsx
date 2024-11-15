@@ -249,9 +249,9 @@ const Navbar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#AACBC433]">
+        {/* <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#AACBC433]">
           <Icons.notification />
-        </div>
+        </div> */}
       </div>
     </div>
   );

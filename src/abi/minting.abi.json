@@ -1,0 +1,964 @@
+[
+  {
+    "type": "impl",
+    "name": "MintingImpl",
+    "interface_name": "contracts::minting_curve::interface::IMintingCurve"
+  },
+  {
+    "type": "struct",
+    "name": "contracts::minting_curve::interface::MintingCurveContractInfo",
+    "members": [
+      {
+        "name": "c_num",
+        "type": "core::integer::u16"
+      },
+      {
+        "name": "c_denom",
+        "type": "core::integer::u16"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "contracts::minting_curve::interface::IMintingCurve",
+    "items": [
+      {
+        "type": "function",
+        "name": "yearly_mint",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "core::integer::u128"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "contract_parameters",
+        "inputs": [],
+        "outputs": [
+          {
+            "type": "contracts::minting_curve::interface::MintingCurveContractInfo"
+          }
+        ],
+        "state_mutability": "view"
+      }
+    ]
+  },
+  {
+    "type": "impl",
+    "name": "IMintingCurveConfigImpl",
+    "interface_name": "contracts::minting_curve::interface::IMintingCurveConfig"
+  },
+  {
+    "type": "interface",
+    "name": "contracts::minting_curve::interface::IMintingCurveConfig",
+    "items": [
+      {
+        "type": "function",
+        "name": "set_c_num",
+        "inputs": [
+          {
+            "name": "c_num",
+            "type": "core::integer::u16"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "type": "impl",
+    "name": "RolesImpl",
+    "interface_name": "contracts_commons::components::roles::interface::IRoles"
+  },
+  {
+    "type": "enum",
+    "name": "core::bool",
+    "variants": [
+      {
+        "name": "False",
+        "type": "()"
+      },
+      {
+        "name": "True",
+        "type": "()"
+      }
+    ]
+  },
+  {
+    "type": "interface",
+    "name": "contracts_commons::components::roles::interface::IRoles",
+    "items": [
+      {
+        "type": "function",
+        "name": "is_app_governor",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "is_app_role_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "is_governance_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "is_operator",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "is_token_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "is_upgrade_governor",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "is_security_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "is_security_agent",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [
+          {
+            "type": "core::bool"
+          }
+        ],
+        "state_mutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "register_app_governor",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_app_governor",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "register_app_role_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_app_role_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "register_governance_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_governance_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "register_operator",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_operator",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "register_token_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_token_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "register_upgrade_governor",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_upgrade_governor",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "renounce",
+        "inputs": [
+          {
+            "name": "role",
+            "type": "core::felt252"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "register_security_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_security_admin",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "register_security_agent",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      },
+      {
+        "type": "function",
+        "name": "remove_security_agent",
+        "inputs": [
+          {
+            "name": "account",
+            "type": "core::starknet::contract_address::ContractAddress"
+          }
+        ],
+        "outputs": [],
+        "state_mutability": "external"
+      }
+    ]
+  },
+  {
+    "type": "constructor",
+    "name": "constructor",
+    "inputs": [
+      {
+        "name": "staking_contract",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "total_supply",
+        "type": "core::integer::u128"
+      },
+      {
+        "name": "l1_staking_minter_address",
+        "type": "core::felt252"
+      },
+      {
+        "name": "governance_admin",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ]
+  },
+  {
+    "type": "l1_handler",
+    "name": "update_total_supply",
+    "inputs": [
+      {
+        "name": "from_address",
+        "type": "core::felt252"
+      },
+      {
+        "name": "total_supply",
+        "type": "core::integer::u128"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::AppGovernorAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::AppGovernorRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::AppRoleAdminAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::AppRoleAdminRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::GovernanceAdminAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::GovernanceAdminRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::OperatorAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::OperatorRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::SecurityAdminAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::SecurityAdminRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::SecurityAgentAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::SecurityAgentRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::TokenAdminAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::TokenAdminRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::UpgradeGovernorAdded",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "added_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "added_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::interface::UpgradeGovernorRemoved",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "removed_account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "removed_by",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts_commons::components::roles::roles::RolesComponent::Event",
+    "kind": "enum",
+    "variants": [
+      {
+        "name": "AppGovernorAdded",
+        "type": "contracts_commons::components::roles::interface::AppGovernorAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "AppGovernorRemoved",
+        "type": "contracts_commons::components::roles::interface::AppGovernorRemoved",
+        "kind": "nested"
+      },
+      {
+        "name": "AppRoleAdminAdded",
+        "type": "contracts_commons::components::roles::interface::AppRoleAdminAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "AppRoleAdminRemoved",
+        "type": "contracts_commons::components::roles::interface::AppRoleAdminRemoved",
+        "kind": "nested"
+      },
+      {
+        "name": "GovernanceAdminAdded",
+        "type": "contracts_commons::components::roles::interface::GovernanceAdminAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "GovernanceAdminRemoved",
+        "type": "contracts_commons::components::roles::interface::GovernanceAdminRemoved",
+        "kind": "nested"
+      },
+      {
+        "name": "OperatorAdded",
+        "type": "contracts_commons::components::roles::interface::OperatorAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "OperatorRemoved",
+        "type": "contracts_commons::components::roles::interface::OperatorRemoved",
+        "kind": "nested"
+      },
+      {
+        "name": "SecurityAdminAdded",
+        "type": "contracts_commons::components::roles::interface::SecurityAdminAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "SecurityAdminRemoved",
+        "type": "contracts_commons::components::roles::interface::SecurityAdminRemoved",
+        "kind": "nested"
+      },
+      {
+        "name": "SecurityAgentAdded",
+        "type": "contracts_commons::components::roles::interface::SecurityAgentAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "SecurityAgentRemoved",
+        "type": "contracts_commons::components::roles::interface::SecurityAgentRemoved",
+        "kind": "nested"
+      },
+      {
+        "name": "TokenAdminAdded",
+        "type": "contracts_commons::components::roles::interface::TokenAdminAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "TokenAdminRemoved",
+        "type": "contracts_commons::components::roles::interface::TokenAdminRemoved",
+        "kind": "nested"
+      },
+      {
+        "name": "UpgradeGovernorAdded",
+        "type": "contracts_commons::components::roles::interface::UpgradeGovernorAdded",
+        "kind": "nested"
+      },
+      {
+        "name": "UpgradeGovernorRemoved",
+        "type": "contracts_commons::components::roles::interface::UpgradeGovernorRemoved",
+        "kind": "nested"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleGranted",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "role",
+        "type": "core::felt252",
+        "kind": "data"
+      },
+      {
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "sender",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleRevoked",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "role",
+        "type": "core::felt252",
+        "kind": "data"
+      },
+      {
+        "name": "account",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      },
+      {
+        "name": "sender",
+        "type": "core::starknet::contract_address::ContractAddress",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleAdminChanged",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "role",
+        "type": "core::felt252",
+        "kind": "data"
+      },
+      {
+        "name": "previous_admin_role",
+        "type": "core::felt252",
+        "kind": "data"
+      },
+      {
+        "name": "new_admin_role",
+        "type": "core::felt252",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::Event",
+    "kind": "enum",
+    "variants": [
+      {
+        "name": "RoleGranted",
+        "type": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleGranted",
+        "kind": "nested"
+      },
+      {
+        "name": "RoleRevoked",
+        "type": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleRevoked",
+        "kind": "nested"
+      },
+      {
+        "name": "RoleAdminChanged",
+        "type": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::RoleAdminChanged",
+        "kind": "nested"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "openzeppelin_introspection::src5::SRC5Component::Event",
+    "kind": "enum",
+    "variants": []
+  },
+  {
+    "type": "event",
+    "name": "contracts::minting_curve::interface::Events::TotalSupplyChanged",
+    "kind": "struct",
+    "members": [
+      {
+        "name": "old_total_supply",
+        "type": "core::integer::u128",
+        "kind": "data"
+      },
+      {
+        "name": "new_total_supply",
+        "type": "core::integer::u128",
+        "kind": "data"
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "contracts::minting_curve::minting_curve::MintingCurve::Event",
+    "kind": "enum",
+    "variants": [
+      {
+        "name": "RolesEvent",
+        "type": "contracts_commons::components::roles::roles::RolesComponent::Event",
+        "kind": "flat"
+      },
+      {
+        "name": "AccessControlEvent",
+        "type": "openzeppelin_access::accesscontrol::accesscontrol::AccessControlComponent::Event",
+        "kind": "flat"
+      },
+      {
+        "name": "SRC5Event",
+        "type": "openzeppelin_introspection::src5::SRC5Component::Event",
+        "kind": "flat"
+      },
+      {
+        "name": "TotalSupplyChanged",
+        "type": "contracts::minting_curve::interface::Events::TotalSupplyChanged",
+        "kind": "nested"
+      }
+    ]
+  }
+]

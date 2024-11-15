@@ -123,8 +123,17 @@ const Tabs: React.FC = () => {
           )}
         >
           <div className="mr-2 size-4 shrink-0 rounded-full bg-[#D69733] lg:size-6" />
-          Unstake requests are based on Withdrawal Queue. It can take up to 1 to
-          21 days. Learn more.
+          <p>
+            Unstake requests are placed in a Withdrawal Queue, with STRK
+            available in 1 to 21 days due to Starknet{"'"}s staking mechanics.{" "}
+            <a
+              style={{ textDecoration: "underline" }}
+              href="https://docs.starknet.io/staking/overview/#economic_parameters"
+              target="_blank"
+            >
+              Learn more.
+            </a>
+          </p>
         </p>
       )}
     </>
