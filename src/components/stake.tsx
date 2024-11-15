@@ -29,6 +29,7 @@ import {
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
+import { snAPYAtom } from "@/store/staking.store";
 import { useAtomValue } from "jotai";
 import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
@@ -59,6 +60,7 @@ const Stake = () => {
   const totalStaked = useAtomValue(totalStakedAtom);
   const exchangeRate = useAtomValue(exchangeRateAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
+  const apy = useAtomValue(snAPYAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -141,7 +143,7 @@ const Stake = () => {
             APY
             <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
           </span>
-          3.15%
+          {(apy.value * 100).toFixed(2)}%
         </p>
 
         <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
@@ -243,7 +245,9 @@ const Stake = () => {
           You will get
           <span>
             {form.watch("stakeAmount")
-              ? (Number(form.watch("stakeAmount")) * 0.9848).toFixed(2)
+              ? (Number(form.watch("stakeAmount")) / exchangeRate.rate).toFixed(
+                  2,
+                )
               : 0}{" "}
             xSTRK
           </span>
@@ -251,7 +255,7 @@ const Stake = () => {
 
         <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
           Exchange rate
-          <span>1 xSTRK = {exchangeRate.rate.toFixed(4)} xSTRK</span>
+          <span>1 xSTRK = {exchangeRate.rate.toFixed(4)} STRK</span>
         </div>
       </div>
 
