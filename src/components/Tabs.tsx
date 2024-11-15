@@ -83,39 +83,10 @@ const Tabs: React.FC = () => {
         </ShadCNTabs>
       </div>
 
-      {tabs === "stake" && (
-        <p
-          className={cn(
-            "mt-8 flex items-center text-xs text-[#707D7D] lg:text-sm",
-            {
-              "lg:-ml-36": open,
-              "lg:-ml-24": !open,
-            },
-          )}
-        >
-          From the teams of{" "}
-          <Link
-            href="https://strkfarm.xyz"
-            target="_blank"
-            className="mx-1 cursor-pointer font-semibold hover:underline"
-          >
-            STRKFarm
-          </Link>{" "}
-          and{" "}
-          <Link
-            href="https://karnot.xyz"
-            target="_blank"
-            className="mx-1 cursor-pointer font-semibold hover:underline"
-          >
-            Karnot
-          </Link>
-        </p>
-      )}
-
       {tabs === "unstake" && (
         <p
           className={cn(
-            "mt-8 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-xs text-[#D69733] lg:text-sm",
+            "mt-4 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-xs text-[#D69733] lg:text-sm",
             {
               "lg:-ml-36": open,
               "lg:-ml-24": !open,
@@ -127,6 +98,34 @@ const Tabs: React.FC = () => {
           21 days. Learn more.
         </p>
       )}
+
+      <p
+        className={cn(
+          "mt-8 flex items-center text-xs text-[#707D7D] lg:text-sm",
+          {
+            "lg:-ml-36": open,
+            "lg:-ml-24": !open,
+            "mt-4": tabs === "unstake",
+          },
+        )}
+      >
+        From the teams of{" "}
+        <Link
+          href="https://strkfarm.xyz"
+          target="_blank"
+          className="mx-1 cursor-pointer font-semibold hover:underline"
+        >
+          STRKFarm
+        </Link>{" "}
+        and{" "}
+        <Link
+          href="https://karnot.xyz"
+          target="_blank"
+          className="mx-1 cursor-pointer font-semibold hover:underline"
+        >
+          Karnot
+        </Link>
+      </p>
     </>
   );
 };

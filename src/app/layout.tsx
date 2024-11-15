@@ -7,10 +7,11 @@ import Providers from "@/components/providers";
 import { Toaster } from "@/components/ui/toaster";
 
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import "./globals.css";
 
 const font = Figtree({
-  subsets: ["latin"],
+  subsets: ["latin-ext"],
 });
 
 export const metadata: Metadata = {
@@ -26,10 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${font.className} bg-[#F1F7F6]`}>
+      <body className="bg-[#F1F7F6]">
         <Analytics />
         <Providers>
-          <SidebarProvider className="w-full">
+          <SidebarProvider className={cn(font.className, "w-full")}>
             {children}
             <Toaster />
           </SidebarProvider>

@@ -11,7 +11,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React from "react";
 import { RpcProvider } from "starknet";
 import {
   ArgentMobileConnector,
@@ -99,18 +99,21 @@ const Navbar = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (connector) {
       const name: string = connector.name;
       setLastWallet(name);
     }
   }, [connector]);
 
-  useEffect(() => {
-    autoConnect();
+  React.useEffect(() => {
     setAddress(address);
     setProvider(provider as RpcProvider);
-  }, [lastWallet, address, provider]);
+  }, [address, provider]);
+
+  React.useEffect(() => {
+    autoConnect();
+  }, [lastWallet]);
 
   return (
     <div
@@ -199,7 +202,7 @@ const Navbar = () => {
             )}
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent className="min-w-[10rem] border border-[#03624C] bg-[#AACBC433] text-white">
+          <DropdownMenuContent className="min-w-[10rem] border border-[#03624C] bg-[#F1F7F6] text-white lg:bg-[#AACBC433]">
             {!address ? (
               MYCONNECTORS?.map((connector) => (
                 <DropdownMenuItem
@@ -249,9 +252,9 @@ const Navbar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#AACBC433]">
+        {/* <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#AACBC433]">
           <Icons.notification />
-        </div>
+        </div> */}
       </div>
     </div>
   );
