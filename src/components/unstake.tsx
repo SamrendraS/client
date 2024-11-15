@@ -19,11 +19,16 @@ import {
 import { toast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 
+import {
+  exchangeRateAtom,
+  totalStakedAtom,
+  totalStakedUSDAtom,
+  userSTRKBalanceAtom,
+} from "@/store/lst.store";
+import { useAtomValue } from "jotai";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { useAtomValue } from "jotai";
-import { exchangeRateAtom, userSTRKBalanceAtom } from "@/store/lst.store";
 
 const formSchema = z.object({
   unstakeAmount: z.string().refine(
@@ -42,6 +47,8 @@ const Unstake = () => {
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const exRate = useAtomValue(exchangeRateAtom);
+  const totalStaked = useAtomValue(totalStakedAtom);
+  const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -104,9 +111,29 @@ const Unstake = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12">
-        <div className="flex items-center gap-4 text-2xl font-semibold text-black">
-          <Icons.strkLogo />
+      <div className="flex items-center justify-between px-3 py-2 lg:px-6">
+        <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
+          <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
+            APY
+            <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+          </span>
+          3.15%
+        </p>
+
+        <div className="flex flex-col items-end gap-2 text-xs font-semibold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
+          Total value locked
+          <p className="flex items-center gap-2">
+            <strong>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</strong>
+            <span className="font-medium">
+              | ${totalStakedUSD.value.toFixed(2)}
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-20">
+        <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
+          <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
@@ -114,7 +141,7 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="flex w-full items-center gap-2 px-7 py-3">
+      <div className="flex w-full items-start gap-2 px-7 py-3">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
           <Form {...form}>
@@ -127,7 +154,7 @@ const Unstake = () => {
                     <FormControl>
                       <div className="relative">
                         <Input
-                          className="h-fit border-none px-0 !text-3xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0"
+                          className="h-fit border-none px-0 pr-1 text-2xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0 lg:pr-0 lg:!text-3xl"
                           placeholder="0.00"
                           {...field}
                         />
@@ -140,8 +167,9 @@ const Unstake = () => {
             </form>
           </Form>
         </div>
-        <div className="flex flex-col items-end">
-          <div className="text-[#8D9C9C]">
+
+        <div className="mt-px flex flex-col items-end">
+          <div className="hidden text-[#8D9C9C] lg:block">
             <button
               onClick={() => handleQuickUnstakePrice(25)}
               className="rounded-md rounded-r-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
@@ -167,11 +195,18 @@ const Unstake = () => {
               Max
             </button>
           </div>
+
+          <button
+            onClick={() => handleQuickUnstakePrice(100)}
+            className="rounded-md bg-[#BBE7E7] px-2 py-1 text-xs font-semibold text-[#215959] transition-all hover:bg-[#BBE7E7] hover:opacity-80 lg:hidden"
+          >
+            Max
+          </button>
         </div>
       </div>
 
-      <div className="mt-[2.75rem] space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
+      <div className="mt-7 space-y-3 px-7">
+        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
           xSTRK burnt
           <span>
             {form.watch("unstakeAmount")
@@ -181,7 +216,7 @@ const Unstake = () => {
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
+        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
           Exchange rate
           <span>
             {exRate.rate == 0
@@ -191,7 +226,7 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="mt-28 px-5">
+      <div className="mt-8 px-5">
         <Button
           type="submit"
           onClick={form.handleSubmit(onSubmit)}

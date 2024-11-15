@@ -23,9 +23,10 @@ const Tabs: React.FC = () => {
     <>
       <div
         className={cn(
-          "mt-12 h-[37rem] w-full max-w-xl rounded-xl bg-white shadow-xl",
+          "mt-12 w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[37rem]",
           {
-            "-ml-40": open,
+            "lg:-ml-36": open,
+            "lg:-ml-24": !open,
           },
         )}
       >
@@ -33,42 +34,42 @@ const Tabs: React.FC = () => {
           onValueChange={(value) => setTabs(value)}
           value={tabs}
           defaultValue="stake"
-          className="col-span-2 mt-4 h-full w-full lg:mt-0"
+          className="col-span-2 h-full w-full lg:mt-0"
         >
-          <TabsList className="flex w-full items-center justify-start rounded-none border-b bg-transparent px-3 pb-5 pt-8">
+          <TabsList className="flex w-full items-center justify-start rounded-none border-b bg-transparent px-3 pb-5 pt-5 lg:pt-8">
             <TabsTrigger
               value="stake"
-              className="group relative rounded-none border-none bg-transparent text-base font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none"
+              className="group relative rounded-none border-none bg-transparent pl-0 text-sm font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none lg:pl-3 lg:text-base"
             >
               Stake
-              <div className="absolute -bottom-[5.5px] left-3 hidden h-[2px] w-10 rounded-full bg-black group-data-[state=active]:flex" />
+              <div className="absolute -bottom-[7.5px] left-0 hidden h-[2px] w-10 rounded-full bg-black group-data-[state=active]:flex lg:-bottom-[5.5px] lg:left-3" />
             </TabsTrigger>
             <TabsTrigger
               value="unstake"
-              className="group relative rounded-none border-none bg-transparent text-base font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none"
+              className="group relative rounded-none border-none bg-transparent text-sm font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none lg:text-base"
             >
               Unstake
-              <div className="absolute -bottom-[5.5px] left-3.5 hidden h-[2px] w-[3.3rem] rounded-full bg-black group-data-[state=active]:flex" />
+              <div className="absolute -bottom-[7.5px] left-3 hidden h-[2px] w-[3.3rem] rounded-full bg-black group-data-[state=active]:flex lg:-bottom-[5.5px] lg:left-3.5" />
             </TabsTrigger>
             <TabsTrigger
               value="withdraw"
-              className="group relative rounded-none border-none bg-transparent text-base font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none"
+              className="group relative rounded-none border-none bg-transparent text-sm font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none lg:text-base"
             >
               Withdraw log
-              <div className="absolute -bottom-[5.5px] left-[16px] hidden h-[2px] w-[5rem] rounded-full bg-black group-data-[state=active]:flex" />
+              <div className="absolute -bottom-[7.5px] left-3 hidden h-[2px] w-[5rem] rounded-full bg-black group-data-[state=active]:flex lg:-bottom-[5.5px] lg:left-[16px]" />
             </TabsTrigger>
           </TabsList>
 
           <TabsContent
             value="stake"
-            className="h-[20%] focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="h-[20%] pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
             <Stake />
           </TabsContent>
 
           <TabsContent
             value="unstake"
-            className="focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="h-[20%] pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
             <Unstake />
           </TabsContent>
@@ -83,7 +84,15 @@ const Tabs: React.FC = () => {
       </div>
 
       {tabs === "stake" && (
-        <p className="-ml-40 mt-8 flex items-center text-sm text-[#707D7D]">
+        <p
+          className={cn(
+            "mt-8 flex items-center text-xs text-[#707D7D] lg:text-sm",
+            {
+              "lg:-ml-36": open,
+              "lg:-ml-24": !open,
+            },
+          )}
+        >
           From the teams of{" "}
           <Link
             href="https://strkfarm.xyz"
@@ -106,14 +115,14 @@ const Tabs: React.FC = () => {
       {tabs === "unstake" && (
         <p
           className={cn(
-            "mt-8 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-sm text-[#D69733]",
+            "mt-8 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-xs text-[#D69733] lg:text-sm",
             {
-              "-ml-40": open,
-              "ml-40": !open,
+              "lg:-ml-36": open,
+              "lg:-ml-24": !open,
             },
           )}
         >
-          <div className="mr-2 size-6 shrink-0 rounded-full bg-[#D69733]" />
+          <div className="mr-2 size-4 shrink-0 rounded-full bg-[#D69733] lg:size-6" />
           Unstake requests are based on Withdrawal Queue. It can take up to 1 to
           21 days. Learn more.
         </p>

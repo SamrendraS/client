@@ -23,18 +23,18 @@ import {
 import { toast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 
-import { STRK_TOKEN } from "../../constants";
-import { Icons } from "./Icons";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { useAtomValue } from "jotai";
+import { providerAtom } from "@/store/common.store";
 import {
   exchangeRateAtom,
   totalStakedAtom,
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
-import { providerAtom } from "@/store/common.store";
+import { useAtomValue } from "jotai";
+import { STRK_TOKEN } from "../../constants";
+import { Icons } from "./Icons";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 const formSchema = z.object({
   stakeAmount: z.string().refine(
@@ -126,34 +126,38 @@ const Stake = () => {
 
   return (
     <div className="h-full w-full">
-      <div className="flex items-center justify-between px-6 py-2">
-        <p className="flex items-center gap-2 text-xs font-semibold">
-          <span className="flex items-center gap-1 text-xs font-semibold text-[#8D9C9C]">
+      <div className="flex items-center justify-between px-3 py-2 lg:px-6">
+        <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
+          <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
             APY
-            <Info className="size-3 text-[#8D9C9C]" />
+            <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
           </span>
           3.15%
         </p>
-        <p className="flex items-center gap-2 text-xs font-semibold text-[#8D9C9C]">
+
+        <div className="flex flex-col items-end gap-2 text-xs font-semibold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
           Total value locked
-          <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
-          <span className="font-medium">
-            | ${totalStakedUSD.value.toFixed(2)}
-          </span>
-        </p>
+          <p className="flex items-center gap-2">
+            <strong>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</strong>
+            <span className="font-medium">
+              | ${totalStakedUSD.value.toFixed(2)}
+            </span>
+          </p>
+        </div>
       </div>
 
-      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-20">
-        <div className="flex items-center gap-4 text-2xl font-semibold text-black">
-          <Icons.strkLogo />
+      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-3 py-12 lg:px-5 lg:py-20">
+        <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
+          <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK
         </div>
+
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
           Current staked: {currentStaked.value.toEtherToFixedDecimals(2)} STRK
         </div>
       </div>
 
-      <div className="flex w-full items-center gap-2 px-7 py-3">
+      <div className="flex w-full items-center px-7 py-3 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
           <Form {...form}>
@@ -166,13 +170,13 @@ const Stake = () => {
                     <FormControl>
                       <div className="relative">
                         <Input
-                          className="h-fit border-none px-0 !text-3xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0"
+                          className="h-fit border-none px-0 pr-1 text-2xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0 lg:pr-0 lg:!text-3xl"
                           placeholder="0.00"
                           {...field}
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="absolute -bottom-5 left-1 text-xs" />
+                    <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
                   </FormItem>
                 )}
               />
@@ -181,7 +185,7 @@ const Stake = () => {
         </div>
 
         <div className="flex flex-col items-end">
-          <div className="text-[#8D9C9C]">
+          <div className="hidden text-[#8D9C9C] lg:block">
             <button
               onClick={() => handleQuickStakePrice(25)}
               className="rounded-md rounded-r-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
@@ -207,8 +211,16 @@ const Stake = () => {
               Max
             </button>
           </div>
-          <div className="mt-3 flex items-center gap-2 text-sm font-semibold text-[#8D9C9C]">
-            <Icons.wallet className="size-5" />
+
+          <button
+            onClick={() => handleQuickStakePrice(100)}
+            className="rounded-md bg-[#BBE7E7] px-2 py-1 text-xs font-semibold text-[#215959] transition-all hover:bg-[#BBE7E7] hover:opacity-80 lg:hidden"
+          >
+            Max
+          </button>
+
+          <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#8D9C9C] lg:text-sm">
+            <Icons.wallet className="size-3 lg:size-5" />
             Balance:{" "}
             {data?.formatted ? Number(data?.formatted).toFixed(2) : "0"} STRK
           </div>
@@ -216,7 +228,7 @@ const Stake = () => {
       </div>
 
       <div className="mt-7 space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
+        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
           You will get
           <span>
             {form.watch("stakeAmount")
@@ -226,7 +238,7 @@ const Stake = () => {
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-sm font-medium text-[#939494]">
+        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
           Exchange rate
           <span>1 xSTRK = {exchangeRate.rate.toFixed(4)} xSTRK</span>
         </div>
