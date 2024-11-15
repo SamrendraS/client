@@ -1,103 +1,172 @@
 "use client";
 
 import {
-  InjectedConnector,
-  useAccount,
-  useConnect,
-  useDisconnect,
-  useProvider,
-} from "@starknet-react/core";
+  connect,
+  ConnectOptionsWithConnectors,
+  disconnect,
+  StarknetkitConnector,
+} from "starknetkit";
 import { useAtom, useSetAtom } from "jotai";
-import { ChevronDown } from "lucide-react";
+import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect } from "react";
-import { RpcProvider } from "starknet";
+import React, { useEffect, useMemo } from "react";
+import { constants, num, RpcProvider } from "starknet";
 import {
   ArgentMobileConnector,
   isInArgentMobileAppBrowser,
 } from "starknetkit/argentMobile";
 import { WebWalletConnector } from "starknetkit/webwallet";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn, shortAddress } from "@/lib/utils";
 import {
   lastWalletAtom,
   providerAtom,
   userAddressAtom,
 } from "@/store/common.store";
-import { ARGENT_MOBILE_BASE64_ICON } from "../../constants";
+import { NETWORK } from "../../constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
+import {
+  InjectedConnector,
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useProvider,
+  useSwitchChain,
+} from "@starknet-react/core";
 
 export const CONNECTOR_NAMES = ["Braavos", "Argent X", "Argent (mobile)"];
 
-export const MYCONNECTORS: any[] = isInArgentMobileAppBrowser()
-  ? [
-      ArgentMobileConnector.init({
-        options: {
-          dappName: "Endurfi",
-          projectId: "endurfi",
-          url: "https://app.endur.fi",
-        },
-        inAppBrowserOptions: {},
-      }),
-    ]
-  : [
-      new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
-      new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
-      new WebWalletConnector({
-        url: "https://web.argent.xyz",
-      }),
-      ArgentMobileConnector.init({
-        options: {
-          dappName: "Endurfi",
-          projectId: "endurfi",
-          url: "https://app.endur.fi",
-        },
-        inAppBrowserOptions: {
-          icon: ARGENT_MOBILE_BASE64_ICON,
-        },
-      }),
+export function getConnectors(isMobile: boolean) {
+  const mobileConnector = ArgentMobileConnector.init({
+    options: {
+      dappName: "Endurfi",
+      url: window.location.hostname,
+      chainId: constants.NetworkName.SN_MAIN,
+    },
+    inAppBrowserOptions: {},
+  }) as StarknetkitConnector;
+
+  const argentXConnector = new InjectedConnector({
+    options: {
+      id: "argentX",
+      name: "Argent X",
+    },
+  });
+
+  const braavosConnector = new InjectedConnector({
+    options: {
+      id: "braavos",
+      name: "Braavos",
+    },
+  });
+
+  const webWalletConnector = new WebWalletConnector({
+    url: "https://web.argent.xyz",
+  }) as StarknetkitConnector;
+
+  const isMainnet = NETWORK === constants.NetworkName.SN_MAIN;
+  if (isMainnet) {
+    if (isInArgentMobileAppBrowser()) {
+      return [mobileConnector];
+    } else if (isMobile) {
+      return [mobileConnector, webWalletConnector];
+    }
+    return [
+      argentXConnector,
+      braavosConnector,
+      mobileConnector,
+      webWalletConnector,
     ];
+  }
+  return [argentXConnector, braavosConnector];
+}
 
 const Navbar = () => {
-  const { address, connector } = useAccount();
+  const { address, connector, chainId } = useAccount();
   const { provider } = useProvider();
-  const { connect } = useConnect();
+  const { connect: connectSnReact } = useConnect();
   const { disconnectAsync } = useDisconnect();
-
   const { isMobile } = useSidebar();
+
+  const connectorConfig: ConnectOptionsWithConnectors = useMemo(() => {
+    return {
+      modalMode: "canAsk",
+      modalTheme: "light",
+      webWalletUrl: "https://web.argent.xyz",
+      argentMobileOptions: {
+        dappName: "Endur.fi",
+        chainId: NETWORK,
+        url: window.location.hostname,
+      },
+      dappName: "Endur.fi",
+      connectors: getConnectors(isMobile) as StarknetkitConnector[],
+    };
+  }, [isMobile]);
+
+  const requiredChainId = useMemo(() => {
+    return NETWORK == constants.NetworkName.SN_MAIN
+      ? constants.StarknetChainId.SN_MAIN
+      : constants.StarknetChainId.SN_SEPOLIA;
+  }, []);
+
+  const { switchChain, error } = useSwitchChain({
+    params: {
+      chainId: requiredChainId,
+    },
+  });
+
+  useEffect(() => {
+    if (error) {
+      console.error("switchChain error", error);
+    }
+  }, [error]);
+
+  async function connectWallet(config = connectorConfig) {
+    try {
+      const { wallet, connector, connectorData } = await connect(config);
+      console.log(
+        "wallet",
+        NETWORK,
+        wallet,
+        connector,
+        connectorData,
+        requiredChainId,
+        num.getDecimalString(requiredChainId),
+      );
+
+      if (connector) {
+        connectSnReact({ connector: connector as any });
+      }
+    } catch (error) {
+      console.error("connectWallet error", error);
+    }
+  }
+
+  // switch chain if not on the required chain
+  useEffect(() => {
+    if (
+      chainId &&
+      chainId.toString() !== num.getDecimalString(requiredChainId)
+    ) {
+      switchChain();
+    }
+  }, [chainId]);
+
+  // attempt to connect wallet on load
+  useEffect(() => {
+    const config = connectorConfig;
+    connectWallet({
+      ...config,
+      modalMode: "neverAsk",
+    });
+  }, []);
 
   const [_, setAddress] = useAtom(userAddressAtom);
   const setProvider = useSetAtom(providerAtom);
   const [lastWallet, setLastWallet] = useAtom(lastWalletAtom);
-
-  const autoConnect = (retry = 0) => {
-    try {
-      if (!address && lastWallet) {
-        const connectorIndex = CONNECTOR_NAMES.findIndex(
-          (name) => name === lastWallet,
-        );
-        if (connectorIndex >= 0) {
-          connect({ connector: MYCONNECTORS[connectorIndex] });
-        }
-      }
-    } catch (error) {
-      console.error("lastWallet error", error);
-      if (retry < 10) {
-        setTimeout(() => {
-          autoConnect(retry + 1);
-        }, 1000);
-      }
-    }
-  };
 
   useEffect(() => {
     if (connector) {
@@ -107,7 +176,7 @@ const Navbar = () => {
   }, [connector]);
 
   useEffect(() => {
-    autoConnect();
+    // autoConnect();
     setAddress(address);
     setProvider(provider as RpcProvider);
   }, [lastWallet, address, provider]);
@@ -160,98 +229,60 @@ const Navbar = () => {
       )}
 
       <div className="flex items-center gap-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            className={cn(
-              "flex h-10 items-center justify-center gap-2 rounded-lg border border-[#ECECED80] bg-[#AACBC433] text-sm font-bold text-[#03624C] focus-visible:outline-[#03624C]",
-              {
-                "h-[34px]": isMobile,
-              },
-            )}
-          >
-            {!address && (
-              <p
-                className={cn(
-                  "flex w-[9.5rem] select-none items-center justify-center gap-1 bg-transparent text-sm",
-                )}
-              >
-                Connect Wallet <ChevronDown className="!size-3" />
-              </p>
-            )}
+        <button
+          className={cn(
+            "flex h-10 items-center justify-center gap-2 rounded-lg border border-[#ECECED80] bg-[#AACBC433] text-sm font-bold text-[#03624C] focus-visible:outline-[#03624C]",
+            {
+              "h-[34px]": isMobile,
+            },
+          )}
+        >
+          {!address && (
+            <p
+              className={cn(
+                "flex w-[9.5rem] select-none items-center justify-center gap-1 bg-transparent text-sm",
+              )}
+              onClick={() => {
+                connectWallet();
+              }}
+            >
+              Connect Wallet
+            </p>
+          )}
 
-            {address && (
-              <>
-                {!isMobile ? (
-                  <div className="flex h-9 w-[9.5rem] items-center justify-center gap-2 rounded-md">
-                    <Icons.gradient />
-                    <p className="flex items-center gap-1 text-sm">
-                      {address && shortAddress(address, 4, 4)}
-                      <ChevronDown className="size-3" />
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex w-fit items-center justify-center gap-2 rounded-md px-3">
-                    <Icons.wallet className="size-5 text-[#3F6870]" />
-                    <ChevronDown className="size-4 text-[#3F6870]" />
-                  </div>
-                )}
-              </>
-            )}
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent className="min-w-[10rem] border border-[#03624C] bg-[#AACBC433] text-white">
-            {!address ? (
-              MYCONNECTORS?.map((connector) => (
-                <DropdownMenuItem
-                  key={connector.id}
-                  className="text-[#03624C] hover:!bg-[#339d84] hover:!text-white"
+          {address && (
+            <>
+              {!isMobile ? (
+                <div
+                  className="flex h-9 w-[9.5rem] items-center justify-center gap-2 rounded-md"
                   onClick={() => {
-                    connect({ connector });
+                    disconnect();
+                    disconnectAsync();
                   }}
                 >
-                  {connector.id === "argentX" && (
-                    <Image
-                      src={connector.icon}
-                      width={15}
-                      height={15}
-                      alt="icon"
-                    />
-                  )}
-
-                  {connector.id === "braavos" && (
-                    <Image
-                      src={connector.icon}
-                      width={15}
-                      height={15}
-                      alt="icon"
-                    />
-                  )}
-
-                  {connector.id === "argentWebWallet" && (
-                    <Icons.email className="size-[15px]" />
-                  )}
-
-                  {connector.id === "argentMobile" && (
-                    <Icons.argentMobile className="size-[15px]" />
-                  )}
-
-                  <p>{connector.name}</p>
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <DropdownMenuItem
-                onClick={() => disconnectAsync()}
-                className="text-[#03624C] hover:!bg-[#339d84] hover:!text-white"
-              >
-                Disconnect
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#AACBC433]">
-          <Icons.notification />
-        </div> */}
+                  <Icons.gradient />
+                  <p className="flex items-center gap-1 text-sm">
+                    {address && shortAddress(address, 4, 4)}
+                    <X className="size-4 text-[#3F6870]" />
+                  </p>
+                </div>
+              ) : (
+                <div
+                  className="flex w-fit items-center justify-center gap-2 rounded-md px-3"
+                  onClick={() => {
+                    disconnect();
+                    disconnectAsync();
+                  }}
+                >
+                  <Icons.wallet className="size-5 text-[#3F6870]" />
+                  {shortAddress(address, 4, 4)}
+                  <X className="size-4 text-[#3F6870]" />
+                </div>
+              )}
+            </>
+          )}
+        </button>
+        {/* </DropdownMenuTrigger> */}
       </div>
     </div>
   );

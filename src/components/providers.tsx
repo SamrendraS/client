@@ -1,11 +1,15 @@
 "use client";
 
 import { devnet, mainnet } from "@starknet-react/chains";
-import { jsonRpcProvider, StarknetConfig } from "@starknet-react/core";
+import {
+  Connector,
+  jsonRpcProvider,
+  StarknetConfig,
+} from "@starknet-react/core";
 import React from "react";
 import { constants, RpcProviderOptions } from "starknet";
-
-import { MYCONNECTORS } from "./navbar";
+import { getConnectors } from "./navbar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -24,11 +28,7 @@ const provider = jsonRpcProvider({
 });
 
 const Providers: React.FC<ProvidersProps> = ({ children }) => {
-  // const { connectors } = useInjectedConnectors({
-  //   recommended: [argent(), braavos()],
-  //   includeRecommended: "onlyIfNoConnectors",
-  //   order: "alphabetical",
-  // });
+  const isMobile = useIsMobile();
 
   if (typeof window === "undefined") return null;
 
@@ -36,7 +36,7 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
     <StarknetConfig
       chains={chains}
       provider={provider}
-      connectors={MYCONNECTORS}
+      connectors={getConnectors(isMobile) as Connector[]}
     >
       {children}
     </StarknetConfig>
