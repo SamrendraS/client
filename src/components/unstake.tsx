@@ -34,7 +34,7 @@ const formSchema = z.object({
   unstakeAmount: z.string().refine(
     (v) => {
       const n = Number(v);
-      return !isNaN(n) && v?.length > 0;
+      return !isNaN(n) && v?.length > 0 && n > 0;
     },
     { message: "Invalid input" },
   ),
@@ -100,6 +100,20 @@ const Unstake = () => {
       });
     }
 
+    if (
+      Number(values.unstakeAmount) >
+      Number(currentStaked.value.toEtherToFixedDecimals(9))
+    ) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Insufficient staked(xSTRK) balance
+          </div>
+        ),
+      });
+    }
+
     const call1 = contract.populate("withdraw", [
       MyNumber.fromEther(values.unstakeAmount, 18),
       address,
@@ -120,10 +134,10 @@ const Unstake = () => {
           3.15%
         </p>
 
-        <div className="flex flex-col items-end gap-2 text-xs font-semibold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
+        <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
           Total value locked
           <p className="flex items-center gap-2">
-            <strong>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</strong>
+            <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
             <span className="font-medium">
               | ${totalStakedUSD.value.toFixed(2)}
             </span>

@@ -23,25 +23,24 @@ import {
 import { toast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 
-import { providerAtom } from "@/store/common.store";
 import {
   exchangeRateAtom,
   totalStakedAtom,
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
+import { snAPYAtom } from "@/store/staking.store";
 import { useAtomValue } from "jotai";
 import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { snAPYAtom } from "@/store/staking.store";
 
 const formSchema = z.object({
   stakeAmount: z.string().refine(
     (v) => {
       const n = Number(v);
-      return !isNaN(n) && v?.length > 0;
+      return !isNaN(n) && v?.length > 0 && n > 0;
     },
     { message: "Invalid input" },
   ),
@@ -61,7 +60,6 @@ const Stake = () => {
   const totalStaked = useAtomValue(totalStakedAtom);
   const exchangeRate = useAtomValue(exchangeRateAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
-  const provider = useAtomValue(providerAtom);
   const apy = useAtomValue(snAPYAtom);
 
   const form = useForm<FormValues>({
@@ -102,6 +100,17 @@ const Stake = () => {
   const { sendAsync } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
+    if (Number(values.stakeAmount) > Number(data?.formatted)) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Insufficient balance
+          </div>
+        ),
+      });
+    }
+
     if (!address) {
       return toast({
         description: (
@@ -137,10 +146,10 @@ const Stake = () => {
           {(apy.value * 100).toFixed(2)}%
         </p>
 
-        <div className="flex flex-col items-end gap-2 text-xs font-semibold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
+        <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
           Total value locked
           <p className="flex items-center gap-2">
-            <strong>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</strong>
+            <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
             <span className="font-medium">
               | ${totalStakedUSD.value.toFixed(2)}
             </span>
@@ -224,7 +233,9 @@ const Stake = () => {
           <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#8D9C9C] lg:text-sm">
             <Icons.wallet className="size-3 lg:size-5" />
             Balance:{" "}
-            {data?.formatted ? Number(data?.formatted).toFixed(2) : "0"} STRK
+            <span className="font-bold">
+              {data?.formatted ? Number(data?.formatted).toFixed(2) : "0"} STRK
+            </span>
           </div>
         </div>
       </div>

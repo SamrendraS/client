@@ -1,17 +1,17 @@
 "use client";
 
-import {
-  connect,
-  ConnectOptionsWithConnectors,
-  disconnect,
-  StarknetkitConnector,
-} from "starknetkit";
 import { useAtom, useSetAtom } from "jotai";
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo } from "react";
 import { constants, num, RpcProvider } from "starknet";
+import {
+  connect,
+  ConnectOptionsWithConnectors,
+  disconnect,
+  StarknetkitConnector,
+} from "starknetkit";
 import {
   ArgentMobileConnector,
   isInArgentMobileAppBrowser,
@@ -24,10 +24,6 @@ import {
   providerAtom,
   userAddressAtom,
 } from "@/store/common.store";
-import { NETWORK } from "../../constants";
-import { Icons } from "./Icons";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-import { useSidebar } from "./ui/sidebar";
 import {
   InjectedConnector,
   useAccount,
@@ -36,6 +32,10 @@ import {
   useProvider,
   useSwitchChain,
 } from "@starknet-react/core";
+import { NETWORK } from "../../constants";
+import { Icons } from "./Icons";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import { useSidebar } from "./ui/sidebar";
 
 export const CONNECTOR_NAMES = ["Braavos", "Argent X", "Argent (mobile)"];
 
@@ -179,7 +179,11 @@ const Navbar = () => {
     // autoConnect();
     setAddress(address);
     setProvider(provider as RpcProvider);
-  }, [lastWallet, address, provider]);
+  }, [address, provider]);
+
+  // React.useEffect(() => {
+  //   autoConnect();
+  // }, [lastWallet]);
 
   return (
     <div

@@ -1,6 +1,5 @@
 "use client";
 
-import { Fira_Sans } from "next/font/google";
 import Image from "next/image";
 
 import {
@@ -14,13 +13,8 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 
+import Link from "next/link";
 import { Icons } from "./Icons";
-
-const font = Fira_Sans({
-  subsets: ["latin"],
-  weight: "400",
-});
-
 export function AppSidebar() {
   const { open, isMobile } = useSidebar();
 
@@ -29,7 +23,6 @@ export function AppSidebar() {
   return (
     <Sidebar
       className={cn(
-        font.className,
         "mx-5 my-auto h-[calc(100vh-40px)] rounded-md rounded-r-sm border border-[#AACBC480]",
       )}
     >
@@ -46,12 +39,12 @@ export function AppSidebar() {
             <SidebarGroup className="flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] text-xl font-semibold text-white transition-all">
               <Icons.staking className="size-5" /> Staking
             </SidebarGroup>
-            <SidebarGroup className="pointer-events-none flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md transition-all hover:bg-[#17876D] hover:text-white">
+            {/* <SidebarGroup className="pointer-events-none flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md transition-all hover:bg-[#17876D] hover:text-white">
               <p className="text-xl font-semibold text-[#03624C]">
                 Defi <span className="text-sm font-thin">(coming soon)</span>
               </p>
               {/* <ChevronDown className="size-4 text-[#03624C]" /> */}
-            </SidebarGroup>
+            {/* </SidebarGroup> */}
             <hr />
             <SidebarGroup className="group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
               <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
@@ -70,6 +63,7 @@ export function AppSidebar() {
           </>
         )}
       </SidebarContent>
+
       <SidebarFooter className="bg-[#AACBC433] px-0">
         <div
           className={cn(
@@ -81,29 +75,48 @@ export function AppSidebar() {
         >
           {open ? (
             <div className="flex items-center gap-4">
-              <Icons.twitter className="cursor-pointer" />
-              <Icons.discord className="cursor-pointer" />
-              <Icons.telegram className="cursor-pointer" />
-              <Icons.doc className="cursor-pointer" />
+              <Link href="https://x.com/endurfi" target="_blank">
+                <Icons.twitter className="cursor-pointer" />
+              </Link>
+              <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
+                <Icons.telegram className="cursor-pointer" />
+              </Link>
+              <Link href="https://docs.endur.fi/" target="_blank">
+                <Icons.doc className="cursor-pointer" />
+              </Link>
             </div>
           ) : (
             <div className="mb-4 flex flex-col items-center gap-4">
-              <Icons.twitter className="cursor-pointer" />
-              <Icons.discord className="cursor-pointer" />
-              <Icons.telegram className="cursor-pointer" />
-              <Icons.doc className="cursor-pointer" />
+              <Link href="https://x.com/endurfi" target="_blank">
+                <Icons.twitter className="cursor-pointer" />
+              </Link>
+              <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
+                <Icons.telegram className="cursor-pointer" />
+              </Link>
+              <Link href="https://docs.endur.fi/" target="_blank">
+                <Icons.doc className="cursor-pointer" />
+              </Link>
             </div>
           )}
           <SidebarTrigger />
         </div>
+
         {open ? (
-          <button className="flex items-center gap-3 border-t border-[#075A5A1A] px-4 py-3 text-xl font-medium text-[#03624C]">
+          <Link
+            href="https://t.me/+jWY71PfbMMIwMTBl"
+            target="_blank"
+            className="flex items-center gap-3 border-t border-[#075A5A1A] px-4 py-3 text-xl font-medium text-[#03624C]"
+          >
             <Icons.chat /> Support
-          </button>
+          </Link>
         ) : (
-          <button className="flex items-center border-t border-[#075A5A1A] px-4 py-2 text-[#03624C]">
+          <Link
+            href="https://t.me/+jWY71PfbMMIwMTBl"
+            target="_blank"
+            className="flex items-center border-t border-[#075A5A1A] px-4 py-2 text-[#03624C]"
+          >
             <Icons.chat className="size-4 shrink-0" />
-          </button>
+          </Link>
         )}
       </SidebarFooter>
     </Sidebar>
