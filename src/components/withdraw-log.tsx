@@ -54,17 +54,17 @@ const invoices = [
 
 const WithdrawLog: React.FC = () => {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px] text-[#939494]">Log ID</TableHead>
-          <TableHead className="text-[#939494]">Amount</TableHead>
-          <TableHead className="text-right text-[#939494]">Status</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody className="overflow-y-auto">
-        <p style={{ margin: "10px 0" }}>Coming soon</p>
-        {/* {invoices.map((invoice) => (
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px] text-[#939494]">Log ID</TableHead>
+            <TableHead className="text-[#939494]">Amount</TableHead>
+            <TableHead className="text-right text-[#939494]">Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody className="overflow-y-auto">
+          {/* {invoices.map((invoice) => (
           <TableRow key={invoice.invoice}>
             <TableCell className="font-medium">{invoice.invoice}</TableCell>
             <TableCell>{invoice.totalAmount}</TableCell>
@@ -91,8 +91,13 @@ const WithdrawLog: React.FC = () => {
             </TableCell>
           </TableRow>
         ))} */}
-      </TableBody>
-    </Table>
+        </TableBody>
+      </Table>
+
+      <p className="my-2.5 animate-pulse text-center text-sm text-muted-foreground">
+        Coming soon...
+      </p>
+    </>
   );
 };
 

@@ -240,15 +240,15 @@ const Navbar = () => {
               "h-[34px]": isMobile,
             },
           )}
+          onClick={() =>
+            !address ? connectWallet() : (disconnect(), disconnectAsync())
+          }
         >
           {!address && (
             <p
               className={cn(
                 "flex w-[9.5rem] select-none items-center justify-center gap-1 bg-transparent text-sm",
               )}
-              onClick={() => {
-                connectWallet();
-              }}
             >
               Connect Wallet
             </p>
@@ -257,13 +257,7 @@ const Navbar = () => {
           {address && (
             <>
               {!isMobile ? (
-                <div
-                  className="flex h-9 w-[9.5rem] items-center justify-center gap-2 rounded-md"
-                  onClick={() => {
-                    disconnect();
-                    disconnectAsync();
-                  }}
-                >
+                <div className="flex h-9 w-[9.5rem] items-center justify-center gap-2 rounded-md">
                   <Icons.gradient />
                   <p className="flex items-center gap-1 text-sm">
                     {address && shortAddress(address, 4, 4)}
@@ -271,13 +265,7 @@ const Navbar = () => {
                   </p>
                 </div>
               ) : (
-                <div
-                  className="flex w-fit items-center justify-center gap-2 rounded-md px-3"
-                  onClick={() => {
-                    disconnect();
-                    disconnectAsync();
-                  }}
-                >
+                <div className="flex w-fit items-center justify-center gap-2 rounded-md px-3">
                   <Icons.wallet className="size-5 text-[#3F6870]" />
                   {shortAddress(address, 4, 4)}
                   <X className="size-4 text-[#3F6870]" />

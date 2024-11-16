@@ -9,6 +9,7 @@ export default function Home() {
       <AppSidebar />
 
       <div className="flex flex-1 flex-col justify-between">
+        {/* peer-hover/sideb:w-[calc(100vw-66px)] */}
         <div className="flex w-full flex-col items-center overflow-hidden px-7 py-3">
           <Navbar />
           <Tabs />
