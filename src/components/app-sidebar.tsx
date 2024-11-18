@@ -102,64 +102,97 @@ export function AppSidebar({ className }: { className?: string }) {
       <SidebarFooter className="bg-[#AACBC433] p-0">
         <div
           className={cn(
-            "mb-5 flex items-center justify-between gap-2 pl-4 pr-6",
+            "mb-3 flex items-center justify-between gap-2 pl-4 pr-6",
             {
               "flex-col px-0": !open,
             },
           )}
         >
           {open ? (
-            <div className="flex items-center gap-4">
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link href="https://x.com/endurfi" target="_blank">
-                      <Icons.twitter className="cursor-pointer" />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="top"
-                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                  >
-                    <p>Twitter (X)</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            <>
+              <div className="flex items-center gap-4">
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link href="https://x.com/endurfi" target="_blank">
+                        <Icons.twitter className="cursor-pointer" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                    >
+                      <p>Twitter (X)</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link
+                        href="https://t.me/+jWY71PfbMMIwMTBl"
+                        target="_blank"
+                      >
+                        <Icons.telegram className="cursor-pointer" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                    >
+                      <p>Telegram</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Link href="https://docs.endur.fi/" target="_blank">
+                        <Icons.doc className="cursor-pointer" />
+                      </Link>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                    >
+                      <p>Docs</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
 
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
-                      <Icons.telegram className="cursor-pointer" />
-                    </Link>
+                    <SidebarTrigger />
                   </TooltipTrigger>
                   <TooltipContent
-                    side="top"
+                    side="right"
                     className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
                   >
-                    <p>Telegram</p>
+                    <p>Collapse</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link href="https://docs.endur.fi/" target="_blank">
-                      <Icons.doc className="cursor-pointer" />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="top"
-                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                  >
-                    <p>Docs</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
+            </>
           ) : (
-            <div className="mb-4 flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-4">
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <SidebarTrigger />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                  >
+                    <p>Expand</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -209,20 +242,6 @@ export function AppSidebar({ className }: { className?: string }) {
               </TooltipProvider>
             </div>
           )}
-
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <SidebarTrigger />
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-              >
-                <p>{open ? "Collapse" : "Expand"}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
         </div>
 
         {open ? (
