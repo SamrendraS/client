@@ -139,21 +139,18 @@ const Stake = () => {
     ]);
 
     if (referrer) {
-      console.log(referrer);
       const call2 = contract.populate("deposit_with_referral", [
-        // MyNumber.fromEther(values.stakeAmount, 18),
-        uint256.bnToUint256(values.stakeAmount),
+        MyNumber.fromEther(values.stakeAmount, 18),
         address,
-        byteArray.byteArrayFromString(referrer),
+        referrer,
       ]);
-      const res = sendAsync([call1, call2]);
-      console.log(res, "res", "referrer called");
+      await sendAsync([call1, call2]);
     } else {
       const call2 = contract.populate("deposit", [
         MyNumber.fromEther(values.stakeAmount, 18),
         address,
       ]);
-      sendAsync([call1, call2]);
+      await sendAsync([call1, call2]);
     }
   };
 

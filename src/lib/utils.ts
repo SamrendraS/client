@@ -78,3 +78,28 @@ export function getReferralUrl(referralCode: string) {
   }
   return `${window.location.origin}/r/${referralCode}`;
 }
+
+export function timeAgo(unixTimestamp: number): string {
+  const currentTime = new Date();
+  const timestampTime = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds
+  const difference = currentTime.getTime() - timestampTime.getTime();
+
+  if (difference < 0) {
+    return "in the future";
+  }
+
+  const seconds = Math.floor(difference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) {
+    return `${days} days ago`;
+  } else if (hours > 0) {
+    return `${hours} hours ago`;
+  } else if (minutes > 0) {
+    return `${minutes} minutes ago`;
+  } else {
+    return `${seconds} seconds ago`;
+  }
+}

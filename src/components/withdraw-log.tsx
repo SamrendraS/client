@@ -9,21 +9,36 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
+import { cn, timeAgo } from "@/lib/utils";
 import { getWithdrawLogs } from "@/store/transactions.atom";
 
+import { LoaderCircle } from "lucide-react";
 import { Icons } from "./Icons";
 
 const WithdrawLog: React.FC = () => {
-  const [withdawals, setWithdawals] = React.useState<any>();
+  const [withdrawals, setWithdrawals] = React.useState<any>();
 
   React.useEffect(() => {
     (async () => {
       const res = await getWithdrawLogs();
-      setWithdawals(res?.withdraw_queues);
-      console.log(res?.withdraw_queues);
+      const withdrawalData = res?.withdraw_queues;
+
+      // Filter to keep the record with the latest `claim_time` for each `request_id`
+      const uniqueWithdrawals = Object.values(
+        withdrawalData.reduce((acc: any, item: any) => {
+          if (
+            !acc[item.request_id] ||
+            acc[item.request_id].claim_time < item.claim_time
+          ) {
+            acc[item.request_id] = item;
+          }
+          return acc;
+        }, {}),
+      );
+
+      setWithdrawals(uniqueWithdrawals);
     })();
-  }, [withdawals]);
+  }, []);
 
   return (
     <Table>
@@ -41,37 +56,51 @@ const WithdrawLog: React.FC = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {[...Array(25)].map((item, i) => (
-          <TableRow
-            key={i}
-            className={cn("rounded-2xl border-0 bg-white hover:bg-white", {
-              "bg-[#E3EFEC80] hover:bg-[#E3EFEC80]": i % 2 === 0,
-            })}
-          >
-            <TableCell className="pl-4 font-thin text-[#939494]">
-              STRK0{i + 1}
-            </TableCell>
-            <TableCell className="text-center font-thin text-[#939494] sm:pl-12">
-              500
-            </TableCell>
-            {i % 2 === 0 ? (
-              <TableCell className="flex justify-end pr-4 text-right font-thin text-[#17876D]">
-                <Link
-                  href="#"
-                  className="group flex w-fit items-center justify-end gap-1 transition-all"
-                >
-                  <span className="group-hover:underline">Success</span>
-                  <Icons.externalLink className="group-hover:opacity-80" />
-                </Link>
+        {withdrawals ? (
+          withdrawals?.map((item: any, i: number) => (
+            <TableRow
+              key={i}
+              className={cn("rounded-2xl border-0 bg-white hover:bg-white", {
+                "bg-[#E3EFEC80] hover:bg-[#E3EFEC80]": i % 2 === 0,
+              })}
+            >
+              <TableCell className="pl-4 font-thin text-[#939494]">
+                {item?.request_id}
               </TableCell>
-            ) : (
-              <TableCell className="flex flex-col items-end pr-4 text-right font-thin">
-                Pending
-                <span className="text-sm text-[#939494]">21 days est</span>
+
+              <TableCell className="text-center font-thin text-[#939494] sm:pl-12">
+                {item?.amount_strk}
               </TableCell>
-            )}
+
+              {!item?.amount_strk ? (
+                <TableCell className="flex justify-end pr-4 text-right font-thin text-[#17876D]">
+                  <Link
+                    href={`https://sepolia.starkscan.co/tx/${item?.receiver}`}
+                    className="group flex w-fit items-center justify-end gap-1 transition-all"
+                  >
+                    <span className="group-hover:underline">Success</span>
+                    <Icons.externalLink className="group-hover:opacity-80" />
+                  </Link>
+                </TableCell>
+              ) : (
+                <TableCell className="flex flex-col items-end pr-4 text-right font-thin">
+                  Pending
+                  <span className="text-sm text-[#939494]">
+                    {timeAgo(item?.claim_time)}
+                  </span>
+                </TableCell>
+              )}
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell className="flex items-center justify-center py-5 pl-14 text-muted-foreground">
+              <LoaderCircle className="size-5 animate-spin" />
+            </TableCell>
+            <TableCell></TableCell>
           </TableRow>
-        ))}
+        )}
       </TableBody>
     </Table>
   );
