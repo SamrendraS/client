@@ -41,7 +41,7 @@ const WithdrawLog: React.FC = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {[...Array(15)].map((item, i) => (
+        {[...Array(25)].map((item, i) => (
           <TableRow
             key={i}
             className={cn("rounded-2xl border-0 bg-white hover:bg-white", {
