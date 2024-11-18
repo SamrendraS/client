@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "eslint --config .eslintrc.json . --fix",
-    "format:fix": "prettier --write \"**/*.{ts,tsx,json}\"",
-    "postinstall": "prisma generate"
+    "format:fix": "prettier --write \"**/*.{ts,tsx,json}\""
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
