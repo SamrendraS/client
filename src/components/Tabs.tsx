@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import Stake from "./stake";
 import { useSidebar } from "./ui/sidebar";
 import {
@@ -76,7 +76,7 @@ const Tabs: React.FC = () => {
 
           <TabsContent
             value="withdraw"
-            className="h-[89%] overflow-y-auto px-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="overflow-y-auto focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-[89.6%]"
           >
             <WithdrawLog />
           </TabsContent>

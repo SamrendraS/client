@@ -6,10 +6,12 @@ import {
   useBalance,
   useSendTransaction,
 } from "@starknet-react/core";
+import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract } from "starknet";
+import { byteArray, Contract, uint256 } from "starknet";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -20,9 +22,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
-
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -30,7 +37,7 @@ import {
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
-import { useAtomValue } from "jotai";
+
 import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
@@ -49,6 +56,8 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const Stake = () => {
+  const searchParams = useSearchParams();
+
   const { address } = useAccount();
 
   const { data } = useBalance({
@@ -61,6 +70,8 @@ const Stake = () => {
   const exchangeRate = useAtomValue(exchangeRateAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const apy = useAtomValue(snAPYAtom);
+
+  const referrer = searchParams.get("referrer");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -127,12 +138,20 @@ const Stake = () => {
       MyNumber.fromEther(values.stakeAmount, 18),
     ]);
 
-    const call2 = contract.populate("deposit", [
-      MyNumber.fromEther(values.stakeAmount, 18),
-      address,
-    ]);
-
-    sendAsync([call1, call2]);
+    if (referrer) {
+      const call2 = contract.populate("deposit_with_referral", [
+        MyNumber.fromEther(values.stakeAmount, 18),
+        address,
+        referrer,
+      ]);
+      await sendAsync([call1, call2]);
+    } else {
+      const call2 = contract.populate("deposit", [
+        MyNumber.fromEther(values.stakeAmount, 18),
+        address,
+      ]);
+      await sendAsync([call1, call2]);
+    }
   };
 
   return (
@@ -141,7 +160,20 @@ const Stake = () => {
         <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
           <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
             APY
-            <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  Current APYs including any fees. Net returns subject to change
+                  based on market conditions.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </span>
           {(apy.value * 100).toFixed(2)}%
         </p>
@@ -168,7 +200,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="flex w-full items-center px-7 py-3 lg:gap-2">
+      <div className="flex w-full items-center px-7 pb-3 pt-5 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
           <Form {...form}>

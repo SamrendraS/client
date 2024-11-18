@@ -5,7 +5,7 @@ import Tabs from "@/components/Tabs";
 
 export default function Home() {
   return (
-    <div className="flex w-full">
+    <div className="flex w-full overflow-x-hidden">
       <AppSidebar />
 
       <div className="flex flex-1 flex-col justify-between">

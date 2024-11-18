@@ -1,10 +1,18 @@
 "use client";
 
+import {
+  InjectedConnector,
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useProvider,
+  useSwitchChain,
+} from "@starknet-react/core";
 import { useAtom, useSetAtom } from "jotai";
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import { constants, num, RpcProvider } from "starknet";
 import {
   connect,
@@ -24,14 +32,6 @@ import {
   providerAtom,
   userAddressAtom,
 } from "@/store/common.store";
-import {
-  InjectedConnector,
-  useAccount,
-  useConnect,
-  useDisconnect,
-  useProvider,
-  useSwitchChain,
-} from "@starknet-react/core";
 import { NETWORK } from "../../constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -89,6 +89,12 @@ const Navbar = () => {
   const { provider } = useProvider();
   const { connect: connectSnReact } = useConnect();
   const { disconnectAsync } = useDisconnect();
+
+  const [__, setAddress] = useAtom(userAddressAtom);
+  const [_, setLastWallet] = useAtom(lastWalletAtom);
+
+  const setProvider = useSetAtom(providerAtom);
+
   const { isMobile } = useSidebar();
 
   const connectorConfig: ConnectOptionsWithConnectors = useMemo(() => {
@@ -118,24 +124,9 @@ const Navbar = () => {
     },
   });
 
-  useEffect(() => {
-    if (error) {
-      console.error("switchChain error", error);
-    }
-  }, [error]);
-
   async function connectWallet(config = connectorConfig) {
     try {
-      const { wallet, connector, connectorData } = await connect(config);
-      console.log(
-        "wallet",
-        NETWORK,
-        wallet,
-        connector,
-        connectorData,
-        requiredChainId,
-        num.getDecimalString(requiredChainId),
-      );
+      const { connector } = await connect(config);
 
       if (connector) {
         connectSnReact({ connector: connector as any });
@@ -146,7 +137,7 @@ const Navbar = () => {
   }
 
   // switch chain if not on the required chain
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       chainId &&
       chainId.toString() !== num.getDecimalString(requiredChainId)
@@ -155,8 +146,14 @@ const Navbar = () => {
     }
   }, [chainId]);
 
+  React.useEffect(() => {
+    if (error) {
+      console.error("switchChain error", error);
+    }
+  }, [error]);
+
   // attempt to connect wallet on load
-  useEffect(() => {
+  React.useEffect(() => {
     const config = connectorConfig;
     connectWallet({
       ...config,
@@ -164,18 +161,14 @@ const Navbar = () => {
     });
   }, []);
 
-  const [_, setAddress] = useAtom(userAddressAtom);
-  const setProvider = useSetAtom(providerAtom);
-  const [lastWallet, setLastWallet] = useAtom(lastWalletAtom);
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (connector) {
       const name: string = connector.name;
       setLastWallet(name);
     }
   }, [connector]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // autoConnect();
     setAddress(address);
     setProvider(provider as RpcProvider);
@@ -240,15 +233,15 @@ const Navbar = () => {
               "h-[34px]": isMobile,
             },
           )}
+          onClick={() =>
+            !address ? connectWallet() : (disconnect(), disconnectAsync())
+          }
         >
           {!address && (
             <p
               className={cn(
                 "flex w-[9.5rem] select-none items-center justify-center gap-1 bg-transparent text-sm",
               )}
-              onClick={() => {
-                connectWallet();
-              }}
             >
               Connect Wallet
             </p>
@@ -257,13 +250,7 @@ const Navbar = () => {
           {address && (
             <>
               {!isMobile ? (
-                <div
-                  className="flex h-9 w-[9.5rem] items-center justify-center gap-2 rounded-md"
-                  onClick={() => {
-                    disconnect();
-                    disconnectAsync();
-                  }}
-                >
+                <div className="flex h-9 w-[9.5rem] items-center justify-center gap-2 rounded-md">
                   <Icons.gradient />
                   <p className="flex items-center gap-1 text-sm">
                     {address && shortAddress(address, 4, 4)}
@@ -271,13 +258,7 @@ const Navbar = () => {
                   </p>
                 </div>
               ) : (
-                <div
-                  className="flex w-fit items-center justify-center gap-2 rounded-md px-3"
-                  onClick={() => {
-                    disconnect();
-                    disconnectAsync();
-                  }}
-                >
+                <div className="flex w-fit items-center justify-center gap-2 rounded-md px-3">
                   <Icons.wallet className="size-5 text-[#3F6870]" />
                   {shortAddress(address, 4, 4)}
                   <X className="size-4 text-[#3F6870]" />
@@ -286,7 +267,6 @@ const Navbar = () => {
             </>
           )}
         </button>
-        {/* </DropdownMenuTrigger> */}
       </div>
     </div>
   );

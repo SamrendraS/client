@@ -1,15 +1,15 @@
+import erc4626Abi from "@/abi/erc4626.abi.json";
+import MyNumber from "@/lib/MyNumber";
 import { atom } from "jotai";
+import { atomWithQuery } from "jotai-tanstack-query";
+import { Contract, RpcProvider, uint256 } from "starknet";
+import { LST_ADDRRESS, STRK_DECIMALS } from "../../constants";
 import {
   currentBlockAtom,
   providerAtom,
   strkPriceAtom,
   userAddressAtom,
 } from "./common.store";
-import erc4626Abi from "@/abi/erc4626.abi.json";
-import { atomWithQuery } from "jotai-tanstack-query";
-import MyNumber from "@/lib/MyNumber";
-import { Contract, RpcProvider, uint256 } from "starknet";
-import { LST_ADDRRESS, STRK_DECIMALS } from "../../constants";
 
 function getLSTContract(provider: RpcProvider) {
   return new Contract(erc4626Abi, LST_ADDRRESS, provider);
@@ -22,14 +22,14 @@ const userXSTRKBalanceQueryAtom = atomWithQuery((get) => {
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const [, , userAddress] = queryKey;
       const provider = get(providerAtom);
-      console.log("userXSTRKBalanceAtom", provider, userAddress);
+      // console.log("userXSTRKBalanceAtom", provider, userAddress);
       if (!provider || !userAddress) {
         return MyNumber.fromZero();
       }
       try {
         const lstContract = getLSTContract(provider);
         const balance = await lstContract.call("balance_of", [userAddress]);
-        console.log("userXSTRKBalanceAtom [2]", balance.toString());
+        // console.log("userXSTRKBalanceAtom [2]", balance.toString());
         return new MyNumber(balance.toString(), STRK_DECIMALS);
       } catch (error) {
         console.error("userXSTRKBalanceAtom [3]", error);
