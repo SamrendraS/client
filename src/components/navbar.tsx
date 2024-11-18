@@ -1,10 +1,20 @@
 "use client";
 
-import { useAtom, useSetAtom } from "jotai";
-import { X } from "lucide-react";
+import {
+  InjectedConnector,
+  useAccount,
+  useConnect,
+  useDisconnect,
+  useProvider,
+  useSwitchChain,
+} from "@starknet-react/core";
+import axios from "axios";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { Copy, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import React, { useMemo } from "react";
 import { constants, num, RpcProvider } from "starknet";
 import {
   connect,
@@ -18,20 +28,20 @@ import {
 } from "starknetkit/argentMobile";
 import { WebWalletConnector } from "starknetkit/webwallet";
 
-import { cn, shortAddress } from "@/lib/utils";
+import {
+  cn,
+  copyReferralLink,
+  generateReferralCode,
+  shortAddress,
+} from "@/lib/utils";
 import {
   lastWalletAtom,
   providerAtom,
   userAddressAtom,
 } from "@/store/common.store";
-import {
-  InjectedConnector,
-  useAccount,
-  useConnect,
-  useDisconnect,
-  useProvider,
-  useSwitchChain,
-} from "@starknet-react/core";
+import { referralCodeAtom } from "@/store/referral.store";
+import { UserInfoAtom } from "@/store/user-info.store";
+
 import { NETWORK } from "../../constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -89,6 +99,15 @@ const Navbar = () => {
   const { provider } = useProvider();
   const { connect: connectSnReact } = useConnect();
   const { disconnectAsync } = useDisconnect();
+
+  const [___, setReferralCode] = useAtom(referralCodeAtom);
+  const [__, setAddress] = useAtom(userAddressAtom);
+  const [_, setLastWallet] = useAtom(lastWalletAtom);
+  const userInfoAtom = useAtomValue(UserInfoAtom);
+
+  const setProvider = useSetAtom(providerAtom);
+
+  const searchParams = useSearchParams();
   const { isMobile } = useSidebar();
 
   const connectorConfig: ConnectOptionsWithConnectors = useMemo(() => {
@@ -118,24 +137,9 @@ const Navbar = () => {
     },
   });
 
-  useEffect(() => {
-    if (error) {
-      console.error("switchChain error", error);
-    }
-  }, [error]);
-
   async function connectWallet(config = connectorConfig) {
     try {
-      const { wallet, connector, connectorData } = await connect(config);
-      console.log(
-        "wallet",
-        NETWORK,
-        wallet,
-        connector,
-        connectorData,
-        requiredChainId,
-        num.getDecimalString(requiredChainId),
-      );
+      const { connector } = await connect(config);
 
       if (connector) {
         connectSnReact({ connector: connector as any });
@@ -145,8 +149,10 @@ const Navbar = () => {
     }
   }
 
+  const userInfo = React.useMemo(() => userInfoAtom.data, [userInfoAtom]);
+
   // switch chain if not on the required chain
-  useEffect(() => {
+  React.useEffect(() => {
     if (
       chainId &&
       chainId.toString() !== num.getDecimalString(requiredChainId)
@@ -155,8 +161,14 @@ const Navbar = () => {
     }
   }, [chainId]);
 
+  React.useEffect(() => {
+    if (error) {
+      console.error("switchChain error", error);
+    }
+  }, [error]);
+
   // attempt to connect wallet on load
-  useEffect(() => {
+  React.useEffect(() => {
     const config = connectorConfig;
     connectWallet({
       ...config,
@@ -164,18 +176,14 @@ const Navbar = () => {
     });
   }, []);
 
-  const [_, setAddress] = useAtom(userAddressAtom);
-  const setProvider = useSetAtom(providerAtom);
-  const [lastWallet, setLastWallet] = useAtom(lastWalletAtom);
-
-  useEffect(() => {
+  React.useEffect(() => {
     if (connector) {
       const name: string = connector.name;
       setLastWallet(name);
     }
   }, [connector]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     // autoConnect();
     setAddress(address);
     setProvider(provider as RpcProvider);
@@ -184,6 +192,32 @@ const Navbar = () => {
   // React.useEffect(() => {
   //   autoConnect();
   // }, [lastWallet]);
+
+  React.useEffect(() => {
+    (async () => {
+      try {
+        let referrer = searchParams.get("referrer");
+
+        if (address && referrer && address === referrer) {
+          referrer = null;
+        }
+
+        const res = await axios.post("/api/referral/createUser", {
+          address,
+          myReferralCode: generateReferralCode(),
+          referrerAddress: referrer,
+        });
+
+        console.log(res);
+
+        if (res.data.success && res.data.user) {
+          setReferralCode(res.data.user.referralCode);
+        }
+      } catch (error) {
+        console.error("Error while creating user", error);
+      }
+    })();
+  }, [address, setReferralCode]);
 
   return (
     <div
@@ -233,6 +267,21 @@ const Navbar = () => {
       )}
 
       <div className="flex items-center gap-4">
+        {address && userInfo?.user?.referralCode && (
+          <div className="flex flex-col items-center gap-1 text-sm">
+            <p className="text-muted-foreground">Your referral link</p>
+            <span className="flex items-center gap-2 text-xs underline">
+              {userInfo.user.referralCode}
+              <Copy
+                onClick={() => {
+                  copyReferralLink(userInfo.user.referralCode);
+                }}
+                className="size-3 cursor-pointer text-muted-foreground transition-all hover:text-foreground"
+              />
+            </span>
+          </div>
+        )}
+
         <button
           className={cn(
             "flex h-10 items-center justify-center gap-2 rounded-lg border border-[#ECECED80] bg-[#AACBC433] text-sm font-bold text-[#03624C] focus-visible:outline-[#03624C]",
@@ -274,7 +323,6 @@ const Navbar = () => {
             </>
           )}
         </button>
-        {/* </DropdownMenuTrigger> */}
       </div>
     </div>
   );

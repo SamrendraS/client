@@ -1,3 +1,4 @@
+import { toast } from "@/hooks/use-toast";
 import { BigNumber } from "bignumber.js";
 import { clsx, type ClassValue } from "clsx";
 import { num } from "starknet";
@@ -48,3 +49,32 @@ export const etherToWeiBN = (amount: any) => {
     return amount;
   }
 };
+
+export function generateReferralCode() {
+  const code = Math.random().toString(36).slice(2, 8);
+  return code;
+}
+
+export function standariseAddress(address: string | bigint) {
+  let _a = address;
+  if (!address) {
+    _a = "0";
+  }
+  const a = num.getHexString(num.getDecimalString(_a.toString()));
+  return a;
+}
+
+export function copyReferralLink(refCode: string) {
+  navigator.clipboard.writeText(getReferralUrl(refCode));
+
+  toast({
+    description: "Referral link copied to clipboard",
+  });
+}
+
+export function getReferralUrl(referralCode: string) {
+  if (window.location.origin.includes("endur.fi")) {
+    return `https://endur.fi/r/${referralCode}`;
+  }
+  return `${window.location.origin}/r/${referralCode}`;
+}

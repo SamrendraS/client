@@ -8,9 +8,10 @@ import {
 } from "@starknet-react/core";
 import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract } from "starknet";
+import { byteArray, Contract, uint256 } from "starknet";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -21,15 +22,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { toast } from "@/hooks/use-toast";
-import MyNumber from "@/lib/MyNumber";
-
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { toast } from "@/hooks/use-toast";
+import MyNumber from "@/lib/MyNumber";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -56,6 +56,8 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const Stake = () => {
+  const searchParams = useSearchParams();
+
   const { address } = useAccount();
 
   const { data } = useBalance({
@@ -68,6 +70,8 @@ const Stake = () => {
   const exchangeRate = useAtomValue(exchangeRateAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const apy = useAtomValue(snAPYAtom);
+
+  const referrer = searchParams.get("referrer");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -134,12 +138,23 @@ const Stake = () => {
       MyNumber.fromEther(values.stakeAmount, 18),
     ]);
 
-    const call2 = contract.populate("deposit", [
-      MyNumber.fromEther(values.stakeAmount, 18),
-      address,
-    ]);
-
-    sendAsync([call1, call2]);
+    if (referrer) {
+      console.log(referrer);
+      const call2 = contract.populate("deposit_with_referral", [
+        // MyNumber.fromEther(values.stakeAmount, 18),
+        uint256.bnToUint256(values.stakeAmount),
+        address,
+        byteArray.byteArrayFromString(referrer),
+      ]);
+      const res = sendAsync([call1, call2]);
+      console.log(res, "res", "referrer called");
+    } else {
+      const call2 = contract.populate("deposit", [
+        MyNumber.fromEther(values.stakeAmount, 18),
+        address,
+      ]);
+      sendAsync([call1, call2]);
+    }
   };
 
   return (

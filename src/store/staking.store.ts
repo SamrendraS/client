@@ -1,15 +1,15 @@
-import { atomWithQuery } from "jotai-tanstack-query";
-import { currentBlockAtom, providerAtom } from "./common.store";
-import { Contract } from "starknet";
-import MyNumber from "@/lib/MyNumber";
-import StakingAbi from "@/abi/staking.abi.json";
 import MintingAbi from "@/abi/minting.abi.json";
+import StakingAbi from "@/abi/staking.abi.json";
+import MyNumber from "@/lib/MyNumber";
+import { atom } from "jotai";
+import { atomWithQuery } from "jotai-tanstack-query";
+import { Contract } from "starknet";
 import {
   SN_MINTING_CURVE_ADRESS,
   SN_STAKING_ADRESS,
   STRK_DECIMALS,
 } from "../../constants";
-import { atom } from "jotai";
+import { currentBlockAtom, providerAtom } from "./common.store";
 
 const snTotalStakedQueryAtom = atomWithQuery((get) => {
   return {
@@ -82,11 +82,6 @@ export const yearlyMintingAtom = atom((get) => {
 export const snAPYAtom = atom((get) => {
   const yearlyMintRes = get(yearlyMintingAtom);
   const totalStakedRes = get(snTotalStakedAtom);
-  console.log(
-    "snAPYAtom",
-    yearlyMintRes.value.toEtherStr(),
-    totalStakedRes.value.toEtherStr(),
-  );
 
   let value = 0;
   if (!totalStakedRes.value.isZero()) {
