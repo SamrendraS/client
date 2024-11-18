@@ -1,3 +1,4 @@
+import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -12,7 +13,8 @@ import {
 import { cn, timeAgo } from "@/lib/utils";
 import { getWithdrawLogs } from "@/store/transactions.atom";
 
-import { LoaderCircle } from "lucide-react";
+import MyNumber from "@/lib/MyNumber";
+
 import { Icons } from "./Icons";
 
 const WithdrawLog: React.FC = () => {
@@ -69,10 +71,10 @@ const WithdrawLog: React.FC = () => {
               </TableCell>
 
               <TableCell className="text-center font-thin text-[#939494] sm:pl-12">
-                {item?.amount_strk}
+                {new MyNumber(item?.amount_strk, 18).toEtherToFixedDecimals(0)}
               </TableCell>
 
-              {!item?.amount_strk ? (
+              {item?.amount_strk ? (
                 <TableCell className="flex justify-end pr-4 text-right font-thin text-[#17876D]">
                   <Link
                     href={`https://sepolia.starkscan.co/tx/${item?.receiver}`}
