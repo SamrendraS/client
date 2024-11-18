@@ -6,6 +6,7 @@ import {
   useBalance,
   useSendTransaction,
 } from "@starknet-react/core";
+import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -24,13 +25,19 @@ import { toast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   exchangeRateAtom,
   totalStakedAtom,
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
-import { useAtomValue } from "jotai";
+
 import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
@@ -141,7 +148,20 @@ const Stake = () => {
         <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
           <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
             APY
-            <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  Current APYs including any fees. Net returns subject to change
+                  based on market conditions.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </span>
           {(apy.value * 100).toFixed(2)}%
         </p>
