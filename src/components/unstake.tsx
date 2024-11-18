@@ -155,7 +155,7 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="flex w-full items-start gap-2 px-7 py-3">
+      <div className="flex w-full items-start gap-2 px-7 pb-3 pt-5">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
           <Form {...form}>

@@ -168,7 +168,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="flex w-full items-center px-7 py-3 lg:gap-2">
+      <div className="flex w-full items-center px-7 pb-3 pt-5 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
           <Form {...form}>

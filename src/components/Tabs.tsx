@@ -76,7 +76,7 @@ const Tabs: React.FC = () => {
 
           <TabsContent
             value="withdraw"
-            className="h-[89%] overflow-y-auto px-3 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="h-[89.6%] overflow-y-auto focus-visible:ring-0 focus-visible:ring-offset-0"
           >
             <WithdrawLog />
           </TabsContent>
