@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 import {
@@ -10,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { getWithdrawLogs } from "@/store/transactions.atom";
-import Link from "next/link";
+
 import { Icons } from "./Icons";
 
 const WithdrawLog: React.FC = () => {
@@ -19,7 +20,7 @@ const WithdrawLog: React.FC = () => {
   React.useEffect(() => {
     (async () => {
       const res = await getWithdrawLogs();
-      setWithdawals(withdawals);
+      setWithdawals(res?.withdraw_queues);
       console.log(res?.withdraw_queues);
     })();
   }, [withdawals]);

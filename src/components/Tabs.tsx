@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import Stake from "./stake";
 import { useSidebar } from "./ui/sidebar";
 import {
