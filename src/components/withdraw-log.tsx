@@ -28,7 +28,7 @@ const WithdrawLog: React.FC = () => {
   return (
     <Table>
       <TableHeader>
-        <TableRow className="border-none bg-gradient-to-t from-[#11998E40] to-[#38EF7D00] hover:bg-gradient-to-t">
+        <TableRow className="border-none bg-gradient-to-t from-[#18a79b40] to-[#38EF7D00] hover:bg-gradient-to-t">
           <TableHead className="pl-3 font-normal text-black sm:w-[100px]">
             ID
           </TableHead>
