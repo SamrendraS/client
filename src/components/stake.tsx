@@ -11,7 +11,7 @@ import { Info } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { byteArray, Contract, uint256 } from "starknet";
+import { Contract } from "starknet";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
