@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client";
 
 import apolloClient from "@/lib/apollo-client";
+import { standariseAddress } from "@/lib/utils";
 
-export async function getWithdrawLogs() {
+export async function getWithdrawLogs(address: string) {
   try {
     const { data } = await apolloClient.query({
       query: gql`
@@ -16,6 +17,13 @@ export async function getWithdrawLogs() {
           }
         }
       `,
+      variables: {
+        where: {
+          receiver: {
+            equals: standariseAddress(address),
+          },
+        },
+      },
     });
 
     return data;

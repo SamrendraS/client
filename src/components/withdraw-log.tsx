@@ -1,3 +1,4 @@
+import { useAccount } from "@starknet-react/core";
 import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -10,19 +11,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, timeAgo } from "@/lib/utils";
-import { getWithdrawLogs } from "@/store/transactions.atom";
-
 import MyNumber from "@/lib/MyNumber";
+import { cn, convertFutureTimestamp } from "@/lib/utils";
+import { getWithdrawLogs } from "@/store/transactions.atom";
 
 import { Icons } from "./Icons";
 
 const WithdrawLog: React.FC = () => {
   const [withdrawals, setWithdrawals] = React.useState<any>();
+  const [loading, setLoading] = React.useState(false);
+
+  const { address } = useAccount();
 
   React.useEffect(() => {
     (async () => {
-      const res = await getWithdrawLogs();
+      if (!address) return;
+
+      setLoading(true);
+
+      const res = await getWithdrawLogs(address);
       const withdrawalData = res?.withdraw_queues;
 
       // Filter to keep the record with the latest `claim_time` for each `request_id`
@@ -38,9 +45,13 @@ const WithdrawLog: React.FC = () => {
         }, {}),
       );
 
+      console.log(uniqueWithdrawals);
+
+      setLoading(false);
+
       setWithdrawals(uniqueWithdrawals);
     })();
-  }, []);
+  }, [address]);
 
   return (
     <Table>
@@ -57,8 +68,30 @@ const WithdrawLog: React.FC = () => {
           </TableHead>
         </TableRow>
       </TableHeader>
+
       <TableBody>
-        {withdrawals ? (
+        {!address && (
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell className="flex items-center justify-center py-5 pl-5 text-muted-foreground">
+              Please connect your wallet
+            </TableCell>
+            <TableCell></TableCell>
+          </TableRow>
+        )}
+
+        {loading && (
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell className="flex items-center justify-center py-5 pl-14 text-muted-foreground">
+              <LoaderCircle className="size-5 animate-spin" />
+            </TableCell>
+            <TableCell></TableCell>
+          </TableRow>
+        )}
+
+        {withdrawals &&
+          address &&
           withdrawals?.map((item: any, i: number) => (
             <TableRow
               key={i}
@@ -71,10 +104,10 @@ const WithdrawLog: React.FC = () => {
               </TableCell>
 
               <TableCell className="text-center font-thin text-[#939494] sm:pl-12">
-                {new MyNumber(item?.amount_strk, 18).toEtherToFixedDecimals(0)}
+                {new MyNumber(item?.amount_strk, 18).toEtherToFixedDecimals(2)}
               </TableCell>
 
-              {item?.amount_strk ? (
+              {item?.is_claimed ? (
                 <TableCell className="flex justify-end pr-4 text-right font-thin text-[#17876D]">
                   <Link
                     href={`https://sepolia.starkscan.co/tx/${item?.receiver}`}
@@ -88,21 +121,12 @@ const WithdrawLog: React.FC = () => {
                 <TableCell className="flex flex-col items-end pr-4 text-right font-thin">
                   Pending
                   <span className="text-sm text-[#939494]">
-                    {timeAgo(item?.claim_time)}
+                    {convertFutureTimestamp(item?.claim_time)}
                   </span>
                 </TableCell>
               )}
             </TableRow>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell></TableCell>
-            <TableCell className="flex items-center justify-center py-5 pl-14 text-muted-foreground">
-              <LoaderCircle className="size-5 animate-spin" />
-            </TableCell>
-            <TableCell></TableCell>
-          </TableRow>
-        )}
+          ))}
       </TableBody>
     </Table>
   );

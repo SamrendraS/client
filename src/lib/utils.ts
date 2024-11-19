@@ -79,34 +79,30 @@ export function getReferralUrl(referralCode: string) {
   return `${window.location.origin}/r/${referralCode}`;
 }
 
-export function timeAgo(unixTimestamp: number): string {
-  // const currentTime = new Date();
-  // const timestampTime = new Date(unixTimestamp * 1000); // Convert Unix timestamp to milliseconds
-  // const difference = currentTime.getTime() - timestampTime.getTime();
+export function convertFutureTimestamp(unixTimestamp: number): string {
+  const currentTime = Date.now();
+  const futureTime = unixTimestamp * 1000; // Convert to milliseconds
+  const difference = futureTime - currentTime;
 
-  // if (difference < 0) {
-  //   return "in the future";
-  // }
+  if (difference <= 0) {
+    return "Anytime soon";
+  }
 
-  // const seconds = Math.floor(difference / 1000);
-  // const minutes = Math.floor(seconds / 60);
-  // const hours = Math.floor(minutes / 60);
-  // const days = Math.floor(hours / 24);
+  const seconds = Math.floor(difference / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
 
-  // if (days > 0) {
-  //   return `${days} days ago`;
-  // } else if (hours > 0) {
-  //   return `${hours} hours ago`;
-  // } else if (minutes > 0) {
-  //   return `${minutes} minutes ago`;
-  // } else {
-  //   return `${seconds} seconds ago`;
-  // }
-
-  const date = new Date(unixTimestamp * 1000);
-
-  const formattedDate = date.toLocaleDateString("en-US");
-  const formattedTime = date.toLocaleTimeString("en-US");
-
-  return `${formattedDate} ${formattedTime}`;
+  if (days > 0) {
+    return `in ${days} day${days > 1 ? "s" : ""}`;
+  } else if (hours > 0) {
+    return `in ${hours} hour${hours > 1 ? "s" : ""}`;
+  } else if (minutes > 0) {
+    return `in ${minutes} minute${minutes > 1 ? "s" : ""}`;
+  }
+  return `in ${seconds} second${seconds > 1 ? "s" : ""}`;
 }
+
+// Example usage:
+const futureTimestamp = Math.floor(Date.now() / 1000) + 3600 * 48; // 48 hours from now
+console.log(convertFutureTimestamp(futureTimestamp)); // Output: "in 2 days"
