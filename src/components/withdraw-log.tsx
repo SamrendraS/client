@@ -127,6 +127,15 @@ const WithdrawLog: React.FC = () => {
               )}
             </TableRow>
           ))}
+        {withdrawals && address && !withdrawals.length && (
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell className="flex items-center justify-center py-5 pl-5 text-muted-foreground">
+              No withdrawals
+            </TableCell>
+            <TableCell></TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

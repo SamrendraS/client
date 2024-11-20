@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 const apolloClient = new ApolloClient({
-  uri: "https://endurfi-graphql-api-sepolia.onrender.com",
+  uri: "https://graphql.sepolia.endur.fi",
   cache: new InMemoryCache(),
 });
 

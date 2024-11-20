@@ -21,6 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 
 import { Icons } from "./Icons";
+import { DASHBOARD_URL } from "../../constants";
 
 export function AppSidebar({ className }: { className?: string }) {
   const { open, isMobile } = useSidebar();
@@ -50,10 +51,12 @@ export function AppSidebar({ className }: { className?: string }) {
               <Icons.staking className="size-5" /> Staking
             </SidebarGroup>
             <hr />
-            <SidebarGroup className="group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-              <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
-              Dashboard
-            </SidebarGroup>
+            <Link href={DASHBOARD_URL} target="_blank">
+              <SidebarGroup className="group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
+                Dashboard
+              </SidebarGroup>
+            </Link>
             {/* <SidebarGroup className="pointer-events-none flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md transition-all hover:bg-[#17876D] hover:text-white">
               <p className="text-xl font-semibold text-[#03624C]">
                 Defi <span className="text-sm font-thin">(coming soon)</span>
@@ -84,7 +87,9 @@ export function AppSidebar({ className }: { className?: string }) {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-                    <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
+                    <Link href={DASHBOARD_URL} target="_blank">
+                      <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
+                    </Link>
                   </SidebarGroup>
                 </TooltipTrigger>
                 <TooltipContent
