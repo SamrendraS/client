@@ -107,7 +107,7 @@ const WithdrawLog: React.FC = () => {
                 {new MyNumber(item?.amount_strk, 18).toEtherToFixedDecimals(2)}
               </TableCell>
 
-              {!item?.is_claimed ? (
+              {item?.is_claimed ? (
                 <TableCell className="flex justify-end pr-4 text-right font-thin text-[#17876D]">
                   <Link
                     target="_blank"
