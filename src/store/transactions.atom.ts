@@ -12,6 +12,7 @@ export async function getWithdrawLogs(address: string) {
             amount_strk
             request_id
             receiver
+            tx_hash
             is_claimed
             claim_time
           }

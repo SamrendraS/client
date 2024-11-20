@@ -110,7 +110,7 @@ const WithdrawLog: React.FC = () => {
               {item?.is_claimed ? (
                 <TableCell className="flex justify-end pr-4 text-right font-thin text-[#17876D]">
                   <Link
-                    href={`https://sepolia.starkscan.co/tx/${item?.receiver}`}
+                    href={`https://sepolia.starkscan.co/tx/${item?.tx_hash}`}
                     className="group flex w-fit items-center justify-end gap-1 transition-all"
                   >
                     <span className="group-hover:underline">Success</span>
