@@ -206,18 +206,18 @@ const Navbar = () => {
 
               <div className="h-full space-y-1 bg-[#AACBC433] px-4 pt-5">
                 <Link
+                  href="#"
+                  className="flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] px-3 py-2 text-xl text-white transition-all"
+                >
+                  <Icons.staking className="size-5" /> Staking
+                </Link>
+
+                <Link
                   href={DASHBOARD_URL}
                   className="group flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
                 >
                   <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
                   Dashboard
-                </Link>
-
-                <Link
-                  href="#"
-                  className="flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] px-3 py-2 text-xl text-white transition-all"
-                >
-                  <Icons.staking className="size-5" /> Staking
                 </Link>
               </div>
             </div>
