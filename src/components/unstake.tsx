@@ -32,6 +32,7 @@ import {
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
 
+import Link from "next/link";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -77,6 +78,7 @@ const Unstake = () => {
     }
 
     const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
+
     if (amount) {
       form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
     }
@@ -144,8 +146,8 @@ const Unstake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Current APYs including any fees. Net returns subject to change
-                  based on market conditions.
+                  Estimated current annualised yield on staking in terms of STRK
+                  including fees.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -176,7 +178,7 @@ const Unstake = () => {
 
       <div className="flex w-full items-start gap-2 px-7 pb-3 pt-5">
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
+          <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
@@ -238,9 +240,26 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="mt-7 space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
-          xSTRK burnt
+      <div className="my-7 h-px w-full rounded-full bg-[#AACBC480]" />
+
+      <div className="space-y-4 px-7">
+        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+          <p className="flex items-center gap-1">
+            xSTRK burnt
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  xSTRK burnt
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
           <span>
             {form.watch("unstakeAmount")
               ? (Number(form.watch("unstakeAmount")) / exRate.rate).toFixed(2)
@@ -249,17 +268,42 @@ const Unstake = () => {
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
-          Exchange rate
+        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+          <p className="flex items-center gap-1">
+            Exchange rate
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-64 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  <strong>xSTRK</strong> is a yield bearing token whose value
+                  will appreciate against STRK as you get more STRK rewards. The
+                  increase in exchange rate of xSTRK will determine your share
+                  of rewards.{" "}
+                  <Link
+                    target="_blank"
+                    href="https://docs.endur.fi/docs"
+                    className="text-blue-600 underline"
+                  >
+                    Learn more
+                  </Link>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
           <span>
-            {exRate.rate == 0
+            {exRate.rate === 0
               ? "-"
               : `1 xSTRK = ${exRate.rate.toFixed(4)} STRK`}
           </span>
         </div>
       </div>
 
-      <div className="mt-8 px-5">
+      <div className="mt-10 px-5">
         <Button
           type="submit"
           onClick={form.handleSubmit(onSubmit)}

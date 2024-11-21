@@ -11,7 +11,7 @@ import { Info } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract } from "starknet";
+import { Contract, RpcProvider, TransactionExecutionStatus } from "starknet";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -38,6 +38,7 @@ import {
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 
+import Link from "next/link";
 import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
@@ -60,7 +61,7 @@ const Stake = () => {
 
   const { address } = useAccount();
 
-  const { data } = useBalance({
+  const { data: balance } = useBalance({
     address,
     token: STRK_TOKEN,
   });
@@ -93,10 +94,20 @@ const Stake = () => {
       });
     }
 
-    if (data) {
+    if (balance && percentage === 100) {
+      if (Number(balance?.formatted) < 1) {
+        form.setValue("stakeAmount", "0");
+        return;
+      }
+
+      form.setValue("stakeAmount", (Number(balance?.formatted) - 1).toString());
+      return;
+    }
+
+    if (balance) {
       form.setValue(
         "stakeAmount",
-        ((Number(data?.formatted) * percentage) / 100).toString(),
+        ((Number(balance?.formatted) * percentage) / 100).toString(),
       );
     }
   };
@@ -108,10 +119,10 @@ const Stake = () => {
     process.env.NEXT_PUBLIC_LST_ADDRESS as string,
   );
 
-  const { sendAsync } = useSendTransaction({});
+  const { sendAsync, data } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
-    if (Number(values.stakeAmount) > Number(data?.formatted)) {
+    if (Number(values.stakeAmount) > Number(balance?.formatted)) {
       return toast({
         description: (
           <div className="flex items-center gap-2">
@@ -154,6 +165,93 @@ const Stake = () => {
     }
   };
 
+  async function isTxAccepted(txHash: string) {
+    const provider = new RpcProvider({
+      nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
+    });
+
+    let keepChecking = true;
+    const maxRetries = 30;
+    let retry = 0;
+
+    while (keepChecking) {
+      let txInfo: any;
+
+      try {
+        txInfo = await provider.getTransactionStatus(txHash);
+      } catch (error) {
+        console.error("isTxAccepted error", error);
+        retry++;
+        if (retry > maxRetries) {
+          throw new Error("Transaction status unknown");
+        }
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        continue;
+      }
+
+      console.debug("isTxAccepted", txInfo);
+      if (!txInfo.finality_status || txInfo.finality_status === "RECEIVED") {
+        // do nothing
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        continue;
+      }
+      if (txInfo.finality_status === "ACCEPTED_ON_L2") {
+        if (txInfo.execution_status === TransactionExecutionStatus.SUCCEEDED) {
+          keepChecking = false;
+          return true;
+        }
+        throw new Error("Transaction reverted");
+      } else if (txInfo.finality_status === "REJECTED") {
+        throw new Error("Transaction rejected");
+      } else {
+        throw new Error("Transaction status unknown");
+      }
+    }
+  }
+
+  React.useEffect(() => {
+    (async () => {
+      if (data) {
+        // const res = await isTxAccepted(
+        //   "0x59276399f13519197ebeffe33bc5aafcb5d0e174bdd86d510451d2e94842e00",
+        // );
+        const res = await isTxAccepted(data?.transaction_hash);
+
+        if (!res) {
+          toast({
+            variant: "pending",
+            description: (
+              <div className="flex items-center gap-5 border-none">
+                <Icons.toastPending />
+                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                  <span className="text-[18px] font-semibold text-[#075A5A]">
+                    In Progress..
+                  </span>
+                  Staking 5 STRK
+                </div>
+              </div>
+            ),
+          });
+        } else {
+          toast({
+            variant: "complete",
+            description: (
+              <div className="flex items-center gap-2 border-none">
+                <Icons.toastSuccess />
+                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                  <span className="text-[18px] font-semibold text-[#075A5A]">
+                    Success...
+                  </span>
+                  Staking 5 STRK
+                </div>
+              </div>
+            ),
+          });
+        }
+      }
+    })();
+  }, [data]);
+
   return (
     <div className="h-full w-full">
       <div className="flex items-center justify-between px-3 py-2 lg:px-6">
@@ -169,8 +267,8 @@ const Stake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Current APYs including any fees. Net returns subject to change
-                  based on market conditions.
+                  Estimated current annualised yield on staking in terms of STRK
+                  including fees.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -202,7 +300,7 @@ const Stake = () => {
 
       <div className="flex w-full items-center px-7 pb-3 pt-5 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-xs text-[#8D9C9C]">Enter Amount</p>
+          <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <FormField
@@ -266,15 +364,41 @@ const Stake = () => {
             <Icons.wallet className="size-3 lg:size-5" />
             Balance:{" "}
             <span className="font-bold">
-              {data?.formatted ? Number(data?.formatted).toFixed(2) : "0"} STRK
+              {balance?.formatted ? Number(balance?.formatted).toFixed(2) : "0"}{" "}
+              STRK
             </span>
           </div>
         </div>
       </div>
 
-      <div className="mt-7 space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
-          You will get
+      <div className="my-7 h-px w-full rounded-full bg-[#AACBC480]" />
+
+      <div className="space-y-4 px-7">
+        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+          <p className="flex items-center gap-1">
+            You will get
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  <strong>xSTRK</strong> is the liquid staking token (LST) of
+                  Endur, representing your staked STRK.{" "}
+                  <Link
+                    target="_blank"
+                    href="https://docs.endur.fi/docs"
+                    className="text-blue-600 underline"
+                  >
+                    Learn more
+                  </Link>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
           <span>
             {form.watch("stakeAmount")
               ? (Number(form.watch("stakeAmount")) / exchangeRate.rate).toFixed(
@@ -285,13 +409,38 @@ const Stake = () => {
           </span>
         </div>
 
-        <div className="flex items-center justify-between rounded-md bg-[#17876D1A] px-3 py-2 text-xs font-medium text-[#939494] lg:text-sm">
-          Exchange rate
+        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+          <p className="flex items-center gap-1">
+            Exchange rate
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-64 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  <strong>xSTRK</strong> is a yield bearing token whose value
+                  will appreciate against STRK as you get more STRK rewards. The
+                  increase in exchange rate of xSTRK will determine your share
+                  of rewards.{" "}
+                  <Link
+                    target="_blank"
+                    href="https://docs.endur.fi/docs"
+                    className="text-blue-600 underline"
+                  >
+                    Learn more
+                  </Link>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
           <span>1 xSTRK = {exchangeRate.rate.toFixed(4)} STRK</span>
         </div>
       </div>
 
-      <div className="mt-8 px-5">
+      <div className="mt-10 px-5">
         <Button
           type="submit"
           onClick={form.handleSubmit(onSubmit)}

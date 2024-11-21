@@ -595,4 +595,90 @@ export const Icons = {
       />
     </svg>
   ),
+  toastPending: (props: IconProps) => (
+    <svg
+      {...props}
+      width="74"
+      height="75"
+      viewBox="0 0 74 75"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g filter="url(#filter0_d_181_2422)">
+        <circle cx="37" cy="37" r="25" fill="#BBC2CC" />
+      </g>
+      <circle cx="37" cy="37" r="30.5" stroke="#DBE3EE" />
+      <circle cx="37" cy="37" r="36.75" stroke="#EBF2FC" stroke-width="0.5" />
+      <path
+        d="M68.8458 55.8374C65.4717 61.5416 60.6274 66.2348 54.8192 69.4266C49.0111 72.6183 42.4522 74.1914 35.8281 73.9815"
+        stroke="#BBC2CC"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+      <path
+        d="M37 33V37L40 40M46 37C46 38.1819 45.7672 39.3522 45.3149 40.4442C44.8626 41.5361 44.1997 42.5282 43.364 43.364C42.5282 44.1997 41.5361 44.8626 40.4442 45.3149C39.3522 45.7672 38.1819 46 37 46C35.8181 46 34.6478 45.7672 33.5558 45.3149C32.4639 44.8626 31.4718 44.1997 30.636 43.364C29.8003 42.5282 29.1374 41.5361 28.6851 40.4442C28.2328 39.3522 28 38.1819 28 37C28 34.6131 28.9482 32.3239 30.636 30.636C32.3239 28.9482 34.6131 28 37 28C39.3869 28 41.6761 28.9482 43.364 30.636C45.0518 32.3239 46 34.6131 46 37Z"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <defs>
+        <filter
+          id="filter0_d_181_2422"
+          x="8"
+          y="12"
+          width="58"
+          height="58"
+          filterUnits="userSpaceOnUse"
+          color-interpolation-filters="sRGB"
+        >
+          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset dy="4" />
+          <feGaussianBlur stdDeviation="2" />
+          <feComposite in2="hardAlpha" operator="out" />
+          <feColorMatrix
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
+          />
+          <feBlend
+            mode="normal"
+            in2="BackgroundImageFix"
+            result="effect1_dropShadow_181_2422"
+          />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="effect1_dropShadow_181_2422"
+            result="shape"
+          />
+        </filter>
+      </defs>
+    </svg>
+  ),
+  toastSuccess: (props: IconProps) => (
+    <svg
+      {...props}
+      width="74"
+      height="74"
+      viewBox="0 0 74 74"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="37" cy="37" r="25" fill="#0AA658" />
+      <circle cx="37" cy="37" r="30.5" stroke="white" />
+      <circle cx="37" cy="37" r="36.75" stroke="white" stroke-width="0.5" />
+      <path
+        d="M29.5 37.5L34 42L44.5 32"
+        stroke="white"
+        stroke-width="2"
+        stroke-linecap="round"
+      />
+    </svg>
+  ),
 };
