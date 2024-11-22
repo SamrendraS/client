@@ -362,7 +362,7 @@ const Stake = () => {
 
           <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#8D9C9C] lg:text-sm">
             <Icons.wallet className="size-3 lg:size-5" />
-            Balance:{" "}
+            Balance: x
             <span className="font-bold">
               {balance?.formatted ? Number(balance?.formatted).toFixed(2) : "0"}{" "}
               STRK

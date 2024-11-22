@@ -84,7 +84,7 @@ export function getConnectors(isMobile: boolean) {
   return [argentXConnector, braavosConnector];
 }
 
-const Navbar = () => {
+const Navbar = ({ className }: { className?: string }) => {
   const { address, connector, chainId } = useAccount();
   const { provider } = useProvider();
   const { connect: connectSnReact } = useConnect();
@@ -180,9 +180,13 @@ const Navbar = () => {
 
   return (
     <div
-      className={cn("flex h-20 w-full items-center justify-end", {
-        "justify-between": isMobile,
-      })}
+      className={cn(
+        "flex h-20 w-full items-center justify-end",
+        {
+          "justify-between": isMobile,
+        },
+        className,
+      )}
     >
       {isMobile && (
         <Sheet>

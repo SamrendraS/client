@@ -45,11 +45,9 @@ const WithdrawLog: React.FC = () => {
         }, {}),
       );
 
-      console.log(uniqueWithdrawals);
-
       setLoading(false);
 
-      setWithdrawals(uniqueWithdrawals);
+      setWithdrawals(uniqueWithdrawals.reverse());
     })();
   }, [address]);
 
