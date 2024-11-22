@@ -13,13 +13,15 @@ import {
 } from "@/components/ui/table";
 import MyNumber from "@/lib/MyNumber";
 import { cn, convertFutureTimestamp } from "@/lib/utils";
-import { getWithdrawLogs } from "@/store/transactions.atom";
+import { withdrawLogsAtom } from "@/store/transactions.atom";
 
+import { useAtomValue } from "jotai";
 import { Icons } from "./Icons";
 
 const WithdrawLog: React.FC = () => {
   const [withdrawals, setWithdrawals] = React.useState<any>();
   const [loading, setLoading] = React.useState(false);
+  const withdrawalLogs = useAtomValue(withdrawLogsAtom);
 
   const { address } = useAccount();
 
@@ -29,15 +31,14 @@ const WithdrawLog: React.FC = () => {
 
       setLoading(true);
 
-      const res = await getWithdrawLogs(address);
-      const withdrawalData = res?.withdraw_queues;
+      const withdrawalData = withdrawalLogs?.value;
 
       // Filter to keep the record with the latest `claim_time` for each `request_id`
       const uniqueWithdrawals = Object.values(
         withdrawalData.reduce((acc: any, item: any) => {
           if (
             !acc[item.request_id] ||
-            acc[item.request_id].claim_time < item.claim_time
+            acc[item.request_id].claim_time > item.claim_time
           ) {
             acc[item.request_id] = item;
           }
@@ -45,11 +46,12 @@ const WithdrawLog: React.FC = () => {
         }, {}),
       );
 
+      console.log(uniqueWithdrawals);
       setLoading(false);
 
       setWithdrawals(uniqueWithdrawals.reverse());
     })();
-  }, [address]);
+  }, [address, withdrawalLogs?.value]);
 
   return (
     <Table>
@@ -118,6 +120,7 @@ const WithdrawLog: React.FC = () => {
                 </TableCell>
               ) : (
                 <TableCell className="flex flex-col items-end pr-4 text-right font-thin">
+                  {item?.is_claimed}
                   Pending
                   <span className="text-sm text-[#939494]">
                     {convertFutureTimestamp(item?.claim_time)}
