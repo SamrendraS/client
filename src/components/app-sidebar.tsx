@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import {
@@ -40,7 +39,7 @@ export function AppSidebar({ className }: { className?: string }) {
       // onMouseLeave={() => setOpen(false)}
     >
       <SidebarHeader className="flex items-center justify-center bg-[#AACBC433] py-10">
-        <Image src={"/logo.png"} alt="Endur" width={63} height={63} />
+        <Icons.logo className={cn(open && "size-[63px]")} />
       </SidebarHeader>
       <SidebarContent
         className={cn("bg-[#AACBC433] px-4 pt-5", {

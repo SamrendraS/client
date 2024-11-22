@@ -26,6 +26,7 @@ import {
 } from "starknetkit/argentMobile";
 import { WebWalletConnector } from "starknetkit/webwallet";
 
+import { toast } from "@/hooks/use-toast";
 import { cn, shortAddress } from "@/lib/utils";
 import {
   lastWalletAtom,
@@ -237,14 +238,12 @@ const Navbar = ({ className }: { className?: string }) => {
               "h-[34px]": isMobile,
             },
           )}
-          onClick={() =>
-            !address ? connectWallet() : (disconnect(), disconnectAsync())
-          }
+          onClick={() => !address && connectWallet()}
         >
           {!address && (
             <p
               className={cn(
-                "flex w-[9.5rem] select-none items-center justify-center gap-1 bg-transparent text-sm",
+                "relative flex w-[9.5rem] select-none items-center justify-center gap-1 bg-transparent text-sm",
               )}
             >
               Connect Wallet
@@ -254,18 +253,44 @@ const Navbar = ({ className }: { className?: string }) => {
           {address && (
             <>
               {!isMobile ? (
-                <div className="flex h-9 w-[9.5rem] items-center justify-center gap-2 rounded-md">
-                  <Icons.gradient />
-                  <p className="flex items-center gap-1 text-sm">
-                    {address && shortAddress(address, 4, 4)}
-                    <X className="size-4 text-[#3F6870]" />
-                  </p>
+                <div className="flex w-[9.5rem] items-center justify-center gap-2">
+                  <div
+                    onClick={() => {
+                      navigator.clipboard.writeText(address);
+                      toast({
+                        description: "Address copied to clipboard",
+                      });
+                    }}
+                    className="flex h-9 items-center justify-center gap-2 rounded-md"
+                  >
+                    <Icons.gradient />
+                    <p className="flex items-center gap-1 text-sm">
+                      {address && shortAddress(address, 4, 4)}
+                    </p>
+                  </div>
+
+                  <X
+                    onClick={() => (disconnect(), disconnectAsync())}
+                    className="size-4 text-[#3F6870]"
+                  />
                 </div>
               ) : (
-                <div className="flex w-fit items-center justify-center gap-2 rounded-md px-3">
-                  <Icons.wallet className="size-5 text-[#3F6870]" />
-                  {shortAddress(address, 4, 4)}
-                  <X className="size-4 text-[#3F6870]" />
+                <div className="flex w-[9.5rem] items-center justify-center gap-2">
+                  <div
+                    onClick={() => {
+                      navigator.clipboard.writeText(address);
+                      toast({ description: "Address copied to clipboard" });
+                    }}
+                    className="flex w-fit items-center justify-center gap-2 rounded-md"
+                  >
+                    <Icons.wallet className="size-5 text-[#3F6870]" />
+                    {shortAddress(address, 4, 4)}
+                  </div>
+
+                  <X
+                    onClick={() => (disconnect(), disconnectAsync())}
+                    className="size-4 text-[#3F6870]"
+                  />
                 </div>
               )}
             </>

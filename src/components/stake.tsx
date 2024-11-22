@@ -277,7 +277,7 @@ const Stake = () => {
         </p>
 
         <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
-          Total value locked
+          TVL
           <p className="flex items-center gap-2">
             <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
             <span className="font-medium">
@@ -362,7 +362,7 @@ const Stake = () => {
 
           <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#8D9C9C] lg:text-sm">
             <Icons.wallet className="size-3 lg:size-5" />
-            Balance: x
+            Balance:
             <span className="font-bold">
               {balance?.formatted ? Number(balance?.formatted).toFixed(2) : "0"}{" "}
               STRK
@@ -444,7 +444,8 @@ const Stake = () => {
         <Button
           type="submit"
           onClick={form.handleSubmit(onSubmit)}
-          className="w-full rounded-2xl bg-[#03624C4D] py-6 text-sm font-semibold text-[#17876D] hover:bg-[#03624C4D]"
+          disabled={!form.formState.isValid || !address}
+          className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
         >
           Stake
         </Button>
