@@ -138,24 +138,6 @@ const Stake = () => {
         });
       }
 
-      if (error?.name?.includes("UserRejectedRequestError")) {
-        toast({
-          itemID: "stake",
-          variant: "pending",
-          description: (
-            <div className="flex items-center gap-5 border-none pl-2">
-              ❌
-              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
-                <span className="text-base font-semibold text-[#075A5A]">
-                  Rejected
-                </span>
-                User declined the transaction
-              </div>
-            </div>
-          ),
-        });
-      }
-
       if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
         toast({
           itemID: "stake",
@@ -324,8 +306,10 @@ const Stake = () => {
           <div className="mt-2 flex items-center justify-center">
             <TwitterShareButton
               url={`https://testnet.endur.fi`}
-              title={`🚀 I just invested my STRK in the Endur.fi \n Join me and start earning`}
-              related={["endurfi"]}
+              title={`
+                Just staked my STRK on Endur.fi, earning X% APY! 🚀 \nLaying the foundation for decentralising Starknet — be part of the journey at testnet.endur.fi!
+                `}
+              related={["endurfi", "strkfarm", "karnotxyz"]}
               style={{
                 display: "flex",
                 alignItems: "center",

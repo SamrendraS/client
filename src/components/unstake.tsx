@@ -117,24 +117,6 @@ const Unstake = () => {
         });
       }
 
-      if (error?.name?.includes("UserRejectedRequestError")) {
-        toast({
-          itemID: "unstake",
-          variant: "pending",
-          description: (
-            <div className="flex items-center gap-5 border-none pl-2">
-              ❌
-              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
-                <span className="text-base font-semibold text-[#075A5A]">
-                  Rejected
-                </span>
-                User declined the transaction
-              </div>
-            </div>
-          ),
-        });
-      }
-
       if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
         toast({
           itemID: "unstake",
