@@ -9,10 +9,12 @@ import {
 } from "@starknet-react/core";
 import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
+import { Figtree } from "next/font/google";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { TwitterShareButton } from "react-share";
 import { Contract } from "starknet";
 import {
   connect,
@@ -22,6 +24,13 @@ import {
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -46,12 +55,15 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
+import { cn } from "@/lib/utils";
 import { NETWORK, STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useSidebar } from "./ui/sidebar";
+
+const font = Figtree({ subsets: ["latin-ext"] });
 
 const formSchema = z.object({
   stakeAmount: z.string().refine(
@@ -66,6 +78,8 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const Stake = () => {
+  const [showShareModal, setShowShareModal] = React.useState(false);
+
   const searchParams = useSearchParams();
 
   const { address } = useAccount();
@@ -181,6 +195,8 @@ const Stake = () => {
             ),
           });
 
+          setShowShareModal(true);
+
           form.reset();
         }
       }
@@ -293,6 +309,40 @@ const Stake = () => {
 
   return (
     <div className="h-full w-full">
+      <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
+        <DialogContent className={cn(font.className, "p-16 sm:max-w-xl")}>
+          <DialogHeader>
+            <DialogTitle className="text-center text-3xl font-semibold text-[#17876D]">
+              Thank you for your deposit!
+            </DialogTitle>
+            <DialogDescription className="!mt-5 text-center text-sm">
+              While your deposits is being processed, if you like Endur, do you
+              mind sharing on X/Twitter?
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-2 flex items-center justify-center">
+            <TwitterShareButton
+              url={`https://testnet.endur.fi`}
+              title={`🚀 I just invested my STRK in the Endur.fi \n Join me and start earning`}
+              related={["endurfi"]}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: ".6rem",
+                padding: ".5rem 1rem",
+                borderRadius: "8px",
+                backgroundColor: "#17876D",
+                color: "white",
+              }}
+            >
+              Share on
+              <Icons.X />
+            </TwitterShareButton>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="flex items-center justify-between px-3 py-2 lg:px-6">
         <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
           <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
