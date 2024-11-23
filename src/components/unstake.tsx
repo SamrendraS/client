@@ -1,12 +1,22 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAccount, useSendTransaction } from "@starknet-react/core";
+import {
+  useAccount,
+  useConnect,
+  useSendTransaction,
+} from "@starknet-react/core";
 import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Contract, RpcProvider } from "starknet";
+import {
+  connect,
+  ConnectOptionsWithConnectors,
+  StarknetkitConnector,
+} from "starknetkit";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -31,11 +41,15 @@ import {
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
+import { snAPYAtom } from "@/store/staking.store";
+import { isTxAccepted } from "@/store/transactions.atom";
 
-import Link from "next/link";
+import { NETWORK } from "../../constants";
 import { Icons } from "./Icons";
+import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useSidebar } from "./ui/sidebar";
 
 const formSchema = z.object({
   unstakeAmount: z.string().refine(
@@ -51,11 +65,15 @@ export type FormValues = z.infer<typeof formSchema>;
 
 const Unstake = () => {
   const { address } = useAccount();
+  const { connect: connectSnReact } = useConnect();
+
+  const { isMobile } = useSidebar();
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const exRate = useAtomValue(exchangeRateAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
+  const apy = useAtomValue(snAPYAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -64,6 +82,128 @@ const Unstake = () => {
     },
     mode: "onChange",
   });
+
+  const provider = new RpcProvider({
+    nodeUrl: process.env.RPC_URL,
+  });
+
+  const contract = new Contract(
+    erc4626Abi,
+    process.env.NEXT_PUBLIC_LST_ADDRESS as string,
+    provider,
+  );
+
+  const { sendAsync, data, isPending, error } = useSendTransaction({});
+
+  React.useEffect(() => {
+    (async () => {
+      if (isPending) {
+        toast({
+          itemID: "unstake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none">
+              <Icons.toastPending />
+              <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                <span className="animate-pulse text-[18px] font-semibold text-[#075A5A]">
+                  In Progress..
+                </span>
+                Unstaking {form.getValues("unstakeAmount")} STRK
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "unstake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Rejected
+                </span>
+                User declined the transaction
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "unstake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Something went wrong
+                </span>
+                Please try again
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (data) {
+        const res = await isTxAccepted(data?.transaction_hash);
+
+        if (res) {
+          toast({
+            itemID: "unstake",
+            variant: "complete",
+            duration: 3000,
+            description: (
+              <div className="flex items-center gap-2 border-none">
+                <Icons.toastSuccess />
+                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                  <span className="text-[18px] font-semibold text-[#075A5A]">
+                    Success 🎉
+                  </span>
+                  Unstaked {form.getValues("unstakeAmount")} STRK
+                </div>
+              </div>
+            ),
+          });
+
+          form.reset();
+        }
+      }
+    })();
+  }, [data, data?.transaction_hash, error?.name, form, isPending]);
+
+  const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    return {
+      modalMode: "canAsk",
+      modalTheme: "light",
+      webWalletUrl: "https://web.argent.xyz",
+      argentMobileOptions: {
+        dappName: "Endur.fi",
+        chainId: NETWORK,
+        url: window.location.hostname,
+      },
+      dappName: "Endur.fi",
+      connectors: getConnectors(isMobile) as StarknetkitConnector[],
+    };
+  }, [isMobile]);
+
+  async function connectWallet(config = connectorConfig) {
+    try {
+      const { connector } = await connect(config);
+
+      if (connector) {
+        connectSnReact({ connector: connector as any });
+      }
+    } catch (error) {
+      console.error("connectWallet error", error);
+    }
+  }
 
   const handleQuickUnstakePrice = (percentage: number) => {
     if (!address) {
@@ -81,20 +221,9 @@ const Unstake = () => {
 
     if (amount) {
       form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
+      form.clearErrors("unstakeAmount");
     }
   };
-
-  const provider = new RpcProvider({
-    nodeUrl: process.env.RPC_URL,
-  });
-
-  const contract = new Contract(
-    erc4626Abi,
-    process.env.NEXT_PUBLIC_LST_ADDRESS as string,
-    provider,
-  );
-
-  const { sendAsync } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
     if (!address) {
@@ -152,7 +281,7 @@ const Unstake = () => {
               </Tooltip>
             </TooltipProvider>
           </span>
-          3.15%
+          {(apy.value * 100).toFixed(2)}%
         </p>
 
         <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
@@ -180,7 +309,7 @@ const Unstake = () => {
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <FormField
                 control={form.control}
                 name="unstakeAmount"
@@ -255,9 +384,8 @@ const Unstake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Burnt xSTRK is the amount of xSTRK that will be burnt when you
-                  unstake. The burnt xSTRK will be removed from the total
-                  supply, increasing the value of xSTRK.
+                  Burnt <strong>xSTRK</strong> is the amount of xSTRK that will
+                  be redeemed to unstake the requested STRK
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -306,14 +434,30 @@ const Unstake = () => {
       </div>
 
       <div className="mt-10 px-5">
-        <Button
-          type="submit"
-          onClick={form.handleSubmit(onSubmit)}
-          disabled={!form.formState.isValid || !address}
-          className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
-        >
-          Unstake
-        </Button>
+        {!address && (
+          <Button
+            onClick={() => connectWallet()}
+            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+          >
+            Connect Wallet
+          </Button>
+        )}
+
+        {address && (
+          <Button
+            type="submit"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={
+              Number(form.getValues("unstakeAmount")) <= 0 ||
+              isNaN(Number(form.getValues("unstakeAmount")))
+                ? true
+                : false
+            }
+            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+          >
+            Unstake
+          </Button>
+        )}
       </div>
     </div>
   );

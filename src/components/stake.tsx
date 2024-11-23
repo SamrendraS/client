@@ -4,14 +4,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useAccount,
   useBalance,
+  useConnect,
   useSendTransaction,
 } from "@starknet-react/core";
 import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract, RpcProvider, TransactionExecutionStatus } from "starknet";
+import { Contract } from "starknet";
+import {
+  connect,
+  ConnectOptionsWithConnectors,
+  StarknetkitConnector,
+} from "starknetkit";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -37,12 +44,14 @@ import {
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
+import { isTxAccepted } from "@/store/transactions.atom";
 
-import Link from "next/link";
-import { STRK_TOKEN } from "../../constants";
+import { NETWORK, STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
+import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useSidebar } from "./ui/sidebar";
 
 const formSchema = z.object({
   stakeAmount: z.string().refine(
@@ -60,11 +69,13 @@ const Stake = () => {
   const searchParams = useSearchParams();
 
   const { address } = useAccount();
-
+  const { connect: connectSnReact } = useConnect();
   const { data: balance } = useBalance({
     address,
     token: STRK_TOKEN,
   });
+
+  const { isMobile } = useSidebar();
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
@@ -82,6 +93,125 @@ const Stake = () => {
     mode: "onChange",
   });
 
+  const contractSTRK = new Contract(erc4626Abi, STRK_TOKEN);
+
+  const contract = new Contract(
+    erc4626Abi,
+    process.env.NEXT_PUBLIC_LST_ADDRESS as string,
+  );
+
+  const { sendAsync, data, isPending, error } = useSendTransaction({});
+
+  React.useEffect(() => {
+    (async () => {
+      if (isPending) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none">
+              <Icons.toastPending />
+              <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                <span className="animate-pulse text-[18px] font-semibold text-[#075A5A]">
+                  In Progress..
+                </span>
+                Staking {form.getValues("stakeAmount")} STRK
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Rejected
+                </span>
+                User declined the transaction
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Something went wrong
+                </span>
+                Please try again
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (data) {
+        const res = await isTxAccepted(data?.transaction_hash);
+
+        if (res) {
+          toast({
+            itemID: "stake",
+            variant: "complete",
+            duration: 3000,
+            description: (
+              <div className="flex items-center gap-2 border-none">
+                <Icons.toastSuccess />
+                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                  <span className="text-[18px] font-semibold text-[#075A5A]">
+                    Success 🎉
+                  </span>
+                  Staked {form.getValues("stakeAmount")} STRK
+                </div>
+              </div>
+            ),
+          });
+
+          form.reset();
+        }
+      }
+    })();
+  }, [data, data?.transaction_hash, error?.name, form, isPending]);
+
+  const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    return {
+      modalMode: "canAsk",
+      modalTheme: "light",
+      webWalletUrl: "https://web.argent.xyz",
+      argentMobileOptions: {
+        dappName: "Endur.fi",
+        chainId: NETWORK,
+        url: window.location.hostname,
+      },
+      dappName: "Endur.fi",
+      connectors: getConnectors(isMobile) as StarknetkitConnector[],
+    };
+  }, [isMobile]);
+
+  async function connectWallet(config = connectorConfig) {
+    try {
+      const { connector } = await connect(config);
+
+      if (connector) {
+        connectSnReact({ connector: connector as any });
+      }
+    } catch (error) {
+      console.error("connectWallet error", error);
+    }
+  }
+
   const handleQuickStakePrice = (percentage: number) => {
     if (!address) {
       return toast({
@@ -97,10 +227,12 @@ const Stake = () => {
     if (balance && percentage === 100) {
       if (Number(balance?.formatted) < 1) {
         form.setValue("stakeAmount", "0");
+        form.clearErrors("stakeAmount");
         return;
       }
 
       form.setValue("stakeAmount", (Number(balance?.formatted) - 1).toString());
+      form.clearErrors("stakeAmount");
       return;
     }
 
@@ -109,17 +241,9 @@ const Stake = () => {
         "stakeAmount",
         ((Number(balance?.formatted) * percentage) / 100).toString(),
       );
+      form.clearErrors("stakeAmount");
     }
   };
-
-  const contractSTRK = new Contract(erc4626Abi, STRK_TOKEN);
-
-  const contract = new Contract(
-    erc4626Abi,
-    process.env.NEXT_PUBLIC_LST_ADDRESS as string,
-  );
-
-  const { sendAsync, data } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
     if (Number(values.stakeAmount) > Number(balance?.formatted)) {
@@ -164,93 +288,6 @@ const Stake = () => {
       await sendAsync([call1, call2]);
     }
   };
-
-  async function isTxAccepted(txHash: string) {
-    const provider = new RpcProvider({
-      nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-    });
-
-    let keepChecking = true;
-    const maxRetries = 30;
-    let retry = 0;
-
-    while (keepChecking) {
-      let txInfo: any;
-
-      try {
-        txInfo = await provider.getTransactionStatus(txHash);
-      } catch (error) {
-        console.error("isTxAccepted error", error);
-        retry++;
-        if (retry > maxRetries) {
-          throw new Error("Transaction status unknown");
-        }
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        continue;
-      }
-
-      console.debug("isTxAccepted", txInfo);
-      if (!txInfo.finality_status || txInfo.finality_status === "RECEIVED") {
-        // do nothing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        continue;
-      }
-      if (txInfo.finality_status === "ACCEPTED_ON_L2") {
-        if (txInfo.execution_status === TransactionExecutionStatus.SUCCEEDED) {
-          keepChecking = false;
-          return true;
-        }
-        throw new Error("Transaction reverted");
-      } else if (txInfo.finality_status === "REJECTED") {
-        throw new Error("Transaction rejected");
-      } else {
-        throw new Error("Transaction status unknown");
-      }
-    }
-  }
-
-  React.useEffect(() => {
-    (async () => {
-      if (data) {
-        // const res = await isTxAccepted(
-        //   "0x59276399f13519197ebeffe33bc5aafcb5d0e174bdd86d510451d2e94842e00",
-        // );
-        const res = await isTxAccepted(data?.transaction_hash);
-
-        if (!res) {
-          toast({
-            variant: "pending",
-            description: (
-              <div className="flex items-center gap-5 border-none">
-                <Icons.toastPending />
-                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
-                  <span className="text-[18px] font-semibold text-[#075A5A]">
-                    In Progress..
-                  </span>
-                  Staking 5 STRK
-                </div>
-              </div>
-            ),
-          });
-        } else {
-          toast({
-            variant: "complete",
-            description: (
-              <div className="flex items-center gap-2 border-none">
-                <Icons.toastSuccess />
-                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
-                  <span className="text-[18px] font-semibold text-[#075A5A]">
-                    Success...
-                  </span>
-                  Staking 5 STRK
-                </div>
-              </div>
-            ),
-          });
-        }
-      }
-    })();
-  }, [data]);
 
   return (
     <div className="h-full w-full">
@@ -302,7 +339,7 @@ const Stake = () => {
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <FormField
                 control={form.control}
                 name="stakeAmount"
@@ -441,14 +478,30 @@ const Stake = () => {
       </div>
 
       <div className="mt-10 px-5">
-        <Button
-          type="submit"
-          onClick={form.handleSubmit(onSubmit)}
-          disabled={!form.formState.isValid || !address}
-          className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
-        >
-          Stake
-        </Button>
+        {!address && (
+          <Button
+            onClick={() => connectWallet()}
+            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+          >
+            Connect Wallet
+          </Button>
+        )}
+
+        {address && (
+          <Button
+            type="submit"
+            disabled={
+              Number(form.getValues("stakeAmount")) <= 0 ||
+              isNaN(Number(form.getValues("stakeAmount")))
+                ? true
+                : false
+            }
+            onClick={form.handleSubmit(onSubmit)}
+            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+          >
+            Stake
+          </Button>
+        )}
       </div>
     </div>
   );
