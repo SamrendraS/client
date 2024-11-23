@@ -78,7 +78,7 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const Stake = () => {
-  const [showShareModal, setShowShareModal] = React.useState(true);
+  const [showShareModal, setShowShareModal] = React.useState(false);
 
   const searchParams = useSearchParams();
 
