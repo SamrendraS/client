@@ -157,7 +157,7 @@ const Unstake = () => {
 
       if (error?.name?.includes("UserRejectedRequestError")) {
         toast({
-          itemID: "stake",
+          itemID: "unstake",
           variant: "pending",
           description: (
             <div className="flex items-center gap-5 border-none pl-2">
@@ -175,7 +175,7 @@ const Unstake = () => {
 
       if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
         toast({
-          itemID: "stake",
+          itemID: "unstake",
           variant: "pending",
           description: (
             <div className="flex items-center gap-5 border-none pl-2">
