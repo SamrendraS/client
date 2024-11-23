@@ -32,11 +32,9 @@ export function AppSidebar({ className }: { className?: string }) {
   return (
     <Sidebar
       className={cn(
-        "mx-5 my-auto h-[calc(100vh-40px)] rounded-md rounded-r-sm border border-[#AACBC480]",
+        "fixed top-1/2 mx-5 h-[calc(100vh-40px)] -translate-y-1/2 rounded-md rounded-r-sm border border-[#AACBC480] transition-[width] duration-1000 ease-linear",
         className,
       )}
-      // onMouseOver={() => setOpen(true)}
-      // onMouseLeave={() => setOpen(false)}
     >
       <SidebarHeader className="flex items-center justify-center bg-[#AACBC433] py-10">
         <Icons.logo className={cn(open && "size-[63px]")} />
@@ -51,21 +49,30 @@ export function AppSidebar({ className }: { className?: string }) {
             <Link href="/">
               <SidebarGroup
                 className={cn(
-                  "flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                   {
                     "bg-[#17876D] text-white": pathname === "/",
                   },
                 )}
               >
-                <Icons.staking className="size-5" /> Staking
+                {pathname === "/" ? (
+                  <Icons.stakingLight className="size-5" />
+                ) : (
+                  <>
+                    <Icons.stakingDark className="size-5 group-hover/stake:hidden" />
+                    <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
+                  </>
+                )}
+                Staking
               </SidebarGroup>
             </Link>
 
             <hr />
 
             <Link href={DASHBOARD_URL} target="_blank">
-              <SidebarGroup className="group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-                <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
+              <SidebarGroup className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                <Icons.dashboardDark className="size-5 group-hover/dash:hidden" />
+                <Icons.dashboardLight className="hidden size-5 group-hover/dash:flex" />
                 Dashboard
               </SidebarGroup>
             </Link>
@@ -73,12 +80,20 @@ export function AppSidebar({ className }: { className?: string }) {
             <Link href="/defi">
               <SidebarGroup
                 className={cn(
-                  "group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                   {
                     "bg-[#17876D] text-white": pathname === "/defi",
                   },
                 )}
               >
+                {pathname === "/defi" ? (
+                  <Icons.defiLight className="size-5" />
+                ) : (
+                  <>
+                    <Icons.defiDark className="size-5 group-hover/defi:hidden" />
+                    <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
+                  </>
+                )}
                 Defi <span className="text-sm font-thin">(coming soon)</span>
               </SidebarGroup>
             </Link>
@@ -91,13 +106,20 @@ export function AppSidebar({ className }: { className?: string }) {
                   <Link href="/">
                     <SidebarGroup
                       className={cn(
-                        "flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                        "group/stake flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                         {
                           "bg-[#17876D] text-white": pathname === "/",
                         },
                       )}
                     >
-                      <Icons.staking className="size-5" />
+                      {pathname === "/" ? (
+                        <Icons.stakingLight className="size-5" />
+                      ) : (
+                        <>
+                          <Icons.stakingDark className="size-5 group-hover/stake:hidden" />
+                          <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
+                        </>
+                      )}
                     </SidebarGroup>
                   </Link>
                 </TooltipTrigger>
@@ -117,7 +139,8 @@ export function AppSidebar({ className }: { className?: string }) {
                 <TooltipTrigger asChild>
                   <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
                     <Link href={DASHBOARD_URL} target="_blank">
-                      <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
+                      <Icons.dashboardDark className="size-5 group-hover:hidden" />
+                      <Icons.dashboardLight className="hidden size-5 group-hover:flex" />
                     </Link>
                   </SidebarGroup>
                 </TooltipTrigger>
@@ -136,13 +159,20 @@ export function AppSidebar({ className }: { className?: string }) {
                   <Link href="/defi">
                     <SidebarGroup
                       className={cn(
-                        "group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                        "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                         {
                           "bg-[#17876D] text-white": pathname === "/defi",
                         },
                       )}
                     >
-                      Dfi
+                      {pathname === "/defi" ? (
+                        <Icons.defiLight className="size-5" />
+                      ) : (
+                        <>
+                          <Icons.defiDark className="size-5 group-hover/defi:hidden" />
+                          <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
+                        </>
+                      )}
                     </SidebarGroup>
                   </Link>
                 </TooltipTrigger>
