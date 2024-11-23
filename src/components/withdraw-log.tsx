@@ -1,4 +1,5 @@
 import { useAccount } from "@starknet-react/core";
+import { useAtomValue } from "jotai";
 import { LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -15,7 +16,6 @@ import MyNumber from "@/lib/MyNumber";
 import { cn, convertFutureTimestamp } from "@/lib/utils";
 import { withdrawLogsAtom } from "@/store/transactions.atom";
 
-import { useAtomValue } from "jotai";
 import { Icons } from "./Icons";
 
 const WithdrawLog: React.FC = () => {

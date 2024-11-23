@@ -1,13 +1,13 @@
 import { gql } from "@apollo/client";
+import { Getter, Setter, atom } from "jotai";
+import { atomWithQuery } from "jotai-tanstack-query";
+import { RpcProvider, TransactionExecutionStatus } from "starknet";
 
 import apolloClient from "@/lib/apollo-client";
 import MyNumber from "@/lib/MyNumber";
 import { capitalize, standariseAddress } from "@/lib/utils";
-import { Getter, Setter, atom } from "jotai";
-import { atomWithQuery } from "jotai-tanstack-query";
-import { RpcProvider, TransactionExecutionStatus } from "starknet";
+
 import { createAtomWithStorage, userAddressAtom } from "./common.store";
-// import { toast } from "@/hooks/use-toast";
 
 export interface StrategyTxProps {
   strategyId: string;
@@ -17,7 +17,7 @@ export interface StrategyTxProps {
 }
 export interface TransactionInfo {
   txHash: string;
-  info: StrategyTxProps; // can add more types of txs in future
+  info: StrategyTxProps;
   status: "pending" | "success" | "failed";
   createdAt: Date;
 }

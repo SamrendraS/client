@@ -8,6 +8,7 @@ import {
 } from "@starknet-react/core";
 import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -38,7 +39,6 @@ import {
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 
-import Link from "next/link";
 import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
@@ -89,7 +89,7 @@ const Stake = () => {
     process.env.NEXT_PUBLIC_LST_ADDRESS as string,
   );
 
-  const { sendAsync, data } = useSendTransaction({});
+  const { sendAsync, data, isPending } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
     if (Number(values.stakeAmount) > Number(balance?.formatted)) {
@@ -214,26 +214,35 @@ const Stake = () => {
 
   React.useEffect(() => {
     (async () => {
+      console.log(data, "data");
+
+      if (isPending) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none">
+              <Icons.toastPending />
+              <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                <span className="text-[18px] font-semibold text-[#075A5A]">
+                  In Progress..
+                </span>
+                Staking 5 STRK
+              </div>
+            </div>
+          ),
+        });
+      }
+
       if (data) {
         const res = await isTxAccepted(data?.transaction_hash);
 
-        if (!res) {
+        console.log(data, "data");
+        console.log(res);
+
+        if (res) {
           toast({
-            variant: "pending",
-            description: (
-              <div className="flex items-center gap-5 border-none">
-                <Icons.toastPending />
-                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
-                  <span className="text-[18px] font-semibold text-[#075A5A]">
-                    In Progress..
-                  </span>
-                  Staking 5 STRK
-                </div>
-              </div>
-            ),
-          });
-        } else {
-          toast({
+            itemID: "stake",
             variant: "complete",
             description: (
               <div className="flex items-center gap-2 border-none">
@@ -250,7 +259,7 @@ const Stake = () => {
         }
       }
     })();
-  }, [data]);
+  }, [data, data?.transaction_hash]);
 
   return (
     <div className="h-full w-full">

@@ -1,4 +1,5 @@
 import React from "react";
+
 import DefiCard from "./defi-card";
 
 const Defi = () => {
