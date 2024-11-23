@@ -38,7 +38,7 @@ const WithdrawLog: React.FC = () => {
         withdrawalData.reduce((acc: any, item: any) => {
           if (
             !acc[item.request_id] ||
-            acc[item.request_id].claim_time > item.claim_time
+            acc[item.request_id].claim_time < item.claim_time
           ) {
             acc[item.request_id] = item;
           }

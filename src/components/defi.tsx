@@ -6,7 +6,7 @@ const Defi = () => {
     <div className="mt-12 w-full max-w-7xl px-4 sm:px-14">
       <h1 className="text-2xl font-semibold tracking-[-1%] text-black">Defi</h1>
       <p className="text-base font-normal tracking-[-1%] text-[#8D9C9C]">
-        Use xSTRK and earn more using DeFi opportuopportunities .
+        Use xSTRK to unlock greater rewards with DeFi opportunities!
       </p>
 
       <div className="mt-9">

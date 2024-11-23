@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Contract, RpcProvider } from "starknet";
@@ -31,8 +32,8 @@ import {
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
+import { snAPYAtom } from "@/store/staking.store";
 
-import Link from "next/link";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -56,6 +57,7 @@ const Unstake = () => {
   const exRate = useAtomValue(exchangeRateAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
+  const apy = useAtomValue(snAPYAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -81,6 +83,7 @@ const Unstake = () => {
 
     if (amount) {
       form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
+      form.clearErrors("unstakeAmount");
     }
   };
 
@@ -152,7 +155,7 @@ const Unstake = () => {
               </Tooltip>
             </TooltipProvider>
           </span>
-          3.15%
+          {(apy.value * 100).toFixed(2)}%
         </p>
 
         <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
@@ -255,9 +258,8 @@ const Unstake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Burnt xSTRK is the amount of xSTRK that will be burnt when you
-                  unstake. The burnt xSTRK will be removed from the total
-                  supply, increasing the value of xSTRK.
+                  Burnt <strong>xSTRK</strong> is the amount of xSTRK that will
+                  be redeemed to unstake the requested STRK
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -309,7 +311,12 @@ const Unstake = () => {
         <Button
           type="submit"
           onClick={form.handleSubmit(onSubmit)}
-          disabled={!form.formState.isValid || !address}
+          disabled={
+            Number(form.getValues("unstakeAmount")) <= 0 ||
+            isNaN(Number(form.getValues("unstakeAmount")))
+              ? true
+              : false
+          }
           className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
         >
           Unstake

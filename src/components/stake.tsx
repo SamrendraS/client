@@ -82,36 +82,6 @@ const Stake = () => {
     mode: "onChange",
   });
 
-  const handleQuickStakePrice = (percentage: number) => {
-    if (!address) {
-      return toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <Info className="size-5" />
-            Please connect your wallet
-          </div>
-        ),
-      });
-    }
-
-    if (balance && percentage === 100) {
-      if (Number(balance?.formatted) < 1) {
-        form.setValue("stakeAmount", "0");
-        return;
-      }
-
-      form.setValue("stakeAmount", (Number(balance?.formatted) - 1).toString());
-      return;
-    }
-
-    if (balance) {
-      form.setValue(
-        "stakeAmount",
-        ((Number(balance?.formatted) * percentage) / 100).toString(),
-      );
-    }
-  };
-
   const contractSTRK = new Contract(erc4626Abi, STRK_TOKEN);
 
   const contract = new Contract(
@@ -209,12 +179,42 @@ const Stake = () => {
     }
   }
 
+  const handleQuickStakePrice = (percentage: number) => {
+    if (!address) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Please connect your wallet
+          </div>
+        ),
+      });
+    }
+
+    if (balance && percentage === 100) {
+      if (Number(balance?.formatted) < 1) {
+        form.setValue("stakeAmount", "0");
+        form.clearErrors("stakeAmount");
+        return;
+      }
+
+      form.setValue("stakeAmount", (Number(balance?.formatted) - 1).toString());
+      form.clearErrors("stakeAmount");
+      return;
+    }
+
+    if (balance) {
+      form.setValue(
+        "stakeAmount",
+        ((Number(balance?.formatted) * percentage) / 100).toString(),
+      );
+      form.clearErrors("stakeAmount");
+    }
+  };
+
   React.useEffect(() => {
     (async () => {
       if (data) {
-        // const res = await isTxAccepted(
-        //   "0x59276399f13519197ebeffe33bc5aafcb5d0e174bdd86d510451d2e94842e00",
-        // );
         const res = await isTxAccepted(data?.transaction_hash);
 
         if (!res) {
@@ -443,8 +443,13 @@ const Stake = () => {
       <div className="mt-10 px-5">
         <Button
           type="submit"
+          disabled={
+            Number(form.getValues("stakeAmount")) <= 0 ||
+            isNaN(Number(form.getValues("stakeAmount")))
+              ? true
+              : false
+          }
           onClick={form.handleSubmit(onSubmit)}
-          disabled={!form.formState.isValid || !address}
           className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
         >
           Stake
