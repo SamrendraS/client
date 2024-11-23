@@ -152,16 +152,18 @@ async function waitForTransaction(
   }
 }
 
-async function isTxAccepted(txHash: string) {
+export async function isTxAccepted(txHash: string) {
   const provider = new RpcProvider({
     nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
   });
+
   let keepChecking = true;
   const maxRetries = 30;
   let retry = 0;
 
   while (keepChecking) {
     let txInfo: any;
+
     try {
       txInfo = await provider.getTransactionStatus(txHash);
     } catch (error) {

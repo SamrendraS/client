@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract, RpcProvider, TransactionExecutionStatus } from "starknet";
+import { Contract } from "starknet";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -38,6 +38,7 @@ import {
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
+import { isTxAccepted } from "@/store/transactions.atom";
 
 import { STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
@@ -89,7 +90,7 @@ const Stake = () => {
     process.env.NEXT_PUBLIC_LST_ADDRESS as string,
   );
 
-  const { sendAsync, data, isPending } = useSendTransaction({});
+  const { sendAsync, data, isPending, error } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
     if (Number(values.stakeAmount) > Number(balance?.formatted)) {
@@ -135,50 +136,6 @@ const Stake = () => {
     }
   };
 
-  async function isTxAccepted(txHash: string) {
-    const provider = new RpcProvider({
-      nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-    });
-
-    let keepChecking = true;
-    const maxRetries = 30;
-    let retry = 0;
-
-    while (keepChecking) {
-      let txInfo: any;
-
-      try {
-        txInfo = await provider.getTransactionStatus(txHash);
-      } catch (error) {
-        console.error("isTxAccepted error", error);
-        retry++;
-        if (retry > maxRetries) {
-          throw new Error("Transaction status unknown");
-        }
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        continue;
-      }
-
-      console.debug("isTxAccepted", txInfo);
-      if (!txInfo.finality_status || txInfo.finality_status === "RECEIVED") {
-        // do nothing
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        continue;
-      }
-      if (txInfo.finality_status === "ACCEPTED_ON_L2") {
-        if (txInfo.execution_status === TransactionExecutionStatus.SUCCEEDED) {
-          keepChecking = false;
-          return true;
-        }
-        throw new Error("Transaction reverted");
-      } else if (txInfo.finality_status === "REJECTED") {
-        throw new Error("Transaction rejected");
-      } else {
-        throw new Error("Transaction status unknown");
-      }
-    }
-  }
-
   const handleQuickStakePrice = (percentage: number) => {
     if (!address) {
       return toast({
@@ -214,8 +171,6 @@ const Stake = () => {
 
   React.useEffect(() => {
     (async () => {
-      console.log(data, "data");
-
       if (isPending) {
         toast({
           itemID: "stake",
@@ -224,10 +179,46 @@ const Stake = () => {
             <div className="flex items-center gap-5 border-none">
               <Icons.toastPending />
               <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
-                <span className="text-[18px] font-semibold text-[#075A5A]">
+                <span className="animate-pulse text-[18px] font-semibold text-[#075A5A]">
                   In Progress..
                 </span>
-                Staking 5 STRK
+                Staking {form.getValues("stakeAmount")} STRK
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Rejected
+                </span>
+                User declined the transaction
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Something went wrong
+                </span>
+                Please try again
               </div>
             </div>
           ),
@@ -237,29 +228,29 @@ const Stake = () => {
       if (data) {
         const res = await isTxAccepted(data?.transaction_hash);
 
-        console.log(data, "data");
-        console.log(res);
-
         if (res) {
           toast({
             itemID: "stake",
             variant: "complete",
+            duration: 3000,
             description: (
               <div className="flex items-center gap-2 border-none">
                 <Icons.toastSuccess />
                 <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
                   <span className="text-[18px] font-semibold text-[#075A5A]">
-                    Success...
+                    Success 🎉
                   </span>
-                  Staking 5 STRK
+                  Staked {form.getValues("stakeAmount")} STRK
                 </div>
               </div>
             ),
           });
+
+          form.reset();
         }
       }
     })();
-  }, [data, data?.transaction_hash]);
+  }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
   return (
     <div className="h-full w-full">

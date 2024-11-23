@@ -33,6 +33,7 @@ import {
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
+import { isTxAccepted } from "@/store/transactions.atom";
 
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
@@ -67,26 +68,6 @@ const Unstake = () => {
     mode: "onChange",
   });
 
-  const handleQuickUnstakePrice = (percentage: number) => {
-    if (!address) {
-      return toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <Info className="size-5" />
-            Please connect your wallet
-          </div>
-        ),
-      });
-    }
-
-    const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
-
-    if (amount) {
-      form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
-      form.clearErrors("unstakeAmount");
-    }
-  };
-
   const provider = new RpcProvider({
     nodeUrl: process.env.RPC_URL,
   });
@@ -97,7 +78,7 @@ const Unstake = () => {
     provider,
   );
 
-  const { sendAsync } = useSendTransaction({});
+  const { sendAsync, data, isPending, error } = useSendTransaction({});
 
   const onSubmit = async (values: FormValues) => {
     if (!address) {
@@ -133,6 +114,109 @@ const Unstake = () => {
 
     sendAsync([call1]);
   };
+
+  const handleQuickUnstakePrice = (percentage: number) => {
+    if (!address) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Please connect your wallet
+          </div>
+        ),
+      });
+    }
+
+    const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
+
+    if (amount) {
+      form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
+      form.clearErrors("unstakeAmount");
+    }
+  };
+
+  React.useEffect(() => {
+    (async () => {
+      if (isPending) {
+        toast({
+          itemID: "unstake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none">
+              <Icons.toastPending />
+              <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                <span className="animate-pulse text-[18px] font-semibold text-[#075A5A]">
+                  In Progress..
+                </span>
+                Unstaking {form.getValues("unstakeAmount")} STRK
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Rejected
+                </span>
+                User declined the transaction
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Something went wrong
+                </span>
+                Please try again
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (data) {
+        const res = await isTxAccepted(data?.transaction_hash);
+
+        if (res) {
+          toast({
+            itemID: "unstake",
+            variant: "complete",
+            duration: 3000,
+            description: (
+              <div className="flex items-center gap-2 border-none">
+                <Icons.toastSuccess />
+                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                  <span className="text-[18px] font-semibold text-[#075A5A]">
+                    Success 🎉
+                  </span>
+                  Unstaked {form.getValues("unstakeAmount")} STRK
+                </div>
+              </div>
+            ),
+          });
+
+          form.reset();
+        }
+      }
+    })();
+  }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
   return (
     <div className="h-full w-full">
