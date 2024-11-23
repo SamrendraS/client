@@ -33,18 +33,22 @@ const WithdrawLog: React.FC = () => {
 
       const withdrawalData = withdrawalLogs?.value;
 
-      // Filter to keep the record with the latest `claim_time` for each `request_id`
+      // Filter to keep the record with the latest claim_time for each request_id
       const uniqueWithdrawals = Object.values(
         withdrawalData.reduce((acc: any, item: any) => {
           if (
             !acc[item.request_id] ||
-            acc[item.request_id].claim_time < item.claim_time
+            // use item with latest claim time
+            acc[item.request_id].claim_time < item.claim_time ||
+            // if claims same, and if it's claimed, use it
+            (acc[item.request_id].claim_time === item.claim_time &&
+              item.is_claimed)
           ) {
             acc[item.request_id] = item;
           }
           return acc;
         }, {}),
-      );
+      ).sort((a: any, b: any) => b.claim_time - a.claim_time);
 
       console.log(uniqueWithdrawals);
       setLoading(false);
