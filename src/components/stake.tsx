@@ -138,24 +138,6 @@ const Stake = () => {
         });
       }
 
-      if (error?.name?.includes("UserRejectedRequestError")) {
-        toast({
-          itemID: "stake",
-          variant: "pending",
-          description: (
-            <div className="flex items-center gap-5 border-none pl-2">
-              ❌
-              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
-                <span className="text-base font-semibold text-[#075A5A]">
-                  Rejected
-                </span>
-                User declined the transaction
-              </div>
-            </div>
-          ),
-        });
-      }
-
       if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
         toast({
           itemID: "stake",
@@ -313,19 +295,19 @@ const Stake = () => {
         <DialogContent className={cn(font.className, "p-16 sm:max-w-xl")}>
           <DialogHeader>
             <DialogTitle className="text-center text-3xl font-semibold text-[#17876D]">
-              Thank you for your deposit!
+              Thank you for taking a step towards decentralizing Starknet!
             </DialogTitle>
             <DialogDescription className="!mt-5 text-center text-sm">
-              While your deposits is being processed, if you like Endur, do you
-              mind sharing on X/Twitter?
+              While staking is being processed, if you like Endur, do you mind
+              sharing on X/Twitter?
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-2 flex items-center justify-center">
             <TwitterShareButton
-              url={`https://testnet.endur.fi`}
-              title={`🚀 I just invested my STRK in the Endur.fi \n Join me and start earning`}
-              related={["endurfi"]}
+              url="https://testnet.endur.fi"
+              title={`Just staked my STRK on Endur.fi, earning X% APY! 🚀 \n\nLaying the foundation for decentralising Starknet — be part of the journey at @endurfi!\n\n`}
+              related={["endurfi", "strkfarm", "karnotxyz"]}
               style={{
                 display: "flex",
                 alignItems: "center",
