@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import {
@@ -20,11 +19,13 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-import { Icons } from "./Icons";
+import { usePathname } from "next/navigation";
 import { DASHBOARD_URL } from "../../constants";
+import { Icons } from "./Icons";
 
 export function AppSidebar({ className }: { className?: string }) {
   const { open, isMobile } = useSidebar();
+  const pathname = usePathname();
 
   if (isMobile) return null;
 
@@ -38,7 +39,7 @@ export function AppSidebar({ className }: { className?: string }) {
       // onMouseLeave={() => setOpen(false)}
     >
       <SidebarHeader className="flex items-center justify-center bg-[#AACBC433] py-10">
-        <Image src={"/logo.png"} alt="Endur" width={63} height={63} />
+        <Icons.logo className={cn(open && "size-[63px]")} />
       </SidebarHeader>
       <SidebarContent
         className={cn("bg-[#AACBC433] px-4 pt-5", {
@@ -47,31 +48,58 @@ export function AppSidebar({ className }: { className?: string }) {
       >
         {open ? (
           <>
-            <SidebarGroup className="flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] text-xl font-semibold text-white transition-all">
-              <Icons.staking className="size-5" /> Staking
-            </SidebarGroup>
+            <Link href="/">
+              <SidebarGroup
+                className={cn(
+                  "flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  {
+                    "bg-[#17876D] text-white": pathname === "/",
+                  },
+                )}
+              >
+                <Icons.staking className="size-5" /> Staking
+              </SidebarGroup>
+            </Link>
+
             <hr />
+
             <Link href={DASHBOARD_URL} target="_blank">
               <SidebarGroup className="group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
                 <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
                 Dashboard
               </SidebarGroup>
             </Link>
-            {/* <SidebarGroup className="pointer-events-none flex cursor-pointer flex-row items-center justify-between gap-2 rounded-md transition-all hover:bg-[#17876D] hover:text-white">
-              <p className="text-xl font-semibold text-[#03624C]">
+
+            <Link href="/defi">
+              <SidebarGroup
+                className={cn(
+                  "group flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  {
+                    "bg-[#17876D] text-white": pathname === "/defi",
+                  },
+                )}
+              >
                 Defi <span className="text-sm font-thin">(coming soon)</span>
-              </p>
-              {/* <ChevronDown className="size-4 text-[#03624C]" /> */}
-            {/* </SidebarGroup> */}
+              </SidebarGroup>
+            </Link>
           </>
         ) : (
           <>
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <SidebarGroup className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md bg-[#17876D] text-xl font-semibold text-white transition-all">
-                    <Icons.staking className="size-5" />
-                  </SidebarGroup>
+                  <Link href="/">
+                    <SidebarGroup
+                      className={cn(
+                        "flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                        {
+                          "bg-[#17876D] text-white": pathname === "/",
+                        },
+                      )}
+                    >
+                      <Icons.staking className="size-5" />
+                    </SidebarGroup>
+                  </Link>
                 </TooltipTrigger>
                 <TooltipContent
                   side="right"
@@ -83,6 +111,7 @@ export function AppSidebar({ className }: { className?: string }) {
             </TooltipProvider>
 
             <hr />
+
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -97,6 +126,31 @@ export function AppSidebar({ className }: { className?: string }) {
                   className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
                 >
                   <p>Dashboard</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/defi">
+                    <SidebarGroup
+                      className={cn(
+                        "group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                        {
+                          "bg-[#17876D] text-white": pathname === "/defi",
+                        },
+                      )}
+                    >
+                      Dfi
+                    </SidebarGroup>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Defi (coming soon)</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

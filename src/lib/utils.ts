@@ -55,6 +55,10 @@ export function generateReferralCode() {
   return code;
 }
 
+export function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 export function standariseAddress(address: string | bigint) {
   let _a = address;
   if (!address) {

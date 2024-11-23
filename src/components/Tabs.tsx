@@ -93,7 +93,9 @@ const Tabs: React.FC = () => {
             },
           )}
         >
-          <div className="mr-2 size-4 shrink-0 rounded-full bg-[#D69733] lg:size-6" />
+          <div className="mr-3 flex size-4 shrink-0 items-center justify-center rounded-full text-xl lg:size-6">
+            ⚠️
+          </div>
           <p>
             Unstake requests are placed in a Withdrawal Queue, with STRK
             available in 1 to 21 days due to Starknet{"'"}s staking mechanics.{" "}
@@ -118,7 +120,7 @@ const Tabs: React.FC = () => {
           },
         )}
       >
-        From the teams of{" "}
+        Made with 💙 by{" "}
         <Link
           href="https://strkfarm.xyz"
           target="_blank"
