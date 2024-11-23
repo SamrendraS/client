@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import {
   Sidebar,
   SidebarContent,
@@ -18,10 +16,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-
+import { Inter } from "next/font/google";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
+
+import Image from "next/image";
 import { DASHBOARD_URL } from "../../constants";
 import { Icons } from "./Icons";
+
+const font = Inter({ subsets: ["latin-ext"] });
 
 export function AppSidebar({ className }: { className?: string }) {
   const { open, isMobile } = useSidebar();
@@ -36,8 +39,20 @@ export function AppSidebar({ className }: { className?: string }) {
         className,
       )}
     >
-      <SidebarHeader className="flex items-center justify-center bg-[#AACBC433] py-10">
-        <Icons.logo className={cn(open && "size-[63px]")} />
+      <SidebarHeader
+        className={cn(
+          font.className,
+          "flex flex-row items-center justify-start gap-3.5 bg-[#AACBC433] py-10",
+          {
+            "px-6": open,
+          },
+        )}
+      >
+        <Icons.logo className={cn(open && "hidden")} />
+        {open && (
+          // <span className="text-4xl font-semibold text-[#1b845c]">Endur</span>
+          <Image src="/full_logo.svg" width={160} height={60} alt="full_logo" />
+        )}
       </SidebarHeader>
       <SidebarContent
         className={cn("bg-[#AACBC433] px-4 pt-5", {
