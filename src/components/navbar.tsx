@@ -215,7 +215,12 @@ const Navbar = ({ className }: { className?: string }) => {
               <div className="h-full space-y-1 bg-[#AACBC433] px-4 pt-5">
                 <Link
                   href="/"
-                  className="group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] px-3 py-2 text-xl text-white transition-all"
+                  className={cn(
+                    "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                    {
+                      "bg-[#17876D] text-white": pathname === "/",
+                    },
+                  )}
                 >
                   {pathname === "/" ? (
                     <Icons.stakingLight className="size-5" />
@@ -230,7 +235,8 @@ const Navbar = ({ className }: { className?: string }) => {
 
                 <Link
                   href={DASHBOARD_URL}
-                  className="group flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
+                  target="_blank"
+                  className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
                 >
                   <Icons.dashboardDark className="size-5 group-hover/dash:hidden" />
                   <Icons.dashboardLight className="hidden size-5 group-hover/dash:flex" />
@@ -239,7 +245,12 @@ const Navbar = ({ className }: { className?: string }) => {
 
                 <Link
                   href="/defi"
-                  className="group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] px-3 py-2 text-xl text-white transition-all"
+                  className={cn(
+                    "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                    {
+                      "bg-[#17876D] text-white": pathname === "/defi",
+                    },
+                  )}
                 >
                   {pathname === "/defi" ? (
                     <Icons.defiLight className="size-5" />
@@ -249,7 +260,7 @@ const Navbar = ({ className }: { className?: string }) => {
                       <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
                     </>
                   )}
-                  DEfi
+                  Defi
                 </Link>
               </div>
             </div>
