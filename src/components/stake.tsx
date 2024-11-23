@@ -78,7 +78,7 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const Stake = () => {
-  const [showShareModal, setShowShareModal] = React.useState(false);
+  const [showShareModal, setShowShareModal] = React.useState(true);
 
   const searchParams = useSearchParams();
 
@@ -295,20 +295,18 @@ const Stake = () => {
         <DialogContent className={cn(font.className, "p-16 sm:max-w-xl")}>
           <DialogHeader>
             <DialogTitle className="text-center text-3xl font-semibold text-[#17876D]">
-              Thank you for your deposit!
+              Thank you for taking a step towards decentralizing Starknet!
             </DialogTitle>
             <DialogDescription className="!mt-5 text-center text-sm">
-              While your deposits is being processed, if you like Endur, do you
-              mind sharing on X/Twitter?
+              While staking is being processed, if you like Endur, do you mind
+              sharing on X/Twitter?
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-2 flex items-center justify-center">
             <TwitterShareButton
-              url={`https://testnet.endur.fi`}
-              title={`
-                Just staked my STRK on Endur.fi, earning X% APY! 🚀 \nLaying the foundation for decentralising Starknet — be part of the journey at testnet.endur.fi!
-                `}
+              url="https://testnet.endur.fi"
+              title={`Just staked my STRK on Endur.fi, earning X% APY! 🚀 \n\nLaying the foundation for decentralising Starknet — be part of the journey at @endurfi!\n\n`}
               related={["endurfi", "strkfarm", "karnotxyz"]}
               style={{
                 display: "flex",
