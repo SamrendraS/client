@@ -109,10 +109,12 @@ const Stake = () => {
           itemID: "stake",
           variant: "pending",
           description: (
-            <div className="flex items-center gap-5 border-none">
-              <Icons.toastPending />
+            <div className="relative flex items-center gap-5 border-none">
+              <div className="absolute left-3 top-3 z-10 size-[52px] rounded-full bg-[#BBC2CC]" />
+              <Icons.toastPending className="animate-spin" />
+              <Icons.clock className="absolute left-[26.5px] top-[26.5px] z-20" />
               <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
-                <span className="animate-pulse text-[18px] font-semibold text-[#075A5A]">
+                <span className="text-[18px] font-semibold text-[#075A5A]">
                   In Progress..
                 </span>
                 Staking {form.getValues("stakeAmount")} STRK
