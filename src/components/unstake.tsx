@@ -1,13 +1,22 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAccount, useSendTransaction } from "@starknet-react/core";
+import {
+  useAccount,
+  useConnect,
+  useSendTransaction,
+} from "@starknet-react/core";
 import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Contract, RpcProvider } from "starknet";
+import {
+  connect,
+  ConnectOptionsWithConnectors,
+  StarknetkitConnector,
+} from "starknetkit";
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
@@ -35,9 +44,12 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
+import { NETWORK } from "../../constants";
 import { Icons } from "./Icons";
+import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { useSidebar } from "./ui/sidebar";
 
 const formSchema = z.object({
   unstakeAmount: z.string().refine(
@@ -53,6 +65,9 @@ export type FormValues = z.infer<typeof formSchema>;
 
 const Unstake = () => {
   const { address } = useAccount();
+  const { connect: connectSnReact } = useConnect();
+
+  const { isMobile } = useSidebar();
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const exRate = useAtomValue(exchangeRateAtom);
@@ -79,61 +94,6 @@ const Unstake = () => {
   );
 
   const { sendAsync, data, isPending, error } = useSendTransaction({});
-
-  const onSubmit = async (values: FormValues) => {
-    if (!address) {
-      return toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <Info className="size-5" />
-            Please connect your wallet
-          </div>
-        ),
-      });
-    }
-
-    if (
-      Number(values.unstakeAmount) >
-      Number(currentStaked.value.toEtherToFixedDecimals(9))
-    ) {
-      return toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <Info className="size-5" />
-            Insufficient staked(xSTRK) balance
-          </div>
-        ),
-      });
-    }
-
-    const call1 = contract.populate("withdraw", [
-      MyNumber.fromEther(values.unstakeAmount, 18),
-      address,
-      address,
-    ]);
-
-    sendAsync([call1]);
-  };
-
-  const handleQuickUnstakePrice = (percentage: number) => {
-    if (!address) {
-      return toast({
-        description: (
-          <div className="flex items-center gap-2">
-            <Info className="size-5" />
-            Please connect your wallet
-          </div>
-        ),
-      });
-    }
-
-    const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
-
-    if (amount) {
-      form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
-      form.clearErrors("unstakeAmount");
-    }
-  };
 
   React.useEffect(() => {
     (async () => {
@@ -218,6 +178,88 @@ const Unstake = () => {
     })();
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
+  const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    return {
+      modalMode: "canAsk",
+      modalTheme: "light",
+      webWalletUrl: "https://web.argent.xyz",
+      argentMobileOptions: {
+        dappName: "Endur.fi",
+        chainId: NETWORK,
+        url: window.location.hostname,
+      },
+      dappName: "Endur.fi",
+      connectors: getConnectors(isMobile) as StarknetkitConnector[],
+    };
+  }, [isMobile]);
+
+  async function connectWallet(config = connectorConfig) {
+    try {
+      const { connector } = await connect(config);
+
+      if (connector) {
+        connectSnReact({ connector: connector as any });
+      }
+    } catch (error) {
+      console.error("connectWallet error", error);
+    }
+  }
+
+  const handleQuickUnstakePrice = (percentage: number) => {
+    if (!address) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Please connect your wallet
+          </div>
+        ),
+      });
+    }
+
+    const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
+
+    if (amount) {
+      form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
+      form.clearErrors("unstakeAmount");
+    }
+  };
+
+  const onSubmit = async (values: FormValues) => {
+    if (!address) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Please connect your wallet
+          </div>
+        ),
+      });
+    }
+
+    if (
+      Number(values.unstakeAmount) >
+      Number(currentStaked.value.toEtherToFixedDecimals(9))
+    ) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Insufficient staked(xSTRK) balance
+          </div>
+        ),
+      });
+    }
+
+    const call1 = contract.populate("withdraw", [
+      MyNumber.fromEther(values.unstakeAmount, 18),
+      address,
+      address,
+    ]);
+
+    sendAsync([call1]);
+  };
+
   return (
     <div className="h-full w-full">
       <div className="flex items-center justify-between px-3 py-2 lg:px-6">
@@ -267,7 +309,7 @@ const Unstake = () => {
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <FormField
                 control={form.control}
                 name="unstakeAmount"
@@ -392,19 +434,30 @@ const Unstake = () => {
       </div>
 
       <div className="mt-10 px-5">
-        <Button
-          type="submit"
-          onClick={form.handleSubmit(onSubmit)}
-          disabled={
-            Number(form.getValues("unstakeAmount")) <= 0 ||
-            isNaN(Number(form.getValues("unstakeAmount")))
-              ? true
-              : false
-          }
-          className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
-        >
-          Unstake
-        </Button>
+        {!address && (
+          <Button
+            onClick={() => connectWallet()}
+            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+          >
+            Connect Wallet
+          </Button>
+        )}
+
+        {address && (
+          <Button
+            type="submit"
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={
+              Number(form.getValues("unstakeAmount")) <= 0 ||
+              isNaN(Number(form.getValues("unstakeAmount")))
+                ? true
+                : false
+            }
+            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+          >
+            Unstake
+          </Button>
+        )}
       </div>
     </div>
   );
