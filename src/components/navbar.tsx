@@ -12,6 +12,7 @@ import { useAtom, useSetAtom } from "jotai";
 import { X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useMemo } from "react";
 import { constants, num, RpcProvider } from "starknet";
 import {
@@ -90,6 +91,8 @@ const Navbar = ({ className }: { className?: string }) => {
   const { provider } = useProvider();
   const { connect: connectSnReact } = useConnect();
   const { disconnectAsync } = useDisconnect();
+
+  const pathname = usePathname();
 
   const [__, setAddress] = useAtom(userAddressAtom);
   const [_, setLastWallet] = useAtom(lastWalletAtom);
@@ -211,18 +214,42 @@ const Navbar = ({ className }: { className?: string }) => {
 
               <div className="h-full space-y-1 bg-[#AACBC433] px-4 pt-5">
                 <Link
-                  href="#"
-                  className="flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] px-3 py-2 text-xl text-white transition-all"
+                  href="/"
+                  className="group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] px-3 py-2 text-xl text-white transition-all"
                 >
-                  <Icons.staking className="size-5" /> Staking
+                  {pathname === "/" ? (
+                    <Icons.stakingLight className="size-5" />
+                  ) : (
+                    <>
+                      <Icons.stakingDark className="size-5 group-hover/stake:hidden" />
+                      <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
+                    </>
+                  )}
+                  Staking
                 </Link>
 
                 <Link
                   href={DASHBOARD_URL}
                   className="group flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
                 >
-                  <Icons.dashboard className="size-5 group-hover:fill-white" />{" "}
+                  <Icons.dashboardDark className="size-5 group-hover/dash:hidden" />
+                  <Icons.dashboardLight className="hidden size-5 group-hover/dash:flex" />
                   Dashboard
+                </Link>
+
+                <Link
+                  href="/defi"
+                  className="group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md bg-[#17876D] px-3 py-2 text-xl text-white transition-all"
+                >
+                  {pathname === "/defi" ? (
+                    <Icons.defiLight className="size-5" />
+                  ) : (
+                    <>
+                      <Icons.defiDark className="size-5 group-hover/defi:hidden" />
+                      <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
+                    </>
+                  )}
+                  DEfi
                 </Link>
               </div>
             </div>
