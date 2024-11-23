@@ -97,8 +97,7 @@ const Tabs: React.FC = () => {
             ⚠️
           </div>
           <p>
-            Unstake requests are placed in a Withdrawal Queue, with STRK
-            available in 1 to 21 days due to Starknet{"'"}s staking mechanics.{" "}
+          Unstake requests go into a Withdrawal Queue and are processed when STRK is available. While instant unstaking isn{"'"}t possible due to staking design, the average wait time is about 2 days now but can take longer.{" "}
             <Link
               href="https://docs.starknet.io/staking/overview/#economic_parameters"
               target="_blank"
