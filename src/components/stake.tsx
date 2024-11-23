@@ -298,15 +298,15 @@ const Stake = () => {
               Thank you for taking a step towards decentralizing Starknet!
             </DialogTitle>
             <DialogDescription className="!mt-5 text-center text-sm">
-              While staking is being processed, if you like Endur, do you mind
-              sharing on X/Twitter?
+              While your stake is being processed, if you like Endur, do you
+              mind sharing on X/Twitter?
             </DialogDescription>
           </DialogHeader>
 
           <div className="mt-2 flex items-center justify-center">
             <TwitterShareButton
               url="https://testnet.endur.fi"
-              title={`Just staked my STRK on Endur.fi, earning X% APY! 🚀 \n\nLaying the foundation for decentralising Starknet — be part of the journey at @endurfi!\n\n`}
+              title={`Just staked my STRK on Endur.fi, earning ${(apy.value * 100).toFixed(2)}% APY! 🚀 \n\nLaying the foundation for decentralising Starknet — be part of the journey at @endurfi!\n\n`}
               related={["endurfi", "strkfarm", "karnotxyz"]}
               style={{
                 display: "flex",
