@@ -18,13 +18,13 @@ const DefiCard: React.FC<DefiCardProps> = ({ dapp, tokens, description }) => {
       case "strkfarm":
         return <Icons.strkfarmLogo />;
       case "vesu":
-        return <Icons.vesuLogo className="size-[22px] rounded-full" />;
+        return <Icons.vesuLogo className="rounded-full" />;
       case "avnu":
-        return <Icons.avnuLogo className="size-[22px] rounded-full" />;
+        return <Icons.avnuLogo className="rounded-full border" />;
       case "fibrous":
-        return <Icons.fibrousLogo className="size-[22px] rounded-full" />;
+        return <Icons.fibrousLogo className="rounded-full" />;
       case "ekubo":
-        return <Icons.ekuboLogo className="size-[22px] rounded-full" />;
+        return <Icons.ekuboLogo className="rounded-full" />;
       default:
         return null;
     }

@@ -22,22 +22,22 @@ const Defi = () => {
             description="Auto compound defi spring rewards on xSTRK"
           />
           <DefiCard
-            dapp="strkfarm"
+            dapp="vesu"
             tokens={["xSTRK", "USDC"]}
             description="Borrow using xSTRK on Vesu"
           />
           <DefiCard
-            dapp="strkfarm"
+            dapp="avnu"
             tokens={["xSTRK", "STRK"]}
             description="Swap xSTRK for STRK on Avnu"
           />
           <DefiCard
-            dapp="strkfarm"
+            dapp="fibrous"
             tokens={["xSTRK", "STRK"]}
             description="Swap xSTRK for STRK on Fibrous"
           />
           <DefiCard
-            dapp="strkfarm"
+            dapp="ekubo"
             tokens={["xSTRK", "STRK"]}
             description="Provide liquidity for xSTRK/STRK on Ekubo"
           />
