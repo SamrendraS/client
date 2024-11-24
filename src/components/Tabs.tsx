@@ -27,11 +27,38 @@ const Tabs: React.FC = () => {
   const [tabs, setTabs] = React.useState("stake");
   const { open } = useSidebar();
 
+  function getMessage() {
+    if (tabs == "unstake") {
+      return (
+        <p>
+          Unstake requests go into a Withdrawal Queue and are processed when
+          STRK is available. While instant unstaking isn{"'"}t possible due to
+          staking design, the average wait time is about 2 days now but can take
+          longer.{" "}
+          <Link
+            href="https://docs.starknet.io/staking/overview/#economic_parameters"
+            target="_blank"
+            className="underline"
+          >
+            Learn more.
+          </Link>
+        </p>
+      );
+    } else if (tabs == "stake") {
+      return (
+        <p>
+          Staking rewards are automatically claimed and compounded, gradually
+          increasing the value of your xSTRK over time.
+        </p>
+      );
+    }
+  }
+
   return (
     <>
       <div
         className={cn(
-          "mt-12 w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[37rem]",
+          "mt-12 w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[37rem] xl:mt-0",
           {
             "lg:-ml-36": open,
             "lg:-ml-24": !open,
@@ -111,10 +138,10 @@ const Tabs: React.FC = () => {
         </ShadCNTabs>
       </div>
 
-      {tabs === "unstake" && (
+      {(tabs === "unstake" || tabs == "stake") && (
         <p
           className={cn(
-            "mt-4 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-xs text-[#D69733] lg:text-sm",
+            `mt-4 flex max-w-xl items-center rounded-md ${tabs == "stake" ? "bg-[#C0D5CE69]" : "bg-[#FFC4664D]"} px-3 py-3 text-xs ${tabs == "stake" ? "text-[#134c3d9e]" : "text-[#D69733]"} lg:text-sm`,
             {
               "lg:-ml-36": open,
               "lg:-ml-24": !open,
@@ -122,21 +149,9 @@ const Tabs: React.FC = () => {
           )}
         >
           <div className="mr-3 flex size-4 shrink-0 items-center justify-center rounded-full text-xl lg:size-6">
-            ⚠️
+            {tabs == "unstake" ? "⚠️" : "ⓘ"}
           </div>
-          <p>
-            Unstake requests go into a Withdrawal Queue and are processed when
-            STRK is available. While instant unstaking isn{"'"}t possible due to
-            staking design, the average wait time is about 2 days now but can
-            take longer.{" "}
-            <Link
-              href="https://docs.starknet.io/staking/overview/#economic_parameters"
-              target="_blank"
-              className="underline"
-            >
-              Learn more.
-            </Link>
-          </p>
+          {getMessage()}
         </p>
       )}
 
