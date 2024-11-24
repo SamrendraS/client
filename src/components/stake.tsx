@@ -442,7 +442,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="my-7 h-px w-full rounded-full bg-[#AACBC480]" />
+      <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="space-y-3 px-7">
         <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
@@ -549,7 +549,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="mt-5 px-5">
+      <div className="mt-6 px-5">
         {!address && (
           <Button
             onClick={() => connectWallet()}
