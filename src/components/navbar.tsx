@@ -10,6 +10,7 @@ import {
 } from "@starknet-react/core";
 import { useAtom, useSetAtom } from "jotai";
 import { X } from "lucide-react";
+import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,10 +35,13 @@ import {
   providerAtom,
   userAddressAtom,
 } from "@/store/common.store";
+
 import { DASHBOARD_URL, NETWORK } from "../../constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
+
+const font = Figtree({ subsets: ["latin-ext"] });
 
 export const CONNECTOR_NAMES = ["Braavos", "Argent X", "Argent (mobile)"];
 
@@ -209,7 +213,10 @@ const Navbar = ({ className }: { className?: string }) => {
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="bg-sidebar p-0 text-sidebar-foreground"
+            className={cn(
+              font.className,
+              "bg-sidebar p-0 text-sidebar-foreground",
+            )}
             side="left"
           >
             <div className="h-full border border-[#AACBC480]">
@@ -227,7 +234,7 @@ const Navbar = ({ className }: { className?: string }) => {
                 <Link
                   href="/"
                   className={cn(
-                    "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                    "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                     {
                       "bg-[#17876D] text-white": pathname === "/",
                     },
@@ -247,7 +254,7 @@ const Navbar = ({ className }: { className?: string }) => {
                 <Link
                   href={DASHBOARD_URL}
                   target="_blank"
-                  className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
+                  className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
                 >
                   <Icons.dashboardDark className="size-5 group-hover/dash:hidden" />
                   <Icons.dashboardLight className="hidden size-5 group-hover/dash:flex" />
@@ -257,7 +264,7 @@ const Navbar = ({ className }: { className?: string }) => {
                 <Link
                   href="/defi"
                   className={cn(
-                    "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                    "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                     {
                       "bg-[#17876D] text-white": pathname === "/defi",
                     },
