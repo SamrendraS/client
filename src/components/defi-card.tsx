@@ -49,11 +49,14 @@ const DefiCard: React.FC<DefiCardProps> = ({ dapp, tokens, description }) => {
         <div className="flex items-center gap-2 text-sm">
           <div className="flex items-center">
             {getTokenIcon(tokens[0])}
-            <div className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white">
-              {getTokenIcon(tokens[1])}
-            </div>
+            {getTokenIcon(tokens[1]) && (
+              <div className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white">
+                {getTokenIcon(tokens[1])}
+              </div>
+            )}
           </div>
-          {tokens[0]}-{tokens[1]}
+          {tokens[0]}
+          {getTokenIcon(tokens[1]) && `-${tokens[1]}`}
         </div>
 
         {getDappIcon(dapp)}

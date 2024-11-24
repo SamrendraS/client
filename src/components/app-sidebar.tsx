@@ -12,7 +12,6 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -115,90 +114,84 @@ export function AppSidebar({ className }: { className?: string }) {
           </>
         ) : (
           <>
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link href="/">
-                    <SidebarGroup
-                      className={cn(
-                        "group/stake flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
-                        {
-                          "bg-[#17876D] text-white": pathname === "/",
-                        },
-                      )}
-                    >
-                      {pathname === "/" ? (
-                        <Icons.stakingLight className="size-5" />
-                      ) : (
-                        <>
-                          <Icons.stakingDark className="size-5 group-hover/stake:hidden" />
-                          <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
-                        </>
-                      )}
-                    </SidebarGroup>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                >
-                  <p>Staking</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/">
+                  <SidebarGroup
+                    className={cn(
+                      "group/stake flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                      {
+                        "bg-[#17876D] text-white": pathname === "/",
+                      },
+                    )}
+                  >
+                    {pathname === "/" ? (
+                      <Icons.stakingLight className="size-5" />
+                    ) : (
+                      <>
+                        <Icons.stakingDark className="size-5 group-hover/stake:hidden" />
+                        <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
+                      </>
+                    )}
+                  </SidebarGroup>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>Staking</p>
+              </TooltipContent>
+            </Tooltip>
 
             <hr />
 
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-                    <Link href={DASHBOARD_URL} target="_blank">
-                      <Icons.dashboardDark className="size-5 group-hover:hidden" />
-                      <Icons.dashboardLight className="hidden size-5 group-hover:flex" />
-                    </Link>
-                  </SidebarGroup>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                >
-                  <p>Dashboard</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link href="/defi">
-                    <SidebarGroup
-                      className={cn(
-                        "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
-                        {
-                          "bg-[#17876D] text-white": pathname === "/defi",
-                        },
-                      )}
-                    >
-                      {pathname === "/defi" ? (
-                        <Icons.defiLight className="size-5" />
-                      ) : (
-                        <>
-                          <Icons.defiDark className="size-5 group-hover/defi:hidden" />
-                          <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
-                        </>
-                      )}
-                    </SidebarGroup>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                  <Link href={DASHBOARD_URL} target="_blank">
+                    <Icons.dashboardDark className="size-5 group-hover:hidden" />
+                    <Icons.dashboardLight className="hidden size-5 group-hover:flex" />
                   </Link>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                >
-                  <p>Defi (coming soon)</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+                </SidebarGroup>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>Dashboard</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/defi">
+                  <SidebarGroup
+                    className={cn(
+                      "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                      {
+                        "bg-[#17876D] text-white": pathname === "/defi",
+                      },
+                    )}
+                  >
+                    {pathname === "/defi" ? (
+                      <Icons.defiLight className="size-5" />
+                    ) : (
+                      <>
+                        <Icons.defiDark className="size-5 group-hover/defi:hidden" />
+                        <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
+                      </>
+                    )}
+                  </SidebarGroup>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>Defi (coming soon)</p>
+              </TooltipContent>
+            </Tooltip>
           </>
         )}
       </SidebarContent>
@@ -215,89 +208,6 @@ export function AppSidebar({ className }: { className?: string }) {
           {open ? (
             <>
               <div className="flex items-center gap-4">
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link href="https://x.com/endurfi" target="_blank">
-                        <Icons.twitter className="cursor-pointer" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="top"
-                      className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                    >
-                      <p>Twitter (X)</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link
-                        href="https://t.me/+jWY71PfbMMIwMTBl"
-                        target="_blank"
-                      >
-                        <Icons.telegram className="cursor-pointer" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="top"
-                      className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                    >
-                      <p>Telegram</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Link href="https://docs.endur.fi/" target="_blank">
-                        <Icons.doc className="cursor-pointer" />
-                      </Link>
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="top"
-                      className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                    >
-                      <p>Docs</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <SidebarTrigger />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                  >
-                    <p>Collapse</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-4">
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <SidebarTrigger />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="right"
-                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                  >
-                    <p>Expand</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link href="https://x.com/endurfi" target="_blank">
@@ -305,15 +215,13 @@ export function AppSidebar({ className }: { className?: string }) {
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent
-                    side="right"
+                    side="top"
                     className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
                   >
                     <p>Twitter (X)</p>
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
 
-              <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
@@ -321,15 +229,13 @@ export function AppSidebar({ className }: { className?: string }) {
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent
-                    side="right"
+                    side="top"
                     className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
                   >
                     <p>Telegram</p>
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
 
-              <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Link href="https://docs.endur.fi/" target="_blank">
@@ -337,13 +243,81 @@ export function AppSidebar({ className }: { className?: string }) {
                     </Link>
                   </TooltipTrigger>
                   <TooltipContent
-                    side="right"
+                    side="top"
                     className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
                   >
                     <p>Docs</p>
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
+              </div>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <SidebarTrigger />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Collapse (⌘B)</p>
+                </TooltipContent>
+              </Tooltip>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-4">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <SidebarTrigger />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Expand (⌘B)</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="https://x.com/endurfi" target="_blank">
+                    <Icons.twitter className="cursor-pointer" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Twitter (X)</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
+                    <Icons.telegram className="cursor-pointer" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Telegram</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="https://docs.endur.fi/" target="_blank">
+                    <Icons.doc className="cursor-pointer" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Docs</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           )}
         </div>
@@ -357,27 +331,25 @@ export function AppSidebar({ className }: { className?: string }) {
             <Icons.chat /> Support
           </Link>
         ) : (
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href="https://t.me/+jWY71PfbMMIwMTBl"
-                  target="_blank"
-                  className="flex items-center border-t border-[#075A5A1A] px-4 py-2.5 text-[#03624C]"
-                >
-                  <Icons.chat className="size-4 shrink-0" />
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="https://t.me/+jWY71PfbMMIwMTBl"
+                target="_blank"
+                className="flex items-center border-t border-[#075A5A1A] px-4 py-2.5 text-[#03624C]"
               >
-                <p>
-                  Support <span className="text-xs font-thin">(Telegram)</span>
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                <Icons.chat className="size-4 shrink-0" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+            >
+              <p>
+                Support <span className="text-xs font-thin">(Telegram)</span>
+              </p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </SidebarFooter>
     </Sidebar>

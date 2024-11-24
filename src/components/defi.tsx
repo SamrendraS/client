@@ -18,12 +18,12 @@ const Defi = () => {
         <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
           <DefiCard
             dapp="strkfarm"
-            tokens={["xSTRK", "USDC"]}
+            tokens={["xSTRK", ""]}
             description="Auto compound defi spring rewards on xSTRK"
           />
           <DefiCard
             dapp="vesu"
-            tokens={["xSTRK", "USDC"]}
+            tokens={["xSTRK", ""]}
             description="Borrow using xSTRK on Vesu"
           />
           <DefiCard

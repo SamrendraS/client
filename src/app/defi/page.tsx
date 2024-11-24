@@ -15,7 +15,6 @@ const DefiPage: NextPage = () => {
         <div className="flex w-full flex-col items-center overflow-hidden py-3">
           <Navbar className="px-7" />
 
-          {/* <Tabs /> */}
           <Defi />
         </div>
 
