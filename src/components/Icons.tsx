@@ -977,14 +977,14 @@ export const Icons = {
   avnuLogo: (props: IconProps) => (
     <svg
       {...props}
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      width="30"
+      height="30"
+      viewBox="0 0 30 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-      <rect width="22" height="22" fill="url(#pattern0_343_1805)" />
+      <rect width="30" height="30" fill="url(#pattern0_343_1805)" />
       <defs>
         <pattern
           id="pattern0_343_1805"
@@ -1006,8 +1006,8 @@ export const Icons = {
   ekuboLogo: (props: IconProps) => (
     <svg
       {...props}
-      width="22"
-      height="22"
+      width="30"
+      height="30"
       viewBox="0 0 22 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -1045,14 +1045,14 @@ export const Icons = {
   fibrousLogo: (props: IconProps) => (
     <svg
       {...props}
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      width="30"
+      height="30"
+      viewBox="0 0 30 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-      <rect width="22" height="22" fill="url(#pattern0_343_1802)" />
+      <rect width="30" height="30" fill="url(#pattern0_343_1802)" />
       <defs>
         <pattern
           id="pattern0_343_1802"
@@ -1074,14 +1074,14 @@ export const Icons = {
   vesuLogo: (props: IconProps) => (
     <svg
       {...props}
-      width="22"
-      height="22"
-      viewBox="0 0 22 22"
+      width="30"
+      height="30"
+      viewBox="0 0 30 30"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
     >
-      <rect width="22" height="22" fill="url(#pattern0_343_1799)" />
+      <rect width="30" height="30" fill="url(#pattern0_343_1799)" />
       <defs>
         <pattern
           id="pattern0_343_1799"
@@ -1103,8 +1103,8 @@ export const Icons = {
   strkfarmLogo: (props: IconProps) => (
     <svg
       {...props}
-      width="22"
-      height="22"
+      width="30"
+      height="30"
       viewBox="0 0 22 22"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
