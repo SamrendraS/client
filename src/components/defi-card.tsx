@@ -1,25 +1,68 @@
+import Image from "next/image";
 import React from "react";
 
-import Image from "next/image";
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 
-const DefiCard = () => {
+interface DefiCardProps {
+  dapp: string;
+  tokens: [string, string];
+  description: string;
+}
+
+const DefiCard: React.FC<DefiCardProps> = ({ dapp, tokens, description }) => {
+  const getDappIcon = (dappName: string) => {
+    switch (dappName.toLowerCase()) {
+      case "endur":
+        return <Icons.endurLogo />;
+      case "strkfarm":
+        return <Icons.strkfarmLogo />;
+      case "vesu":
+        return <Icons.vesuLogo className="rounded-full" />;
+      case "avnu":
+        return <Icons.avnuLogo className="rounded-full border" />;
+      case "fibrous":
+        return <Icons.fibrousLogo className="rounded-full" />;
+      case "ekubo":
+        return <Icons.ekuboLogo className="rounded-full" />;
+      default:
+        return null;
+    }
+  };
+
+  const getTokenIcon = (tokenName: string) => {
+    switch (tokenName.toLowerCase()) {
+      case "strk":
+        return <Icons.strkLogo className="size-[22px]" />;
+      case "xstrk":
+        return <Icons.endurLogo />;
+      case "usdc":
+        return <Icons.usdcLogo />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="h-[220px] w-full min-w-[330px] rounded-xl bg-white px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm">
           <div className="flex items-center">
-            <Icons.endurLogo />
-            <Icons.usdcLogo className="-ml-2 size-6 rounded-full border-[1.5px] border-white" />
+            {getTokenIcon(tokens[0])}
+            {getTokenIcon(tokens[1]) && (
+              <div className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white">
+                {getTokenIcon(tokens[1])}
+              </div>
+            )}
           </div>
-          XSTRK-USDC
+          {tokens[0]}
+          {getTokenIcon(tokens[1]) && `-${tokens[1]}`}
         </div>
 
-        <Icons.strkfarmLogo />
+        {getDappIcon(dapp)}
       </div>
 
-      <p className="mt-4 text-sm text-black">Borrow using xSTRK on STRKFarm</p>
+      <p className="mt-4 text-sm text-black">{description}</p>
 
       <div className="relative h-[69px] w-full">
         <Image

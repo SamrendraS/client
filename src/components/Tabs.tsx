@@ -1,9 +1,17 @@
 "use client";
 
+import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+
 import Stake from "./stake";
 import { useSidebar } from "./ui/sidebar";
 import {
@@ -56,6 +64,26 @@ const Tabs: React.FC = () => {
               className="group relative rounded-none border-none bg-transparent text-sm font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none lg:text-base"
             >
               Withdraw log
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger className="ml-1">
+                    <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    className="max-w-[13rem] rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                  >
+                    Learn more about withdraw logs{" "}
+                    <Link
+                      target="_blank"
+                      href="https://docs.endur.fi/docs/concepts/withdraw-log"
+                      className="text-blue-600 underline"
+                    >
+                      here
+                    </Link>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <div className="absolute -bottom-[7.5px] left-3 hidden h-[2px] w-[5rem] rounded-full bg-black group-data-[state=active]:flex lg:-bottom-[5.5px] lg:left-[16px]" />
             </TabsTrigger>
           </TabsList>

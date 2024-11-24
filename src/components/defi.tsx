@@ -16,12 +16,31 @@ const Defi = () => {
         </p>
 
         <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          <DefiCard />
-          <DefiCard />
-          <DefiCard />
-          <DefiCard />
-          <DefiCard />
-          <DefiCard />
+          <DefiCard
+            dapp="strkfarm"
+            tokens={["xSTRK", ""]}
+            description="Auto compound defi spring rewards on xSTRK"
+          />
+          <DefiCard
+            dapp="vesu"
+            tokens={["xSTRK", ""]}
+            description="Borrow using xSTRK on Vesu"
+          />
+          <DefiCard
+            dapp="avnu"
+            tokens={["xSTRK", "STRK"]}
+            description="Swap xSTRK for STRK on Avnu"
+          />
+          <DefiCard
+            dapp="fibrous"
+            tokens={["xSTRK", "STRK"]}
+            description="Swap xSTRK for STRK on Fibrous"
+          />
+          <DefiCard
+            dapp="ekubo"
+            tokens={["xSTRK", "STRK"]}
+            description="Provide liquidity for xSTRK/STRK on Ekubo"
+          />
         </div>
       </div>
     </div>
