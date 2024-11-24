@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
+import { cn } from "@/lib/utils";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -55,8 +56,7 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { cn } from "@/lib/utils";
-import { NETWORK, STRK_TOKEN } from "../../constants";
+import { NETWORK, REWARD_FEES, STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -444,7 +444,7 @@ const Stake = () => {
 
       <div className="my-7 h-px w-full rounded-full bg-[#AACBC480]" />
 
-      <div className="space-y-4 px-7">
+      <div className="space-y-3 px-7">
         <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
           <p className="flex items-center gap-1">
             You will get
@@ -509,9 +509,47 @@ const Stake = () => {
           </p>
           <span>1 xSTRK = {exchangeRate.rate.toFixed(4)} STRK</span>
         </div>
+
+        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+          <p className="flex items-center gap-1">
+            Reward fees
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  This fee applies exclusively to your staking rewards and does
+                  NOT affect your staked amount. You might qualify for a future
+                  fee rebate.{" "}
+                  <Link
+                    target="_blank"
+                    href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+                    className="text-blue-600 underline"
+                  >
+                    Learn more
+                  </Link>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
+          <p>
+            <span className="line-through">{REWARD_FEES}%</span>{" "}
+            <Link
+              target="_blank"
+              href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+              className="underline"
+            >
+              Fee Rebate
+            </Link>
+          </p>
+        </div>
       </div>
 
-      <div className="mt-10 px-5">
+      <div className="mt-5 px-5">
         {!address && (
           <Button
             onClick={() => connectWallet()}

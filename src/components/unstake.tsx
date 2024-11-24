@@ -417,7 +417,7 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="mt-10 px-5">
+      <div className="mt-[2.75rem] px-5">
         {!address && (
           <Button
             onClick={() => connectWallet()}
