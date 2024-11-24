@@ -11,7 +11,7 @@ import {
   userAddressAtom,
 } from "./common.store";
 
-function getLSTContract(provider: RpcProvider) {
+export function getLSTContract(provider: RpcProvider) {
   return new Contract(erc4626Abi, LST_ADDRRESS, provider);
 }
 
