@@ -51,6 +51,7 @@ const withdrawLogsAtomWithQuery = atomWithQuery((get) => {
                 receiver
                 is_claimed
                 claim_time
+                timestamp
                 tx_hash
               }
             }
