@@ -48,7 +48,7 @@ const WithdrawLog: React.FC = () => {
           }
           return acc;
         }, {}),
-      ).sort((a: any, b: any) => b.claim_time - a.claim_time);
+      ).sort((a: any, b: any) => b.timestamp - a.timestamp);
 
       console.log(uniqueWithdrawals);
       setLoading(false);
