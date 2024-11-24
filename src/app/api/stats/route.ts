@@ -20,7 +20,7 @@ export async function GET(_req: Request) {
   });
 
   if (!provider) {
-    return MyNumber.fromZero();
+    return NextResponse.json("Provider not found");
   }
 
   let yearlyMinting = MyNumber.fromZero();
@@ -36,8 +36,11 @@ export async function GET(_req: Request) {
     const res = await mintingContract.call("yearly_mint");
     yearlyMinting = new MyNumber(res.toString(), STRK_DECIMALS);
   } catch (error) {
-    console.error("yearlyMintingQueryAtom", error);
-    return MyNumber.fromZero();
+    console.error("yearlyMintingError", error);
+    return NextResponse.json({
+      message: "yearlyMintingError",
+      error,
+    });
   }
 
   const stakingContract = new Contract(StakingAbi, SN_STAKING_ADRESS, provider);
@@ -46,8 +49,11 @@ export async function GET(_req: Request) {
     const res = await stakingContract.call("get_total_stake");
     totalStaked = new MyNumber(res.toString(), STRK_DECIMALS);
   } catch (error) {
-    console.error("snTotalStakedQueryAtom", error);
-    return MyNumber.fromZero();
+    console.error("snTotalStakedError", error);
+    return NextResponse.json({
+      message: "snTotalStakedError",
+      error,
+    });
   }
 
   let apy = 0;
@@ -75,7 +81,10 @@ export async function GET(_req: Request) {
 
     return response;
   } catch (error) {
-    console.error("totalStakedAtom [3]", error);
-    return MyNumber.fromZero();
+    console.error("totalStakedError", error);
+    return NextResponse.json({
+      message: "totalStakedError",
+      error,
+    });
   }
 }
