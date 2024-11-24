@@ -58,7 +58,7 @@ const Tabs: React.FC = () => {
     <>
       <div
         className={cn(
-          "mt-12 w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[37rem] xl:mt-0",
+          "mt-12 w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[36.3rem] xl:mt-0",
           {
             "lg:-ml-36": open,
             "lg:-ml-24": !open,
