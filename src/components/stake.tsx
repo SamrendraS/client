@@ -338,13 +338,13 @@ const Stake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Estimated current annualised yield on staking in terms of STRK
-                  including fees.
+                  Estimated current annualised yield on staking in terms of
+                  STRK.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </span>
-          {(apy.value * 100).toFixed(2)}%
+          ~{(apy.value * 100).toFixed(2)}%
         </p>
 
         <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">

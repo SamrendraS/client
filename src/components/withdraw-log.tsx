@@ -62,7 +62,7 @@ const WithdrawLog: React.FC = () => {
       <TableHeader>
         <TableRow className="border-none bg-gradient-to-t from-[#18a79b40] to-[#38EF7D00] hover:bg-gradient-to-t">
           <TableHead className="pl-3 font-normal text-black sm:w-[100px]">
-            ID
+            Log ID
           </TableHead>
           <TableHead className="min-w-[120px] shrink-0 px-0 text-center font-normal text-black sm:!pl-10">
             Amount in STRK

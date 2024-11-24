@@ -98,13 +98,11 @@ export function convertFutureTimestamp(unixTimestamp: number): string {
   const days = Math.floor(hours / 24);
 
   if (days > 0) {
-    return `in ${days} day${days > 1 ? "s" : ""}`;
+    return `within ~${days} day${days > 1 ? "s" : ""}`;
   } else if (hours > 0) {
-    return `in ${hours} hour${hours > 1 ? "s" : ""}`;
-  } else if (minutes > 0) {
-    return `in ${minutes} minute${minutes > 1 ? "s" : ""}`;
+    return `within ~${hours} hour${hours > 1 ? "s" : ""}`;
   }
-  return `in ${seconds} second${seconds > 1 ? "s" : ""}`;
+  return "Anytime soon";
 }
 
 // Example usage:
