@@ -198,7 +198,12 @@ const Navbar = ({ className }: { className?: string }) => {
             <SheetTrigger>
               <Icons.hamburger className="size-5" />
             </SheetTrigger>
-            <Image src={"/logo.png"} alt="Endur" width={28} height={28} />
+            <Image
+              src="/full_logo.svg"
+              width={80}
+              height={60}
+              alt="full_logo"
+            />
           </div>
 
           <SheetContent
@@ -208,8 +213,14 @@ const Navbar = ({ className }: { className?: string }) => {
             side="left"
           >
             <div className="h-full border border-[#AACBC480]">
-              <div className="flex items-center justify-center bg-[#AACBC433] py-10">
-                <Image src={"/logo.png"} alt="Endur" width={63} height={63} />
+              <div className="flex items-center justify-start bg-[#AACBC433] px-6 py-10">
+                <Image
+                  className=""
+                  src="/full_logo.svg"
+                  width={160}
+                  height={60}
+                  alt="full_logo"
+                />
               </div>
 
               <div className="h-full space-y-1 bg-[#AACBC433] px-4 pt-5">
