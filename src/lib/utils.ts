@@ -13,6 +13,17 @@ export function shortAddress(_address: string, startChars = 4, endChars = 4) {
   return truncate(x, startChars, endChars);
 }
 
+export function formatNumber(num: number | string): string {
+  const numberValue = typeof num === "string" ? Number(num) : num;
+
+  if (numberValue >= 1_000_000) {
+    return `${(numberValue / 1_000_000).toFixed(2)}m`;
+  } else if (numberValue >= 1_000) {
+    return `${(numberValue / 1_000).toFixed(2)}k`;
+  }
+  return numberValue.toLocaleString("en-US");
+}
+
 export function truncate(str: string, startChars: number, endChars: number) {
   if (str.length <= startChars + endChars) {
     return str;

@@ -28,7 +28,7 @@ const Tabs: React.FC = () => {
   const { open } = useSidebar();
 
   function getMessage() {
-    if (tabs == "unstake") {
+    if (tabs === "unstake") {
       return (
         <p>
           Unstake requests go into a Withdrawal Queue and are processed when
@@ -44,7 +44,7 @@ const Tabs: React.FC = () => {
           </Link>
         </p>
       );
-    } else if (tabs == "stake") {
+    } else if (tabs === "stake") {
       return (
         <p>
           Staking rewards are automatically claimed and compounded, gradually
@@ -138,21 +138,22 @@ const Tabs: React.FC = () => {
         </ShadCNTabs>
       </div>
 
-      {(tabs === "unstake" || tabs == "stake") && (
-        <p
+      {(tabs === "unstake" || tabs === "stake") && (
+        <div
           className={cn(
-            `mt-4 flex max-w-xl items-center rounded-md ${tabs == "stake" ? "bg-[#C0D5CE69]" : "bg-[#FFC4664D]"} px-3 py-3 text-xs ${tabs == "stake" ? "text-[#134c3d9e]" : "text-[#D69733]"} lg:text-sm`,
+            "mt-4 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-xs text-[#D69733] lg:text-sm",
             {
               "lg:-ml-36": open,
               "lg:-ml-24": !open,
+              "bg-[#C0D5CE69] text-[#134c3d9e]": tabs === "stake",
             },
           )}
         >
-          <div className="mr-3 flex size-4 shrink-0 items-center justify-center rounded-full text-xl lg:size-6">
-            {tabs == "unstake" ? "⚠️" : "ⓘ"}
-          </div>
+          <span className="mr-3 flex size-4 shrink-0 items-center justify-center rounded-full text-xl lg:size-6">
+            {tabs === "unstake" ? "⚠️" : "ⓘ"}
+          </span>
           {getMessage()}
-        </p>
+        </div>
       )}
 
       <p
