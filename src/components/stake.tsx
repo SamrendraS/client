@@ -44,7 +44,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { toast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { cn } from "@/lib/utils";
 import {
@@ -90,6 +90,7 @@ const Stake = () => {
   });
 
   const { isMobile } = useSidebar();
+  const { dismiss } = useToast();
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
@@ -138,6 +139,10 @@ const Stake = () => {
             </div>
           ),
         });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        dismiss();
       }
 
       if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {

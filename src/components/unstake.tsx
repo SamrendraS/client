@@ -33,7 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { toast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import {
   exchangeRateAtom,
@@ -68,6 +68,7 @@ const Unstake = () => {
   const { connect: connectSnReact } = useConnect();
 
   const { isMobile } = useSidebar();
+  const { dismiss } = useToast();
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const exRate = useAtomValue(exchangeRateAtom);
@@ -117,6 +118,10 @@ const Unstake = () => {
             </div>
           ),
         });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        dismiss();
       }
 
       if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
