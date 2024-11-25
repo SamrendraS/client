@@ -1,5 +1,4 @@
-import { Fira_Sans } from 'next/font/google';
-import Image from 'next/image';
+"use client";
 
 import {
   Sidebar,
@@ -7,51 +6,351 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
-} from '@/components/ui/sidebar';
-import { cn } from '@/lib/utils';
-import { ChevronDown } from 'lucide-react';
-import { Icons } from './Icons';
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { Inter } from "next/font/google";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-const font = Fira_Sans({
-  subsets: ['latin'],
-  weight: '400',
-});
+import Image from "next/image";
+import { DASHBOARD_URL } from "../../constants";
+import { Icons } from "./Icons";
 
-export function AppSidebar() {
+const font = Inter({ subsets: ["latin-ext"] });
+
+export function AppSidebar({ className }: { className?: string }) {
+  const { open, isMobile } = useSidebar();
+  const pathname = usePathname();
+
+  if (isMobile) return null;
+
   return (
     <Sidebar
       className={cn(
-        font.className,
-        'h-[calc(100vh-40px)] my-auto mx-5 border border-[#AACBC480] rounded-md rounded-r-sm',
+        "fixed top-1/2 mx-5 h-[calc(100vh-40px)] -translate-y-1/2 rounded-md rounded-r-sm border border-[#AACBC480] transition-[width] duration-1000 ease-linear",
+        className,
       )}
     >
-      <SidebarHeader className="bg-[#AACBC433] flex items-center justify-center py-10">
-        <Image src={'/logo.png'} alt="Endur" width={63} height={63} />
+      <SidebarHeader
+        className={cn(
+          font.className,
+          "flex flex-row items-center justify-start gap-3.5 bg-[#AACBC433] py-10",
+          {
+            "px-6": open,
+          },
+        )}
+      >
+        <Icons.logo className={cn(open && "hidden")} />
+        {open && (
+          // <span className="text-4xl font-semibold text-[#1b845c]">Endur</span>
+          <Image src="/full_logo.svg" width={160} height={60} alt="full_logo" />
+        )}
       </SidebarHeader>
-      <SidebarContent className="bg-[#AACBC433] px-4 pt-5">
-        <SidebarGroup className="text-[#03624C] text-xl cursor-pointer font-semibold transition-all hover:bg-[#17876D] hover:text-white rounded-md">
-          Dashboard
-        </SidebarGroup>
-        <SidebarGroup className="text-xl cursor-pointer font-semibold transition-all bg-[#17876D] text-white rounded-md">
-          Staking
-        </SidebarGroup>
-        <SidebarGroup className="cursor-pointer transition-all hover:bg-[#17876D] hover:text-white rounded-md pointer-events-none flex justify-between flex-row items-center gap-2">
-          <p className="text-[#03624C] text-xl font-semibold">
-            Defi <span className="text-sm font-thin">(coming soon)</span>
-          </p>
-          <ChevronDown className="size-4 text-[#03624C]" />
-        </SidebarGroup>
+      <SidebarContent
+        className={cn("bg-[#AACBC433] px-4 pt-5", {
+          "px-1.5": !open,
+        })}
+      >
+        {open ? (
+          <>
+            <Link href="/">
+              <SidebarGroup
+                className={cn(
+                  "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  {
+                    "bg-[#17876D] text-white": pathname === "/",
+                  },
+                )}
+              >
+                {pathname === "/" ? (
+                  <Icons.stakingLight className="size-5" />
+                ) : (
+                  <>
+                    <Icons.stakingDark className="size-5 group-hover/stake:hidden" />
+                    <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
+                  </>
+                )}
+                Staking
+              </SidebarGroup>
+            </Link>
+
+            <hr />
+
+            <Link href={DASHBOARD_URL} target="_blank">
+              <SidebarGroup className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                <Icons.dashboardDark className="size-5 group-hover/dash:hidden" />
+                <Icons.dashboardLight className="hidden size-5 group-hover/dash:flex" />
+                Dashboard
+              </SidebarGroup>
+            </Link>
+
+            <Link href="/defi">
+              <SidebarGroup
+                className={cn(
+                  "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  {
+                    "bg-[#17876D] text-white": pathname === "/defi",
+                  },
+                )}
+              >
+                {pathname === "/defi" ? (
+                  <Icons.defiLight className="size-5" />
+                ) : (
+                  <>
+                    <Icons.defiDark className="size-5 group-hover/defi:hidden" />
+                    <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
+                  </>
+                )}
+                Defi <span className="text-sm font-thin">(coming soon)</span>
+              </SidebarGroup>
+            </Link>
+          </>
+        ) : (
+          <>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/">
+                  <SidebarGroup
+                    className={cn(
+                      "group/stake flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                      {
+                        "bg-[#17876D] text-white": pathname === "/",
+                      },
+                    )}
+                  >
+                    {pathname === "/" ? (
+                      <Icons.stakingLight className="size-5" />
+                    ) : (
+                      <>
+                        <Icons.stakingDark className="size-5 group-hover/stake:hidden" />
+                        <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
+                      </>
+                    )}
+                  </SidebarGroup>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>Staking</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <hr />
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                  <Link href={DASHBOARD_URL} target="_blank">
+                    <Icons.dashboardDark className="size-5 group-hover:hidden" />
+                    <Icons.dashboardLight className="hidden size-5 group-hover:flex" />
+                  </Link>
+                </SidebarGroup>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>Dashboard</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/defi">
+                  <SidebarGroup
+                    className={cn(
+                      "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                      {
+                        "bg-[#17876D] text-white": pathname === "/defi",
+                      },
+                    )}
+                  >
+                    {pathname === "/defi" ? (
+                      <Icons.defiLight className="size-5" />
+                    ) : (
+                      <>
+                        <Icons.defiDark className="size-5 group-hover/defi:hidden" />
+                        <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
+                      </>
+                    )}
+                  </SidebarGroup>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>Defi (coming soon)</p>
+              </TooltipContent>
+            </Tooltip>
+          </>
+        )}
       </SidebarContent>
-      <SidebarFooter className="bg-[#AACBC433] px-0">
-        <div className="flex items-center gap-4 px-4 mb-5">
-          <Icons.twitter className="cursor-pointer" />
-          <Icons.discord className="cursor-pointer" />
-          <Icons.telegram className="cursor-pointer" />
-          <Icons.doc className="cursor-pointer" />
+
+      <SidebarFooter className="bg-[#AACBC433] p-0">
+        <div
+          className={cn(
+            "mb-3 flex items-center justify-between gap-2 pl-4 pr-6",
+            {
+              "flex-col px-0": !open,
+            },
+          )}
+        >
+          {open ? (
+            <>
+              <div className="flex items-center gap-4">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="https://x.com/endurfi" target="_blank">
+                      <Icons.twitter className="cursor-pointer" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                  >
+                    <p>Twitter (X)</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
+                      <Icons.telegram className="cursor-pointer" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                  >
+                    <p>Telegram</p>
+                  </TooltipContent>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="https://docs.endur.fi/" target="_blank">
+                      <Icons.doc className="cursor-pointer" />
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                  >
+                    <p>Docs</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <SidebarTrigger />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Collapse (⌘B)</p>
+                </TooltipContent>
+              </Tooltip>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-4">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <SidebarTrigger />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Expand (⌘B)</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="https://x.com/endurfi" target="_blank">
+                    <Icons.twitter className="cursor-pointer" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Twitter (X)</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
+                    <Icons.telegram className="cursor-pointer" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Telegram</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="https://docs.endur.fi/" target="_blank">
+                    <Icons.doc className="cursor-pointer" />
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>Docs</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          )}
         </div>
-        <button className="py-3 px-4 border-t border-[#075A5A1A] flex items-center gap-3 text-[#03624C] text-xl font-medium">
-          <Icons.chat /> Support
-        </button>
+
+        {open ? (
+          <Link
+            href="https://t.me/+jWY71PfbMMIwMTBl"
+            target="_blank"
+            className="flex items-center gap-3 border-t border-[#075A5A1A] px-4 py-3 text-xl font-medium text-[#03624C]"
+          >
+            <Icons.chat /> Support
+          </Link>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="https://t.me/+jWY71PfbMMIwMTBl"
+                target="_blank"
+                className="flex items-center border-t border-[#075A5A1A] px-4 py-2.5 text-[#03624C]"
+              >
+                <Icons.chat className="size-4 shrink-0" />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent
+              side="right"
+              className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+            >
+              <p>
+                Support <span className="text-xs font-thin">(Telegram)</span>
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        )}
       </SidebarFooter>
     </Sidebar>
   );

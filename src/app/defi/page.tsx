@@ -1,17 +1,21 @@
+import { NextPage } from "next";
+import React from "react";
+
 import { AppSidebar } from "@/components/app-sidebar";
+import Defi from "@/components/defi";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
-import Tabs from "@/components/Tabs";
 
-export default function Home() {
+const DefiPage: NextPage = () => {
   return (
     <div className="flex w-full overflow-x-hidden">
       <AppSidebar />
 
       <div className="flex flex-1 flex-col justify-between">
-        <div className="flex w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
-          <Navbar />
-          <Tabs />
+        <div className="flex w-full flex-col items-center overflow-hidden py-3">
+          <Navbar className="px-7" />
+
+          <Defi />
         </div>
 
         <div className="lg:hidden">
@@ -20,4 +24,6 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+export default DefiPage;
