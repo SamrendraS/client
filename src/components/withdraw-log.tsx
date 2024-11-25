@@ -17,6 +17,7 @@ import { cn, convertFutureTimestamp } from "@/lib/utils";
 import { withdrawLogsAtom } from "@/store/transactions.atom";
 
 import { Icons } from "./Icons";
+import { getExplorerEndpoint } from "../../constants";
 
 const WithdrawLog: React.FC = () => {
   const [withdrawals, setWithdrawals] = React.useState<any>();
@@ -115,7 +116,7 @@ const WithdrawLog: React.FC = () => {
                 <TableCell className="flex justify-end pr-4 text-right font-thin text-[#17876D]">
                   <Link
                     target="_blank"
-                    href={`https://sepolia.starkscan.co/tx/${item?.tx_hash}`}
+                    href={`${getExplorerEndpoint()}/tx/${item?.tx_hash}`}
                     className="group flex w-fit items-center justify-end gap-1 transition-all"
                   >
                     <span className="group-hover:underline">Success</span>

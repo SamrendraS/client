@@ -11,7 +11,7 @@ import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract, RpcProvider } from "starknet";
+import { Contract } from "starknet";
 import {
   connect,
   ConnectOptionsWithConnectors,
@@ -44,7 +44,7 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { NETWORK, REWARD_FEES } from "../../constants";
+import { getProvider, NETWORK, REWARD_FEES } from "../../constants";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -83,9 +83,7 @@ const Unstake = () => {
     mode: "onChange",
   });
 
-  const provider = new RpcProvider({
-    nodeUrl: process.env.RPC_URL,
-  });
+  const provider = getProvider();
 
   const contract = new Contract(
     erc4626Abi,

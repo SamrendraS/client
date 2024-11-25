@@ -1,4 +1,4 @@
-import { constants } from "starknet";
+import { constants, RpcProvider } from "starknet";
 
 export const STRK_TOKEN =
   "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d" as const;
@@ -22,4 +22,32 @@ export const NETWORK =
     ? constants.NetworkName.SN_SEPOLIA
     : constants.NetworkName.SN_MAIN;
 
+export const isMainnet = () => {
+  return NETWORK === constants.NetworkName.SN_MAIN;
+};
+
 export const DASHBOARD_URL = "https://dashboard.endur.fi";
+
+export function getEndpoint() {
+  return (
+    (typeof window === "undefined"
+      ? process.env.HOSTNAME
+      : window.location.origin) || "https://app.endur.fi"
+  );
+}
+
+export function getProvider() {
+  return new RpcProvider({
+    nodeUrl:
+      process.env.NEXT_PUBLIC_RPC_URL ||
+      "https://starknet-mainnet.public.blastapi.io",
+  });
+}
+
+export function getExplorerEndpoint() {
+  if (isMainnet()) {
+    return "https://starkscan.co";
+  }
+
+  return "https://sepolia.starkscan.co";
+}
