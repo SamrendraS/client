@@ -1,13 +1,14 @@
 import { gql } from "@apollo/client";
 import { Getter, Setter, atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
-import { RpcProvider, TransactionExecutionStatus } from "starknet";
+import { TransactionExecutionStatus } from "starknet";
 
 import apolloClient from "@/lib/apollo-client";
 import MyNumber from "@/lib/MyNumber";
 import { capitalize, standariseAddress } from "@/lib/utils";
 
 import { createAtomWithStorage, userAddressAtom } from "./common.store";
+import { getProvider } from "../../constants";
 
 export interface StrategyTxProps {
   strategyId: string;
@@ -154,9 +155,7 @@ async function waitForTransaction(
 }
 
 export async function isTxAccepted(txHash: string) {
-  const provider = new RpcProvider({
-    nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-  });
+  const provider = getProvider();
 
   let keepChecking = true;
   const maxRetries = 30;

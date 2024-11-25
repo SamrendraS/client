@@ -15,7 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useMemo } from "react";
-import { constants, num, RpcProvider } from "starknet";
+import { constants, num } from "starknet";
 import {
   connect,
   ConnectOptionsWithConnectors,
@@ -36,7 +36,7 @@ import {
   userAddressAtom,
 } from "@/store/common.store";
 
-import { DASHBOARD_URL, NETWORK } from "../../constants";
+import { DASHBOARD_URL, getProvider, NETWORK } from "../../constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
@@ -179,7 +179,7 @@ const Navbar = ({ className }: { className?: string }) => {
   React.useEffect(() => {
     // autoConnect();
     setAddress(address);
-    setProvider(provider as RpcProvider);
+    setProvider(getProvider());
   }, [address, provider]);
 
   // React.useEffect(() => {

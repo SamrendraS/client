@@ -1,7 +1,10 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { isMainnet } from "../../constants";
 
 const apolloClient = new ApolloClient({
-  uri: "https://graphql.sepolia.endur.fi",
+  uri: isMainnet()
+    ? "https://graphql.mainnet.endur.fi"
+    : "https://graphql.sepolia.endur.fi",
   cache: new InMemoryCache(),
 });
 
