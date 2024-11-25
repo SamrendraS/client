@@ -27,6 +27,7 @@ const provider = jsonRpcProvider({
         NETWORK === constants.NetworkName.SN_MAIN
           ? constants.StarknetChainId.SN_MAIN
           : constants.StarknetChainId.SN_SEPOLIA,
+      blockIdentifier: 'pending'
     };
     return args;
   },
