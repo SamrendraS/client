@@ -33,7 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { toast } from "@/hooks/use-toast";
+import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import {
   exchangeRateAtom,
@@ -68,6 +68,7 @@ const Unstake = () => {
   const { connect: connectSnReact } = useConnect();
 
   const { isMobile } = useSidebar();
+  const { dismiss } = useToast();
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const exRate = useAtomValue(exchangeRateAtom);
@@ -102,10 +103,12 @@ const Unstake = () => {
           itemID: "unstake",
           variant: "pending",
           description: (
-            <div className="relative flex items-center gap-5 border-none">
-              <div className="absolute left-3 top-3 z-10 size-[52px] rounded-full bg-[#BBC2CC]" />
-              <Icons.toastPending className="animate-spin" />
-              <Icons.clock className="absolute left-[26.5px] top-[26.5px] z-20" />
+            <div className="flex items-center gap-5 border-none">
+              <div className="relative shrink-0">
+                <div className="absolute left-3 top-3 z-10 size-[52px] rounded-full bg-[#BBC2CC]" />
+                <Icons.toastPending className="animate-spin" />
+                <Icons.clock className="absolute left-[26.5px] top-[26.5px] z-20" />
+              </div>
               <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
                 <span className="text-[18px] font-semibold text-[#075A5A]">
                   In Progress..
@@ -115,6 +118,10 @@ const Unstake = () => {
             </div>
           ),
         });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        dismiss();
       }
 
       if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
@@ -268,7 +275,7 @@ const Unstake = () => {
           ~{(apy.value * 100).toFixed(2)}%
         </p>
 
-        <div className="flex flex-col items-end gap-2 text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:text-[#8D9C9C]">
+        <div className="flex flex-col items-end text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:gap-2 lg:text-[#8D9C9C]">
           TVL
           <p className="flex items-center gap-2">
             <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
