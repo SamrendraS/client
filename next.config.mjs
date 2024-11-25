@@ -7,6 +7,12 @@ const nextConfig = {
         destination: "https://bit.ly/4flfFVg",
         permanent: true,
       },
+      {
+        source: "/audit",
+        destination:
+          "https://drive.google.com/file/d/1EufZmcW9k5yq5Jivek1MjTCVnft5WRER/view?usp=sharing",
+        permanent: true,
+      },
     ];
   },
   async headers() {
