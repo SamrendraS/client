@@ -1,7 +1,7 @@
 "use client";
 
 import { useIsMobile } from "@/hooks/use-mobile";
-import { devnet, mainnet, sepolia } from "@starknet-react/chains";
+import { mainnet, sepolia } from "@starknet-react/chains";
 import {
   Connector,
   jsonRpcProvider,
