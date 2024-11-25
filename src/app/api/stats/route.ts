@@ -7,6 +7,7 @@ import MyNumber from "@/lib/MyNumber";
 import { getLSTContract } from "@/store/lst.store";
 
 import {
+  getProvider,
   SN_MINTING_CURVE_ADRESS,
   SN_STAKING_ADRESS,
   STRK_DECIMALS,
@@ -15,9 +16,7 @@ import {
 export const revalidate = 1800;
 
 export async function GET(_req: Request) {
-  const provider = new RpcProvider({
-    nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-  });
+  const provider = getProvider();
 
   if (!provider) {
     return NextResponse.json("Provider not found");

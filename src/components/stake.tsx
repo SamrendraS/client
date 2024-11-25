@@ -56,7 +56,7 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { NETWORK, REWARD_FEES, STRK_TOKEN } from "../../constants";
+import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "../../constants";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -312,7 +312,7 @@ const Stake = () => {
 
           <div className="mt-2 flex items-center justify-center">
             <TwitterShareButton
-              url="https://testnet.endur.fi"
+              url={getEndpoint()}
               title={`Just staked my STRK on Endur.fi, earning ${(apy.value * 100).toFixed(2)}% APY! 🚀 \n\nLaying the foundation for decentralising Starknet — be part of the journey at @endurfi!\n\n`}
               related={["endurfi", "strkfarm", "karnotxyz"]}
               style={{
