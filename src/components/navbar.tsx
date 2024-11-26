@@ -78,7 +78,7 @@ export function getConnectors(isMobile: boolean) {
     if (isInArgentMobileAppBrowser()) {
       return [mobileConnector];
     } else if (isMobile) {
-      return [mobileConnector, webWalletConnector];
+      return [mobileConnector, braavosConnector, webWalletConnector];
     }
     return [
       argentXConnector,
