@@ -6,14 +6,20 @@ const Footer = () => {
   return (
     <div className="w-full bg-[#17876D1A]">
       <div className="flex items-center gap-4 px-7 py-8">
-        <Icons.twitter className="cursor-pointer" />
-        <Icons.discord className="cursor-pointer" />
-        <Icons.telegram className="cursor-pointer" />
-        <Icons.doc className="cursor-pointer" />
+        <Link href="https://x.com/endurfi" target="_blank">
+          <Icons.twitter className="cursor-pointer" />
+        </Link>
+        <Link href="https://t.me/+jWY71PfbMMIwMTBl" target="_blank">
+          <Icons.telegram className="cursor-pointer" />
+        </Link>
+        <Link href="https://docs.endur.fi/" target="_blank">
+          <Icons.doc className="cursor-pointer" />
+        </Link>
       </div>
 
       <Link
-        href="#"
+        href="https://t.me/+jWY71PfbMMIwMTBl"
+        target="_blank"
         className="flex items-center gap-3 border-t border-[#075A5A1A] px-7 py-3 text-[#03624C]"
       >
         <Icons.chat />
