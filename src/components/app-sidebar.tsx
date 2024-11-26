@@ -19,6 +19,7 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { ChartPie } from "lucide-react";
 import Image from "next/image";
 import { DASHBOARD_URL } from "../../constants";
 import { Icons } from "./Icons";
@@ -77,19 +78,11 @@ export function AppSidebar({ className }: { className?: string }) {
                     <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
                   </>
                 )}
-                Staking
+                Liquid Staking
               </SidebarGroup>
             </Link>
 
-            <hr />
-
-            <Link href={DASHBOARD_URL} target="_blank">
-              <SidebarGroup className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-                <Icons.dashboardDark className="size-5 group-hover/dash:hidden" />
-                <Icons.dashboardLight className="hidden size-5 group-hover/dash:flex" />
-                Dashboard
-              </SidebarGroup>
-            </Link>
+            <hr className="border-[#AACBC480]" />
 
             <Link href="/defi">
               <SidebarGroup
@@ -108,7 +101,29 @@ export function AppSidebar({ className }: { className?: string }) {
                     <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
                   </>
                 )}
-                Defi <span className="text-sm font-thin">(coming soon)</span>
+                DeFi <span className="text-sm font-thin">(coming soon)</span>
+              </SidebarGroup>
+            </Link>
+
+            <SidebarGroup
+              className={cn(
+                "group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+              )}
+            >
+              <ChartPie className="size-5 shrink-0" />
+              <p className="flex flex-col gap-0">
+                xSTRK Analytics{" "}
+                <span className="text-sm font-thin">(coming soon)</span>
+              </p>
+            </SidebarGroup>
+
+            <hr className="border-[#AACBC480]" />
+
+            <Link href={DASHBOARD_URL} target="_blank">
+              <SidebarGroup className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                <Icons.dashboardDark className="size-5 shrink-0 group-hover/dash:hidden" />
+                <Icons.dashboardLight className="hidden size-5 shrink-0 group-hover/dash:flex" />
+                Staking Dashboard
               </SidebarGroup>
             </Link>
           </>
@@ -140,28 +155,11 @@ export function AppSidebar({ className }: { className?: string }) {
                 side="right"
                 className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
               >
-                <p>Staking</p>
+                <p> Liquid Staking</p>
               </TooltipContent>
             </Tooltip>
 
-            <hr />
-
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-                  <Link href={DASHBOARD_URL} target="_blank">
-                    <Icons.dashboardDark className="size-5 group-hover:hidden" />
-                    <Icons.dashboardLight className="hidden size-5 group-hover:flex" />
-                  </Link>
-                </SidebarGroup>
-              </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-              >
-                <p>Dashboard</p>
-              </TooltipContent>
-            </Tooltip>
+            <hr className="border-[#AACBC480]" />
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -189,7 +187,44 @@ export function AppSidebar({ className }: { className?: string }) {
                 side="right"
                 className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
               >
-                <p>Defi (coming soon)</p>
+                <p>DeFi (coming soon)</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarGroup
+                  className={cn(
+                    "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  )}
+                >
+                  <ChartPie className="size-5 shrink-0" />
+                </SidebarGroup>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>xSTRK Analytics (coming soon)</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <hr className="border-[#AACBC480]" />
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <SidebarGroup className="group flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                  <Link href={DASHBOARD_URL} target="_blank">
+                    <Icons.dashboardDark className="size-5 group-hover:hidden" />
+                    <Icons.dashboardLight className="hidden size-5 group-hover:flex" />
+                  </Link>
+                </SidebarGroup>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              >
+                <p>Staking Dashboard</p>
               </TooltipContent>
             </Tooltip>
           </>
