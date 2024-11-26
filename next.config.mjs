@@ -13,6 +13,21 @@ const nextConfig = {
           "https://drive.google.com/file/d/1EufZmcW9k5yq5Jivek1MjTCVnft5WRER/view?usp=sharing",
         permanent: true,
       },
+      {
+        source: "/telegram",
+        destination: "https://t.me/+O75VPjXyg18zN2Q1",
+        permanent: true,
+      },
+      {
+        source: "/tg",
+        destination: "https://t.me/+O75VPjXyg18zN2Q1",
+        permanent: true,
+      },
+      {
+        source: "/x",
+        destination: "https://x.com/endurfi",
+        permanent: true,
+      },
     ];
   },
   async headers() {
