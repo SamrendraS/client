@@ -361,7 +361,7 @@ const Stake = () => {
               {formatNumber(totalStaked.value.toEtherToFixedDecimals(2))} STRK
             </span>
             <span className="font-medium">
-              | ${formatNumber(totalStakedUSD.value)}| $
+              | ${formatNumber(totalStakedUSD.value)}
             </span>
           </p>
         </div>
