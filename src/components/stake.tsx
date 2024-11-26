@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -357,9 +357,11 @@ const Stake = () => {
         <div className="flex flex-col items-end text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:gap-2 lg:text-[#8D9C9C]">
           TVL
           <p className="flex items-center gap-2">
-            <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
+            <span>
+              {formatNumber(totalStaked.value.toEtherToFixedDecimals(2))} STRK
+            </span>
             <span className="font-medium">
-              | ${totalStakedUSD.value.toFixed(2)}
+              | ${formatNumber(totalStakedUSD.value)}
             </span>
           </p>
         </div>
@@ -372,7 +374,8 @@ const Stake = () => {
         </div>
 
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked: {currentStaked.value.toEtherToFixedDecimals(2)} STRK
+          Current staked:{" "}
+          {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))} STRK
         </div>
       </div>
 
@@ -479,8 +482,8 @@ const Stake = () => {
           </p>
           <span>
             {form.watch("stakeAmount")
-              ? (Number(form.watch("stakeAmount")) / exchangeRate.rate).toFixed(
-                  2,
+              ? formatNumber(
+                  Number(form.watch("stakeAmount")) / exchangeRate.rate,
                 )
               : 0}{" "}
             xSTRK
