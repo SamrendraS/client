@@ -13,7 +13,7 @@ import {
   STRK_DECIMALS,
 } from "../../../../constants";
 
-export const revalidate = 1800;
+export const revalidate = 120;
 
 export async function GET(_req: Request) {
   const provider = getProvider();
