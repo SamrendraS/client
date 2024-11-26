@@ -68,12 +68,19 @@ export async function GET(_req: Request) {
     const lstContract = getLSTContract(provider as RpcProvider);
     const balance = await lstContract.call("total_assets");
 
+    const tvlInStrk = Number(
+      new MyNumber(balance.toString(), STRK_DECIMALS).toEtherStr(),
+    );
+
+    const data = await fetch("https://app.strkfarm.xyz/api/price/STRK");
+    const { price } = await data.json();
+
+    const tvlInUsd = price * tvlInStrk;
+
     const response = NextResponse.json({
       asset: "STRK",
-      tvl: new MyNumber(
-        balance.toString(),
-        STRK_DECIMALS,
-      ).toEtherToFixedDecimals(2),
+      tvlUsd: tvlInUsd,
+      tvlStrk: tvlInStrk,
       apy,
       apyInPercentage: `${apyInPercentage}%`,
     });
