@@ -58,10 +58,9 @@ const Tabs: React.FC = () => {
     <>
       <div
         className={cn(
-          "mt-12 w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[36.3rem] xl:mt-0",
+          "mt-12 h-[31.5rem] w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[36.3rem] xl:mt-6",
           {
-            "lg:-ml-36": open,
-            "lg:-ml-24": !open,
+            "lg:-ml-32": open,
           },
         )}
       >
@@ -117,21 +116,21 @@ const Tabs: React.FC = () => {
 
           <TabsContent
             value="stake"
-            className="h-[20%] pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
+            className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
             <Stake />
           </TabsContent>
 
           <TabsContent
             value="unstake"
-            className="h-[20%] pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
+            className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
             <Unstake />
           </TabsContent>
 
           <TabsContent
             value="withdraw"
-            className="min-h-[25rem] overflow-y-auto focus-visible:ring-0 focus-visible:ring-offset-0 lg:h-[89.6%]"
+            className="h-full focus-visible:ring-0 focus-visible:ring-offset-0"
           >
             <WithdrawLog />
           </TabsContent>
@@ -141,16 +140,15 @@ const Tabs: React.FC = () => {
       {(tabs === "unstake" || tabs === "stake") && (
         <div
           className={cn(
-            "mt-4 flex max-w-xl items-center rounded-md bg-[#FFC4664D] px-3 py-3 text-xs text-[#D69733] lg:text-sm",
+            "mt-5 flex max-w-xl items-center rounded-md bg-[#FFC4664D] py-3 pl-4 pr-3 text-xs text-[#D69733] lg:text-sm",
             {
-              "lg:-ml-36": open,
-              "lg:-ml-24": !open,
+              "lg:-ml-32": open,
               "bg-[#C0D5CE69] text-[#134c3d9e]": tabs === "stake",
             },
           )}
         >
           <span className="mr-3 flex size-4 shrink-0 items-center justify-center rounded-full text-xl lg:size-6">
-            {tabs === "unstake" ? "⚠️" : "ⓘ"}
+            {tabs === "unstake" ? "⚠️" : <Info />}
           </span>
           {getMessage()}
         </div>
@@ -158,11 +156,9 @@ const Tabs: React.FC = () => {
 
       <p
         className={cn(
-          "mt-8 flex items-center text-xs text-[#707D7D] lg:text-sm",
+          "mt-8 flex items-center text-xs text-[#707D7D] lg:mb-3 lg:mt-auto lg:text-sm",
           {
-            "lg:-ml-36": open,
-            "lg:-ml-24": !open,
-            "mt-4": tabs === "unstake",
+            "lg:-ml-32": open,
           },
         )}
       >

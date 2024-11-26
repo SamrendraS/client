@@ -1,10 +1,21 @@
+"use client";
+
 import React from "react";
 
-import DefiCard from "./defi-card";
+import { cn } from "@/lib/utils";
 
-const Defi = () => {
+import DefiCard from "./defi-card";
+import { useSidebar } from "./ui/sidebar";
+
+const Defi: React.FC = () => {
+  const { open } = useSidebar();
+
   return (
-    <div className="mt-12 w-full max-w-7xl px-4 sm:px-14">
+    <div
+      className={cn("mx-auto mt-12 w-full max-w-7xl px-4 sm:px-14", {
+        "lg:pl-28": !open,
+      })}
+    >
       <h1 className="text-2xl font-semibold tracking-[-1%] text-black">Defi</h1>
       <p className="text-base font-normal tracking-[-1%] text-[#8D9C9C]">
         Use xSTRK to unlock greater rewards with DeFi opportunities!
