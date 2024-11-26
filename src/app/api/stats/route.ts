@@ -79,7 +79,7 @@ export async function GET(_req: Request) {
 
     const response = NextResponse.json({
       asset: "STRK",
-      tvlUsd: tvlInUsd,
+      tvl: tvlInUsd,
       tvlStrk: tvlInStrk,
       apy,
       apyInPercentage: `${apyInPercentage}%`,
