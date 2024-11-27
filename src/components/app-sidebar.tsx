@@ -1,5 +1,11 @@
 "use client";
 
+import { ChartPie } from "lucide-react";
+import { Inter } from "next/font/google";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+
 import {
   Sidebar,
   SidebarContent,
@@ -15,12 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Inter } from "next/font/google";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
-import { ChartPie } from "lucide-react";
-import Image from "next/image";
 import { DASHBOARD_URL } from "../../constants";
 import { Icons } from "./Icons";
 
@@ -29,6 +30,9 @@ const font = Inter({ subsets: ["latin-ext"] });
 export function AppSidebar({ className }: { className?: string }) {
   const { open, isMobile } = useSidebar();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const referrer = searchParams.get("referrer");
 
   if (isMobile) return null;
 
@@ -50,10 +54,10 @@ export function AppSidebar({ className }: { className?: string }) {
       >
         <Icons.logo className={cn(open && "hidden")} />
         {open && (
-          // <span className="text-4xl font-semibold text-[#1b845c]">Endur</span>
           <Image src="/full_logo.svg" width={160} height={60} alt="full_logo" />
         )}
       </SidebarHeader>
+
       <SidebarContent
         className={cn("bg-[#AACBC433] px-4 pt-5", {
           "px-1.5": !open,
@@ -61,7 +65,7 @@ export function AppSidebar({ className }: { className?: string }) {
       >
         {open ? (
           <>
-            <Link href="/">
+            <Link href={referrer ? "#" : "/"}>
               <SidebarGroup
                 className={cn(
                   "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
