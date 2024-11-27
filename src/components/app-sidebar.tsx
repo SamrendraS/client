@@ -65,7 +65,7 @@ export function AppSidebar({ className }: { className?: string }) {
       >
         {open ? (
           <>
-            <Link href={referrer ? "#" : "/"}>
+            <Link href={referrer ? `/?referrer=${referrer}` : "/"}>
               <SidebarGroup
                 className={cn(
                   "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
@@ -88,7 +88,7 @@ export function AppSidebar({ className }: { className?: string }) {
 
             <hr className="border-[#AACBC480]" />
 
-            <Link href="/defi">
+            <Link href={referrer ? `/defi?referrer=${referrer}` : "/defi"}>
               <SidebarGroup
                 className={cn(
                   "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
@@ -135,7 +135,7 @@ export function AppSidebar({ className }: { className?: string }) {
           <>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/">
+                <Link href={referrer ? `/?referrer=${referrer}` : "/"}>
                   <SidebarGroup
                     className={cn(
                       "group/stake flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
@@ -167,7 +167,7 @@ export function AppSidebar({ className }: { className?: string }) {
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link href="/defi">
+                <Link href={referrer ? `/defi?referrer=${referrer}` : "/defi"}>
                   <SidebarGroup
                     className={cn(
                       "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
