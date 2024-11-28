@@ -9,11 +9,11 @@ import {
   useSwitchChain,
 } from "@starknet-react/core";
 import { useAtom, useSetAtom } from "jotai";
-import { X } from "lucide-react";
+import { ChartPie, X } from "lucide-react";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import React, { useMemo } from "react";
 import { constants, num } from "starknet";
 import {
@@ -78,7 +78,7 @@ export function getConnectors(isMobile: boolean) {
     if (isInArgentMobileAppBrowser()) {
       return [mobileConnector];
     } else if (isMobile) {
-      return [mobileConnector, webWalletConnector];
+      return [mobileConnector, braavosConnector, webWalletConnector];
     }
     return [
       argentXConnector,
@@ -97,6 +97,9 @@ const Navbar = ({ className }: { className?: string }) => {
   const { disconnectAsync } = useDisconnect();
 
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const referrer = searchParams.get("referrer");
 
   const [__, setAddress] = useAtom(userAddressAtom);
   const [_, setLastWallet] = useAtom(lastWalletAtom);
@@ -177,14 +180,9 @@ const Navbar = ({ className }: { className?: string }) => {
   }, [connector]);
 
   React.useEffect(() => {
-    // autoConnect();
     setAddress(address);
     setProvider(getProvider());
   }, [address, provider]);
-
-  // React.useEffect(() => {
-  //   autoConnect();
-  // }, [lastWallet]);
 
   return (
     <div
@@ -232,7 +230,7 @@ const Navbar = ({ className }: { className?: string }) => {
 
               <div className="h-full space-y-1 bg-[#AACBC433] px-4 pt-5">
                 <Link
-                  href="/"
+                  href={referrer ? `/?referrer=${referrer}` : "/"}
                   className={cn(
                     "group/stake flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                     {
@@ -248,21 +246,13 @@ const Navbar = ({ className }: { className?: string }) => {
                       <Icons.stakingLight className="hidden size-5 group-hover/stake:flex" />
                     </>
                   )}
-                  Staking
+                  Liquid Staking
                 </Link>
 
-                <Link
-                  href={DASHBOARD_URL}
-                  target="_blank"
-                  className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
-                >
-                  <Icons.dashboardDark className="size-5 group-hover/dash:hidden" />
-                  <Icons.dashboardLight className="hidden size-5 group-hover/dash:flex" />
-                  Dashboard
-                </Link>
+                <hr className="border-[#AACBC480]" />
 
                 <Link
-                  href="/defi"
+                  href={referrer ? `/defi?referrer=${referrer}` : "/defi"}
                   className={cn(
                     "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                     {
@@ -278,7 +268,27 @@ const Navbar = ({ className }: { className?: string }) => {
                       <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
                     </>
                   )}
-                  Defi
+                  DeFi <span className="text-sm font-thin">(coming soon)</span>
+                </Link>
+
+                <div className="group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                  <ChartPie className="size-5 shrink-0" />
+                  <p className="flex flex-col gap-0">
+                    xSTRK Analytics{" "}
+                    <span className="text-sm font-thin">(coming soon)</span>
+                  </p>
+                </div>
+
+                <hr className="border-[#AACBC480]" />
+
+                <Link
+                  href={DASHBOARD_URL}
+                  target="_blank"
+                  className="group/dash flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white"
+                >
+                  <Icons.dashboardDark className="size-5 shrink-0 group-hover/dash:hidden" />
+                  <Icons.dashboardLight className="hidden size-5 shrink-0 group-hover/dash:flex" />
+                  Staking Dashboard
                 </Link>
               </div>
             </div>

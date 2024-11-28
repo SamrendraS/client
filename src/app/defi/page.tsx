@@ -12,7 +12,7 @@ const DefiPage: NextPage = () => {
       <AppSidebar />
 
       <div className="flex flex-1 flex-col justify-between">
-        <div className="flex w-full flex-col items-center overflow-hidden py-3">
+        <div className="flex w-full flex-col items-center overflow-hidden pb-3">
           <Navbar className="px-7" />
 
           <Defi />

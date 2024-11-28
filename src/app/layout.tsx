@@ -18,6 +18,44 @@ export const metadata: Metadata = {
   title: "Endur | Liquid Staked STRK",
   description:
     "Stake your STRK to support Starknet's decentralization with xSTRK—a liquid staking token (LST) that empowers you to actively engage in DeFi, retain flexibility, and use your xSTRK across various protocols just like STRK. From the buidlers of Karnot and STRKFarm",
+  keywords: [
+    "endur",
+    "starknet",
+    "strk",
+    "xstrk",
+    "liquid staking",
+    "lst",
+    "defi",
+    "karnot",
+    "strkfarm",
+    "yield",
+    "farming",
+    "staking",
+    "LSTs",
+    "competitor",
+    "avnu",
+    "fibrous",
+    "starkware",
+    "vesu",
+    "ekubo",
+    "stark",
+    "brother",
+    "memecoin",
+    "chillguy",
+  ],
+  openGraph: {
+    title: "Endur | Liquid Staked STRK",
+    description:
+      "Stake your STRK to support Starknet's decentralization with xSTRK—a liquid staking token (LST) that empowers you to actively engage in DeFi, retain flexibility, and use your xSTRK across various protocols just like STRK. From the buidlers of Karnot and STRKFarm",
+    images: ["https://endur.fi/og.png"],
+  },
+  twitter: {
+    title: "Endur | Liquid Staked STRK",
+    description:
+      "Stake your STRK to support Starknet's decentralization with xSTRK—a liquid staking token (LST) that empowers you to actively engage in DeFi, retain flexibility, and use your xSTRK across various protocols just like STRK. From the buidlers of Karnot and STRKFarm",
+    card: "player",
+    images: ["https://endur.fi/og.png"],
+  },
 };
 
 export default function RootLayout({

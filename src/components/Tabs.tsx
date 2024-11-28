@@ -162,7 +162,7 @@ const Tabs: React.FC = () => {
           },
         )}
       >
-        Made with 💙 by{" "}
+        Made with 💚 by{" "}
         <Link
           href="https://strkfarm.xyz"
           target="_blank"
