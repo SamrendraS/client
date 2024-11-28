@@ -1,9 +1,11 @@
-import MintingAbi from "@/abi/minting.abi.json";
-import StakingAbi from "@/abi/staking.abi.json";
-import MyNumber from "@/lib/MyNumber";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { Contract } from "starknet";
+
+import MintingAbi from "@/abi/minting.abi.json";
+import StakingAbi from "@/abi/staking.abi.json";
+import MyNumber from "@/lib/MyNumber";
+
 import {
   SN_MINTING_CURVE_ADRESS,
   SN_STAKING_ADRESS,
@@ -89,8 +91,11 @@ export const snAPYAtom = atom((get) => {
       Number(yearlyMintRes.value.toEtherToFixedDecimals(4)) /
       Number(totalStakedRes.value.toEtherToFixedDecimals(4));
   }
+
+  const newValue = (1 + value / 365) ** 365 - 1;
+
   return {
-    value,
+    value: newValue,
     isLoading: yearlyMintRes.isLoading || totalStakedRes.isLoading,
     error: yearlyMintRes.error || totalStakedRes.error,
   };
