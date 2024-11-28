@@ -265,8 +265,8 @@ const Unstake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Estimated current annualised yield on staking in terms of
-                  STRK.
+                  Estimated current compounded annualised yield on staking in
+                  terms of STRK.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
