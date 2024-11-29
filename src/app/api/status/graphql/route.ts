@@ -5,7 +5,7 @@ import { Contract } from "starknet";
 import WqAbi from "@/abi/wq.abi.json";
 import apolloClient from "@/lib/apollo-client";
 
-import { getProvider } from "../../../../../constants";
+import { getProvider, WITHDRAWAL_QUEUE_ADDRESS } from "@/constants";
 
 export const revalidate = 0;
 
@@ -16,11 +16,7 @@ export async function GET(_req: Request) {
     return NextResponse.json("Provider not found");
   }
 
-  const wqContract = new Contract(
-    WqAbi,
-    "0x518a66e579f9eb1603f5ffaeff95d3f013788e9c37ee94995555026b9648b6",
-    provider,
-  );
+  const wqContract = new Contract(WqAbi, WITHDRAWAL_QUEUE_ADDRESS, provider);
 
   let contractReqId;
   let apiReqId;
