@@ -56,7 +56,7 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "../../constants";
+import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";

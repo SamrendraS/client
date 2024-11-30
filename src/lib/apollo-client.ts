@@ -1,5 +1,5 @@
+import { isMainnet } from "@/constants";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { isMainnet } from "../../constants";
 
 const apolloClient = new ApolloClient({
   uri: isMainnet()

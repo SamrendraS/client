@@ -1,9 +1,9 @@
 import erc4626Abi from "@/abi/erc4626.abi.json";
+import { LST_ADDRRESS, STRK_DECIMALS } from "@/constants";
 import MyNumber from "@/lib/MyNumber";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { Contract, RpcProvider, uint256 } from "starknet";
-import { LST_ADDRRESS, STRK_DECIMALS } from "../../constants";
 import {
   currentBlockAtom,
   providerAtom,

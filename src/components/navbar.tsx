@@ -36,7 +36,7 @@ import {
   userAddressAtom,
 } from "@/store/common.store";
 
-import { DASHBOARD_URL, getProvider, NETWORK } from "../../constants";
+import { DASHBOARD_URL, getProvider, NETWORK } from "@/constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
