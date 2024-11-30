@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, formatNumber, formatNumberWithCommas } from "@/lib/utils";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -482,7 +482,7 @@ const Stake = () => {
           </p>
           <span>
             {form.watch("stakeAmount")
-              ? formatNumber(
+              ? formatNumberWithCommas(
                   Number(form.watch("stakeAmount")) / exchangeRate.rate,
                 )
               : 0}{" "}
