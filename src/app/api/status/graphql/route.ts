@@ -38,13 +38,7 @@ export async function GET(_req: Request) {
       query: gql`
         query Withdraw_queues($where: Withdraw_queueWhereInput) {
           withdraw_queues(where: $where) {
-            amount_strk
             request_id
-            receiver
-            is_claimed
-            claim_time
-            timestamp
-            tx_hash
           }
         }
       `,
