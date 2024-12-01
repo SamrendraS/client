@@ -10,7 +10,7 @@ import {
   SN_MINTING_CURVE_ADRESS,
   SN_STAKING_ADRESS,
   STRK_DECIMALS,
-} from "../../constants";
+} from "@/constants";
 import { currentBlockAtom, providerAtom } from "./common.store";
 
 const snTotalStakedQueryAtom = atomWithQuery((get) => {

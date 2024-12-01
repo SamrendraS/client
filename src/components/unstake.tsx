@@ -44,8 +44,8 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { formatNumber } from "@/lib/utils";
-import { getProvider, NETWORK, REWARD_FEES } from "../../constants";
+import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
+import { formatNumber, formatNumberWithCommas } from "@/lib/utils";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -265,8 +265,8 @@ const Unstake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Estimated current annualised yield on staking in terms of
-                  STRK.
+                  Estimated current compounded annualised yield on staking in
+                  terms of STRK.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -385,7 +385,9 @@ const Unstake = () => {
           </p>
           <span>
             {form.watch("unstakeAmount")
-              ? formatNumber(Number(form.watch("unstakeAmount")) / exRate.rate)
+              ? formatNumberWithCommas(
+                  Number(form.watch("unstakeAmount")) / exRate.rate,
+                )
               : 0}{" "}
             xSTRK
           </span>

@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-import { DASHBOARD_URL } from "../../constants";
+import { DASHBOARD_URL } from "@/constants";
 import { Icons } from "./Icons";
 
 const font = Inter({ subsets: ["latin-ext"] });

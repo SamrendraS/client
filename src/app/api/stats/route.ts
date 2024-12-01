@@ -11,7 +11,7 @@ import {
   SN_MINTING_CURVE_ADRESS,
   SN_STAKING_ADRESS,
   STRK_DECIMALS,
-} from "../../../../constants";
+} from "@/constants";
 
 export const revalidate = 120;
 

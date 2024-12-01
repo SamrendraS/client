@@ -7,8 +7,8 @@ import apolloClient from "@/lib/apollo-client";
 import MyNumber from "@/lib/MyNumber";
 import { capitalize, standariseAddress } from "@/lib/utils";
 
+import { getProvider } from "@/constants";
 import { createAtomWithStorage, userAddressAtom } from "./common.store";
-import { getProvider } from "../../constants";
 
 export interface StrategyTxProps {
   strategyId: string;

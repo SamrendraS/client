@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, formatNumber, formatNumberWithCommas } from "@/lib/utils";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -56,7 +56,7 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "../../constants";
+import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -345,8 +345,8 @@ const Stake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Estimated current annualised yield on staking in terms of
-                  STRK.
+                  Estimated current compounded annualised yield on staking in
+                  terms of STRK.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -482,7 +482,7 @@ const Stake = () => {
           </p>
           <span>
             {form.watch("stakeAmount")
-              ? formatNumber(
+              ? formatNumberWithCommas(
                   Number(form.watch("stakeAmount")) / exchangeRate.rate,
                 )
               : 0}{" "}
