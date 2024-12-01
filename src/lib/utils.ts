@@ -13,15 +13,30 @@ export function shortAddress(_address: string, startChars = 4, endChars = 4) {
   return truncate(x, startChars, endChars);
 }
 
-export function formatNumber(num: number | string): string {
+export function formatNumber(num: number | string, decimals?: number): string {
   const numberValue = typeof num === "string" ? Number(num) : num;
 
   if (numberValue >= 1_000_000) {
-    return `${(numberValue / 1_000_000).toFixed(2)}m`;
+    return `${(numberValue / 1_000_000).toFixed(decimals ?? 2)}m`;
   } else if (numberValue >= 1_000) {
-    return `${(numberValue / 1_000).toFixed(2)}k`;
+    return `${(numberValue / 1_000).toFixed(decimals ?? 2)}k`;
   }
-  return numberValue.toLocaleString("en-US");
+  return `${numberValue.toFixed(decimals ?? 2)}`;
+}
+
+export function formatNumberWithCommas(
+  value: number | string,
+  decimals?: number,
+): string {
+  const numberValue = typeof value === "string" ? Number(value) : value;
+
+  if (isNaN(numberValue)) {
+    throw new Error("Input must be a valid number");
+  }
+
+  return numberValue
+    .toFixed(decimals ?? 2)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export function truncate(str: string, startChars: number, endChars: number) {

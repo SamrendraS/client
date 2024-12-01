@@ -10,7 +10,7 @@ import {
 import React from "react";
 import { constants, RpcProviderOptions } from "starknet";
 
-import { NETWORK } from "../../constants";
+import { NETWORK } from "@/constants";
 import { getConnectors } from "./navbar";
 
 interface ProvidersProps {

@@ -16,7 +16,7 @@ import MyNumber from "@/lib/MyNumber";
 import { cn, convertFutureTimestamp } from "@/lib/utils";
 import { withdrawLogsAtom } from "@/store/transactions.atom";
 
-import { getExplorerEndpoint } from "../../constants";
+import { getExplorerEndpoint } from "@/constants";
 import { Icons } from "./Icons";
 
 const WithdrawLog: React.FC = () => {
