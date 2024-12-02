@@ -20,13 +20,13 @@ import { toast } from "@/hooks/use-toast";
 import { cn, formatNumberWithCommas } from "@/lib/utils";
 import { providerAtom } from "@/store/common.store";
 import {
+  exchangeRateAtom,
   getLSTContract,
   getNstSTRKContract,
   nstStrkWithdrawalFeeAtom,
   userNstSTRKBalanceAtom,
 } from "@/store/lst.store";
 
-import MyNumber from "@/lib/MyNumber";
 import React from "react";
 import { Icons } from "./Icons";
 
@@ -34,22 +34,22 @@ const font = Figtree({ subsets: ["latin-ext"] });
 const fontInter = Inter({ subsets: ["latin-ext"] });
 
 const MigrateNostra = () => {
-  const [youWillReceive, setYouWillReceive] = React.useState(0);
-
   const { address } = useAccount();
-  const { sendAsync, data, error } = useSendTransaction({});
+  const { sendAsync } = useSendTransaction({});
 
   const rpcProvider = useAtomValue(providerAtom);
   const nstStrkBalance = useAtomValue(userNstSTRKBalanceAtom);
   const nstStrkWithdrawal = useAtomValue(nstStrkWithdrawalFeeAtom);
+  const exchangeRate = useAtomValue(exchangeRateAtom);
 
-  const currentStakedOnNostra =
-    parseFloat(nstStrkBalance.value.toEtherStr()) - 0.01;
-  const nstStrkWithdrawalFee = parseFloat(nstStrkWithdrawal.value.toEtherStr());
-  const youWillStake = currentStakedOnNostra * (1 - nstStrkWithdrawalFee);
-
-  console.log(currentStakedOnNostra, "current staked");
-  console.log(nstStrkWithdrawalFee, "withdrawal fee");
+  const nstStrkWithdrawalFee = parseFloat(
+    nstStrkWithdrawal.value.toEtherToFixedDecimals(4),
+  );
+  const youWillStakeFull = nstStrkBalance.value.operate(
+    "multipliedBy",
+    1 - nstStrkWithdrawalFee,
+  );
+  const youWillStake = youWillStakeFull.toEtherToFixedDecimals(4);
 
   const handleMigrateToEndur = async () => {
     if (!address) {
@@ -70,39 +70,23 @@ const MigrateNostra = () => {
     const strkContract = new Contract(erc4626Abi, STRK_TOKEN);
 
     const call1 = nstContract.populate("redeem", [
-      MyNumber.fromEther(currentStakedOnNostra.toString(), 18),
+      uint256.bnToUint256(nstStrkBalance.value.toString()),
       address,
       address,
     ]);
 
     const call2 = strkContract.populate("approve", [
       lstContract.address,
-      MyNumber.fromEther(youWillStake.toString(), 18),
+      uint256.bnToUint256(youWillStakeFull.toString()),
     ]);
 
     const call3 = lstContract.populate("deposit", [
-      MyNumber.fromEther(youWillStake.toString(), 18),
+      uint256.bnToUint256(youWillStakeFull.toString()),
       address,
     ]);
 
     await sendAsync([call1, call2, call3]);
   };
-
-  React.useEffect(() => {
-    (async () => {
-      if (!rpcProvider) return;
-
-      const lstContract = getLSTContract(rpcProvider);
-
-      const balance = await lstContract.call("convert_to_shares", [
-        uint256.bnToUint256((youWillStake.toString(), 18)),
-      ]);
-
-      console.log(Number(balance), "huehue");
-
-      setYouWillReceive(Number(balance));
-    })();
-  }, [rpcProvider, youWillStake]);
 
   return (
     <Dialog>
@@ -127,7 +111,12 @@ const MigrateNostra = () => {
 
         <div className="mt-2 flex items-center justify-between rounded-md bg-[#E8F3F0] px-3 py-3.5 text-[#17876D]">
           <span>Current staked STRK on Nostra</span>
-          <span>{formatNumberWithCommas(currentStakedOnNostra)} STRK</span>
+          <span>
+            {formatNumberWithCommas(
+              nstStrkBalance.value.toEtherToFixedDecimals(4),
+            )}{" "}
+            STRK
+          </span>
         </div>
 
         <div className="mt-3">
@@ -135,12 +124,19 @@ const MigrateNostra = () => {
           <div className="mt-1 flex flex-col rounded-md bg-[#E8F3F0] px-3 py-3.5 text-[#17876D]">
             <div className="flex items-center justify-between">
               <span>You will stake</span>
-              <span>{formatNumberWithCommas(youWillStake)} STRK</span>
+              <span>{formatNumberWithCommas(youWillStake, 4)} STRK</span>
             </div>
 
             <div className="mt-2 flex items-center justify-between">
               <span>You will receive</span>
-              <span>{youWillReceive} xSTRK</span>
+              <span>
+                {exchangeRate.rate !== 0
+                  ? formatNumberWithCommas(
+                      (Number(youWillStake) / exchangeRate.rate).toFixed(4),
+                    )
+                  : formatNumberWithCommas(youWillStake, 4)}{" "}
+                xSTRK
+              </span>
             </div>
           </div>
         </div>
