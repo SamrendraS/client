@@ -38,7 +38,6 @@ import {
 } from "@/store/common.store";
 
 import { Icons } from "./Icons";
-import MigrateNostra from "./migrate-nostra";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
 
@@ -296,7 +295,7 @@ const Navbar = ({ className }: { className?: string }) => {
       )}
 
       <div className="flex items-center gap-4">
-        <MigrateNostra />
+        {/* <MigrateNostra /> */}
 
         <button
           className={cn(
