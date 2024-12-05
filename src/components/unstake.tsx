@@ -44,8 +44,10 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
 import { formatNumber, formatNumberWithCommas } from "@/lib/utils";
+
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -287,11 +289,12 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-20">
+      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-7">
         <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
           <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK
         </div>
+
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
           Current staked:{" "}
           {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))} STRK
@@ -317,7 +320,7 @@ const Unstake = () => {
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="absolute -bottom-5 left-1 text-xs" />
+                    <FormMessage className="absolute -bottom-3 left-1 text-xs" />
                   </FormItem>
                 )}
               />
@@ -362,136 +365,197 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
-
-      <div className="space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
-          <p className="flex items-center gap-1">
-            Burnt xSTRK
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                >
-                  Burnt <strong>xSTRK</strong> is the amount of xSTRK that will
-                  be redeemed to unstake the requested STRK
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </p>
-          <span>
-            {form.watch("unstakeAmount")
-              ? formatNumberWithCommas(
-                  Number(form.watch("unstakeAmount")) / exRate.rate,
-                )
-              : 0}{" "}
-            xSTRK
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
-          <p className="flex items-center gap-1">
-            Exchange rate
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="max-w-64 rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                >
-                  <strong>xSTRK</strong> is a yield bearing token whose value
-                  will appreciate against STRK as you get more STRK rewards. The
-                  increase in exchange rate of xSTRK will determine your share
-                  of rewards.{" "}
-                  <Link
-                    target="_blank"
-                    href="https://docs.endur.fi/docs"
-                    className="text-blue-600 underline"
-                  >
-                    Learn more
-                  </Link>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </p>
-          <span>
-            {exRate.rate === 0
-              ? "-"
-              : `1 xSTRK = ${exRate.rate.toFixed(4)} STRK`}
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
-          <p className="flex items-center gap-1">
-            Reward fees
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                </TooltipTrigger>
-                <TooltipContent
-                  side="right"
-                  className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                >
-                  This fee applies exclusively to your staking rewards and does
-                  NOT affect your staked amount. You might qualify for a future
-                  fee rebate.{" "}
-                  <Link
-                    target="_blank"
-                    href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
-                    className="text-blue-600 underline"
-                  >
-                    Learn more
-                  </Link>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </p>
-          <p>
-            <span className="line-through">{REWARD_FEES}%</span>{" "}
-            <Link
-              target="_blank"
-              href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
-              className="underline"
-            >
-              Fee Rebate
-            </Link>
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-6 px-5">
-        {!address && (
-          <Button
-            onClick={() => connectWallet()}
-            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+      <Tabs defaultValue="endur" className="w-full max-w-none pt-1">
+        <TabsList className="flex h-full w-full items-center justify-between gap-3 bg-transparent px-6">
+          <TabsTrigger
+            value="endur"
+            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D]"
           >
-            Connect Wallet
-          </Button>
-        )}
+            <div className="flex w-full items-center justify-between font-semibold">
+              <p>Use Endur</p>
 
-        {address && (
-          <Button
-            type="submit"
-            onClick={form.handleSubmit(onSubmit)}
-            disabled={
-              Number(form.getValues("unstakeAmount")) <= 0 ||
-              isNaN(Number(form.getValues("unstakeAmount")))
-                ? true
-                : false
-            }
-            className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+              <Icons.endurLogo className="size-6" />
+            </div>
+
+            <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
+              <p>Rate:</p>
+              <p>1:1</p>
+            </div>
+
+            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
+              <p>Waiting time:</p>
+              <p>~ 2 days</p>
+            </div>
+          </TabsTrigger>
+
+          <TabsTrigger
+            value="dex"
+            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D]"
           >
-            Unstake
-          </Button>
-        )}
-      </div>
+            <div className="flex w-full items-center justify-between font-semibold">
+              <p>Use DEX</p>
+              <div className="flex items-center">
+                <Icons.avnuLogo className="size-6 rounded-full border border-[#8D9C9C20]" />
+                <Icons.ekuboLogo className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white" />
+                <Icons.nostraLogo className="-ml-2 size-6 rounded-full" />
+              </div>
+            </div>
+
+            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939394]">
+              <p>Rate:</p>
+              <p>1:0.9</p>
+            </div>
+
+            <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
+              <p>Waiting time:</p>
+              <p>~ 1-5 mins</p>
+            </div>
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent
+          value="endur"
+          className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
+        >
+          <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
+
+          <div className="space-y-3 px-7">
+            <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+              <p className="flex items-center gap-1">
+                Burnt xSTRK
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="right"
+                      className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                    >
+                      Burnt <strong>xSTRK</strong> is the amount of xSTRK that
+                      will be redeemed to unstake the requested STRK
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </p>
+              <span>
+                {form.watch("unstakeAmount")
+                  ? formatNumberWithCommas(
+                      Number(form.watch("unstakeAmount")) / exRate.rate,
+                    )
+                  : 0}{" "}
+                xSTRK
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+              <p className="flex items-center gap-1">
+                Exchange rate
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="right"
+                      className="max-w-64 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                    >
+                      <strong>xSTRK</strong> is a yield bearing token whose
+                      value will appreciate against STRK as you get more STRK
+                      rewards. The increase in exchange rate of xSTRK will
+                      determine your share of rewards.{" "}
+                      <Link
+                        target="_blank"
+                        href="https://docs.endur.fi/docs"
+                        className="text-blue-600 underline"
+                      >
+                        Learn more
+                      </Link>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </p>
+              <span>
+                {exRate.rate === 0
+                  ? "-"
+                  : `1 xSTRK = ${exRate.rate.toFixed(4)} STRK`}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+              <p className="flex items-center gap-1">
+                Reward fees
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="right"
+                      className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                    >
+                      This fee applies exclusively to your staking rewards and
+                      does NOT affect your staked amount. You might qualify for
+                      a future fee rebate.{" "}
+                      <Link
+                        target="_blank"
+                        href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+                        className="text-blue-600 underline"
+                      >
+                        Learn more
+                      </Link>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </p>
+              <p>
+                <span className="line-through">{REWARD_FEES}%</span>{" "}
+                <Link
+                  target="_blank"
+                  href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+                  className="underline"
+                >
+                  Fee Rebate
+                </Link>
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 px-5">
+            {!address && (
+              <Button
+                onClick={() => connectWallet()}
+                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+              >
+                Connect Wallet
+              </Button>
+            )}
+
+            {address && (
+              <Button
+                type="submit"
+                onClick={form.handleSubmit(onSubmit)}
+                disabled={
+                  Number(form.getValues("unstakeAmount")) <= 0 ||
+                  isNaN(Number(form.getValues("unstakeAmount")))
+                    ? true
+                    : false
+                }
+                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+              >
+                Unstake
+              </Button>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent
+          value="dex"
+          className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
+        >
+          dexes
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
