@@ -7,17 +7,16 @@ import MyNumber from "@/lib/MyNumber";
 import { getLSTContract } from "@/store/lst.store";
 
 import {
+  getProvider,
   SN_MINTING_CURVE_ADRESS,
   SN_STAKING_ADRESS,
   STRK_DECIMALS,
-} from "../../../../constants";
+} from "@/constants";
 
-export const revalidate = 1800;
+export const revalidate = 120;
 
 export async function GET(_req: Request) {
-  const provider = new RpcProvider({
-    nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-  });
+  const provider = getProvider();
 
   if (!provider) {
     return NextResponse.json("Provider not found");
@@ -63,19 +62,28 @@ export async function GET(_req: Request) {
       Number(totalStaked.toEtherToFixedDecimals(4));
   }
 
-  const apyInPercentage = (apy * 100).toFixed(2);
+  const newApy = (1 + apy / 365) ** 365 - 1;
+
+  const apyInPercentage = (newApy * 100).toFixed(2);
 
   try {
     const lstContract = getLSTContract(provider as RpcProvider);
     const balance = await lstContract.call("total_assets");
 
+    const tvlInStrk = Number(
+      new MyNumber(balance.toString(), STRK_DECIMALS).toEtherStr(),
+    );
+
+    const data = await fetch("https://app.strkfarm.xyz/api/price/STRK");
+    const { price } = await data.json();
+
+    const tvlInUsd = price * tvlInStrk;
+
     const response = NextResponse.json({
       asset: "STRK",
-      tvl: new MyNumber(
-        balance.toString(),
-        STRK_DECIMALS,
-      ).toEtherToFixedDecimals(2),
-      apy,
+      tvl: tvlInUsd,
+      tvlStrk: tvlInStrk,
+      apy: newApy,
       apyInPercentage: `${apyInPercentage}%`,
     });
 
