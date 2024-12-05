@@ -1,9 +1,10 @@
 import erc4626Abi from "@/abi/erc4626.abi.json";
+import nostraSTRKAbi from "@/abi/nostra.strk.abi.json";
+import { LST_ADDRRESS, NST_STRK_ADDRESS, STRK_DECIMALS } from "@/constants";
 import MyNumber from "@/lib/MyNumber";
 import { atom } from "jotai";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { Contract, RpcProvider, uint256 } from "starknet";
-import { LST_ADDRRESS, STRK_DECIMALS } from "../../constants";
 import {
   currentBlockAtom,
   providerAtom,
@@ -13,6 +14,10 @@ import {
 
 export function getLSTContract(provider: RpcProvider) {
   return new Contract(erc4626Abi, LST_ADDRRESS, provider);
+}
+
+export function getNstSTRKContract(provider: RpcProvider) {
+  return new Contract(nostraSTRKAbi, NST_STRK_ADDRESS, provider);
 }
 
 const userXSTRKBalanceQueryAtom = atomWithQuery((get) => {
@@ -48,6 +53,64 @@ export const userXSTRKBalanceAtom = atom((get) => {
   };
 });
 
+export const userNstSTRKBalanceQueryAtom = atomWithQuery((get) => {
+  return {
+    queryKey: [
+      "userNstSTRKBalance",
+      get(currentBlockAtom),
+      get(userAddressAtom),
+    ],
+    queryFn: async ({ _queryKey }: any): Promise<MyNumber> => {
+      const provider = get(providerAtom);
+      const userAddress = get(userAddressAtom);
+
+      if (!provider || !userAddress) {
+        return MyNumber.fromZero();
+      }
+
+      try {
+        const nstContract = getNstSTRKContract(provider);
+        const balance = await nstContract.call("balanceOf", [userAddress]);
+        return new MyNumber(balance.toString(), STRK_DECIMALS);
+      } catch (error) {
+        console.error("userNstSTRKBalanceQueryAtom [2]", error);
+        return MyNumber.fromZero();
+      }
+    },
+  };
+});
+
+export const nstStrkWithdrawalFeeQueryAtom = atomWithQuery((get) => {
+  return {
+    queryKey: [
+      "userNstWithdrawalFee",
+      get(currentBlockAtom),
+      get(userAddressAtom),
+    ],
+    queryFn: async ({ _queryKey }: any): Promise<MyNumber> => {
+      console.log("nstStrkWithdrawalFeeQueryAtom [1]");
+      const provider = get(providerAtom);
+      const userAddress = get(userAddressAtom);
+
+      if (!provider || !userAddress) {
+        console.log("nstStrkWithdrawalFeeQueryAtom [1.1]");
+        return MyNumber.fromZero();
+      }
+
+      try {
+        console.log("nstStrkWithdrawalFeeQueryAtom [1.2]");
+        const nstContract = getNstSTRKContract(provider);
+        const balance = await nstContract.call("withdrawal_fee");
+        console.log("nstStrkWithdrawalFeeQueryAtom [2]", balance.toString());
+        return new MyNumber(balance.toString(), STRK_DECIMALS);
+      } catch (error) {
+        console.error("nstStrkWithdrawalFeeQueryAtom [3]", error);
+        return MyNumber.fromZero();
+      }
+    },
+  };
+});
+
 export const userSTRKBalanceQueryAtom = atomWithQuery((get) => {
   return {
     queryKey: [
@@ -76,6 +139,24 @@ export const userSTRKBalanceQueryAtom = atomWithQuery((get) => {
         return MyNumber.fromZero();
       }
     },
+  };
+});
+
+export const userNstSTRKBalanceAtom = atom((get) => {
+  const { data, error } = get(userNstSTRKBalanceQueryAtom);
+  return {
+    value: error || !data ? MyNumber.fromZero() : data,
+    error,
+    isLoading: !data && !error,
+  };
+});
+
+export const nstStrkWithdrawalFeeAtom = atom((get) => {
+  const { data, error } = get(nstStrkWithdrawalFeeQueryAtom);
+  return {
+    value: error || !data ? MyNumber.fromZero() : data,
+    error,
+    isLoading: !data && !error,
   };
 });
 

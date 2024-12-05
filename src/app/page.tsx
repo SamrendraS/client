@@ -9,7 +9,7 @@ export default function Home() {
       <AppSidebar />
 
       <div className="flex flex-1 flex-col justify-between">
-        <div className="flex w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
+        <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
           <Navbar />
           <Tabs />
         </div>

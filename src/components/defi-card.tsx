@@ -44,7 +44,7 @@ const DefiCard: React.FC<DefiCardProps> = ({ dapp, tokens, description }) => {
   };
 
   return (
-    <div className="h-[220px] w-full min-w-[330px] rounded-xl bg-white px-4 py-3">
+    <div className="h-[230px] w-full min-w-[330px] rounded-xl bg-white px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm">
           <div className="flex items-center">

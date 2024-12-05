@@ -13,6 +13,41 @@ export function shortAddress(_address: string, startChars = 4, endChars = 4) {
   return truncate(x, startChars, endChars);
 }
 
+export function formatNumber(num: number | string, decimals?: number): string {
+  const numberValue = typeof num === "string" ? Number(num) : num;
+
+  if (numberValue >= 1_000_000) {
+    return `${(numberValue / 1_000_000).toFixed(decimals ?? 2)}m`;
+  } else if (numberValue >= 1_000) {
+    return `${(numberValue / 1_000).toFixed(decimals ?? 2)}k`;
+  }
+  return `${numberValue.toFixed(decimals ?? 2)}`;
+}
+
+export function formatNumberWithCommas(
+  value: number | string,
+  decimals?: number,
+): string {
+  const numberValue = typeof value === "string" ? Number(value) : value;
+
+  if (isNaN(numberValue)) {
+    return "0";
+  }
+
+  const [integerPart, decimalPart] = numberValue
+    .toFixed(decimals ?? 2)
+    .split(".");
+
+  const formattedIntegerPart = integerPart.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ",",
+  );
+
+  return decimalPart !== undefined
+    ? `${formattedIntegerPart}.${decimalPart}`
+    : formattedIntegerPart;
+}
+
 export function truncate(str: string, startChars: number, endChars: number) {
   if (str.length <= startChars + endChars) {
     return str;

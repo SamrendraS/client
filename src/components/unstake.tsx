@@ -11,7 +11,7 @@ import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Contract, RpcProvider } from "starknet";
+import { Contract } from "starknet";
 import {
   connect,
   ConnectOptionsWithConnectors,
@@ -44,7 +44,8 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { NETWORK, REWARD_FEES } from "../../constants";
+import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
+import { formatNumber, formatNumberWithCommas } from "@/lib/utils";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -84,9 +85,7 @@ const Unstake = () => {
     mode: "onChange",
   });
 
-  const provider = new RpcProvider({
-    nodeUrl: process.env.RPC_URL,
-  });
+  const provider = getProvider();
 
   const contract = new Contract(
     erc4626Abi,
@@ -266,8 +265,8 @@ const Unstake = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Estimated current annualised yield on staking in terms of
-                  STRK.
+                  Estimated current compounded annualised yield on staking in
+                  terms of STRK.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -278,9 +277,11 @@ const Unstake = () => {
         <div className="flex flex-col items-end text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:gap-2 lg:text-[#8D9C9C]">
           TVL
           <p className="flex items-center gap-2">
-            <span>{totalStaked.value.toEtherToFixedDecimals(2)} STRK</span>
+            <span>
+              {formatNumber(totalStaked.value.toEtherToFixedDecimals(2))} STRK
+            </span>
             <span className="font-medium">
-              | ${totalStakedUSD.value.toFixed(2)}
+              | ${formatNumber(totalStakedUSD.value)}
             </span>
           </p>
         </div>
@@ -292,11 +293,12 @@ const Unstake = () => {
           STRK
         </div>
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
-          Current staked: {currentStaked.value.toEtherToFixedDecimals(2)} STRK
+          Current staked:{" "}
+          {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))} STRK
         </div>
       </div>
 
-      <div className="flex w-full items-start gap-2 px-7 pb-3 pt-5">
+      <div className="flex h-[88px] w-full items-center gap-2 px-7 pb-3 pt-5 md:h-[84px] lg:h-fit">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>
@@ -383,7 +385,9 @@ const Unstake = () => {
           </p>
           <span>
             {form.watch("unstakeAmount")
-              ? (Number(form.watch("unstakeAmount")) / exRate.rate).toFixed(2)
+              ? formatNumberWithCommas(
+                  Number(form.watch("unstakeAmount")) / exRate.rate,
+                )
               : 0}{" "}
             xSTRK
           </span>
