@@ -14,7 +14,7 @@ import { Figtree } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import React, { useMemo } from "react";
+import React from "react";
 import { constants, num } from "starknet";
 import {
   connect,
@@ -28,6 +28,7 @@ import {
 } from "starknetkit/argentMobile";
 import { WebWalletConnector } from "starknetkit/webwallet";
 
+import { DASHBOARD_URL, getProvider, NETWORK } from "@/constants";
 import { toast } from "@/hooks/use-toast";
 import { cn, shortAddress } from "@/lib/utils";
 import {
@@ -36,7 +37,6 @@ import {
   userAddressAtom,
 } from "@/store/common.store";
 
-import { DASHBOARD_URL, getProvider, NETWORK } from "@/constants";
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
@@ -98,17 +98,15 @@ const Navbar = ({ className }: { className?: string }) => {
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { isMobile } = useSidebar();
 
   const referrer = searchParams.get("referrer");
 
   const [__, setAddress] = useAtom(userAddressAtom);
   const [_, setLastWallet] = useAtom(lastWalletAtom);
-
   const setProvider = useSetAtom(providerAtom);
 
-  const { isMobile } = useSidebar();
-
-  const connectorConfig: ConnectOptionsWithConnectors = useMemo(() => {
+  const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -123,8 +121,8 @@ const Navbar = ({ className }: { className?: string }) => {
     };
   }, [isMobile]);
 
-  const requiredChainId = useMemo(() => {
-    return NETWORK == constants.NetworkName.SN_MAIN
+  const requiredChainId = React.useMemo(() => {
+    return NETWORK === constants.NetworkName.SN_MAIN
       ? constants.StarknetChainId.SN_MAIN
       : constants.StarknetChainId.SN_SEPOLIA;
   }, []);
@@ -297,6 +295,8 @@ const Navbar = ({ className }: { className?: string }) => {
       )}
 
       <div className="flex items-center gap-4">
+        {/* <MigrateNostra /> */}
+
         <button
           className={cn(
             "flex h-10 items-center justify-center gap-2 rounded-lg border border-[#ECECED80] bg-[#AACBC433] text-sm font-bold text-[#03624C] focus-visible:outline-[#03624C]",
