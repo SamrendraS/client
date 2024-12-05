@@ -62,7 +62,9 @@ export async function GET(_req: Request) {
       Number(totalStaked.toEtherToFixedDecimals(4));
   }
 
-  const apyInPercentage = (apy * 100).toFixed(2);
+  const newApy = (1 + apy / 365) ** 365 - 1;
+
+  const apyInPercentage = (newApy * 100).toFixed(2);
 
   try {
     const lstContract = getLSTContract(provider as RpcProvider);
@@ -81,7 +83,7 @@ export async function GET(_req: Request) {
       asset: "STRK",
       tvl: tvlInUsd,
       tvlStrk: tvlInStrk,
-      apy,
+      apy: newApy,
       apyInPercentage: `${apyInPercentage}%`,
     });
 
