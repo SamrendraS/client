@@ -128,7 +128,6 @@ const WithdrawLog: React.FC = () => {
                   </TableCell>
                 ) : (
                   <TableCell className="flex flex-col items-end pr-4 text-right font-thin">
-                    {item?.is_claimed}
                     Pending
                     <span className="text-sm text-[#939494]">
                       {convertFutureTimestamp(item?.claim_time)}

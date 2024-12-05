@@ -31,12 +31,21 @@ export function formatNumberWithCommas(
   const numberValue = typeof value === "string" ? Number(value) : value;
 
   if (isNaN(numberValue)) {
-    throw new Error("Input must be a valid number");
+    return "0";
   }
 
-  return numberValue
+  const [integerPart, decimalPart] = numberValue
     .toFixed(decimals ?? 2)
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    .split(".");
+
+  const formattedIntegerPart = integerPart.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ",",
+  );
+
+  return decimalPart !== undefined
+    ? `${formattedIntegerPart}.${decimalPart}`
+    : formattedIntegerPart;
 }
 
 export function truncate(str: string, startChars: number, endChars: number) {
