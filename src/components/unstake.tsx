@@ -45,7 +45,7 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   convertTimeString,
   getProvider,
@@ -461,16 +461,6 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
             </div>
           </TabsTrigger>
         </TabsList>
-
-        <TabsContent
-          value="endur"
-          className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
-        ></TabsContent>
-
-        <TabsContent
-          value="dex"
-          className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
-        ></TabsContent>
       </Tabs>
 
       <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
