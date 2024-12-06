@@ -104,7 +104,7 @@ const MigrateNostra = () => {
             Migrate your Nostra staked STRK to Endur
           </DialogTitle>
           <DialogDescription className="!mt-3.5 text-base font-normal text-[#8D9C9C]">
-            Nostra is retiring soon. Easily migrate your staked STRK to Endur,
+            Nostra Staked STRK is <a style={{textDecoration: 'underline'}} href="https://snapshot.box/#/sn:0x07c251045154318a2376a3bb65be47d3c90df1740d8e35c9b9d943aa3f240e50/proposal/5">retired</a>. One click migrate your staked STRK to Endur,
             and earn more with xSTRK
           </DialogDescription>
         </DialogHeader>
