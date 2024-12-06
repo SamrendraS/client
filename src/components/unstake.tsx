@@ -301,9 +301,9 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="flex h-[88px] w-full items-center gap-2 px-7 pb-3 pt-5 md:h-[84px] lg:h-fit">
+      <div className="flex h-[88px] w-full items-center px-7 pb-3 pt-5 md:h-[84px] lg:h-fit lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-xs text-[#06302B]">Enter Amount</p>
+          <p className="text-xs text-[#06302B]">Enter Amount (xSTRK)</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <FormField
@@ -362,11 +362,20 @@ const Unstake = () => {
           >
             Max
           </button>
+
+          <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#8D9C9C] lg:text-sm">
+            <Icons.wallet className="size-3 lg:size-5" />
+            <span className="hidden md:block">Balance:</span>
+            <span className="font-bold">
+              {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))}{" "}
+              xSTRK
+            </span>
+          </div>
         </div>
       </div>
 
       <Tabs defaultValue="endur" className="w-full max-w-none pt-1">
-        <TabsList className="flex h-full w-full items-center justify-between gap-3 bg-transparent px-6">
+        <TabsList className="flex h-full w-full flex-col items-center justify-between gap-3 bg-transparent px-6 md:flex-row">
           <TabsTrigger
             value="endur"
             className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D]"
@@ -422,7 +431,7 @@ const Unstake = () => {
           <div className="space-y-3 px-7">
             <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
               <p className="flex items-center gap-1">
-                Burnt xSTRK
+                You will get
                 <TooltipProvider delayDuration={0}>
                   <Tooltip>
                     <TooltipTrigger>
@@ -432,8 +441,12 @@ const Unstake = () => {
                       side="right"
                       className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                     >
-                      Burnt <strong>xSTRK</strong> is the amount of xSTRK that
-                      will be redeemed to unstake the requested STRK
+                      {/* Burnt <strong>xSTRK</strong> is the amount of xSTRK that
+                      will be redeemed to unstake the requested STRK */}
+                      You will receive the equivalent amount of STRK for the
+                      xSTRK you are unstaking. The amount of STRK you receive
+                      will be based on the current exchange rate of xSTRK to
+                      STRK.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -441,10 +454,10 @@ const Unstake = () => {
               <span>
                 {form.watch("unstakeAmount")
                   ? formatNumberWithCommas(
-                      Number(form.watch("unstakeAmount")) / exRate.rate,
+                      Number(form.watch("unstakeAmount")) * exRate.rate,
                     )
                   : 0}{" "}
-                xSTRK
+                STRK
               </span>
             </div>
 
