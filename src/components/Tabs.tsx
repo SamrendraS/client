@@ -23,7 +23,11 @@ import {
 import Unstake from "./unstake";
 import WithdrawLog from "./withdraw-log";
 
-const Tabs: React.FC = () => {
+interface TabsProps {
+  avgWaitTime: string;
+}
+
+const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
   const [tabs, setTabs] = React.useState("stake");
   const { open } = useSidebar();
 
@@ -125,7 +129,7 @@ const Tabs: React.FC = () => {
             value="unstake"
             className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
-            <Unstake />
+            <Unstake avgWaitTime={avgWaitTime} />
           </TabsContent>
 
           <TabsContent

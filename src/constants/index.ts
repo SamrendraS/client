@@ -58,3 +58,21 @@ export function getExplorerEndpoint() {
 
   return "https://sepolia.starkscan.co";
 }
+
+export function convertTimeString(timeString: string): string {
+  const timeRegex = /(\d+)\s(\d{2}):(\d{2}):(\d{2})\.(\d{3})/;
+  const match = timeString.match(timeRegex);
+
+  if (!match) {
+    throw new Error("Invalid time format. Expected format '0 00:00:04.876'");
+  }
+
+  const [_, days, hours, minutes, seconds] = match.map(Number);
+
+  if (days > 0) return `${days} ${days === 1 ? "day" : "days"}`;
+  if (hours > 0) return `${hours} ${hours === 1 ? "hour" : "hours"}`;
+  if (minutes > 0) return `${minutes} ${minutes === 1 ? "min" : "mins"}`;
+  if (seconds > 0) return `${seconds} ${seconds === 1 ? "sec" : "secs"}`;
+
+  return "0 secs";
+}
