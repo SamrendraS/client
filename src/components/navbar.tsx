@@ -74,6 +74,7 @@ export function getConnectors(isMobile: boolean) {
   }) as StarknetkitConnector;
 
   const isMainnet = NETWORK === constants.NetworkName.SN_MAIN;
+
   if (isMainnet) {
     if (isInArgentMobileAppBrowser()) {
       return [mobileConnector];
