@@ -21,8 +21,21 @@ export async function GET(_req: Request) {
   let contractReqId;
   let apiReqId;
 
+  let latest_block = 0;
   try {
-    const res = await wqContract.call("get_queue_state");
+    latest_block = (await provider.getBlockLatestAccepted()).block_number;
+  } catch (error) {
+    console.error("latestBlockError:", error);
+    return NextResponse.json({
+      message: "latestBlockError",
+      error,
+    });
+  }
+
+  try {
+    const res = await wqContract.call("get_queue_state", [], {
+      blockIdentifier: Math.max(latest_block - 2, 0), // check the state matches for atleast 2 blocks before
+    });
     // @ts-ignore
     contractReqId = Number(res?.max_request_id);
   } catch (error) {
@@ -36,22 +49,30 @@ export async function GET(_req: Request) {
   try {
     const { data } = await apolloClient.query({
       query: gql`
-        query Withdraw_queues($where: Withdraw_queueWhereInput) {
-          withdraw_queues(where: $where) {
+        query FindFirstWithdraw_queue(
+          $orderBy: [Withdraw_queueOrderByWithRelationInput!]
+        ) {
+          findFirstWithdraw_queue(orderBy: $orderBy) {
             request_id
           }
         }
       `,
+      variables: {
+        orderBy: [
+          {
+            request_id: "desc",
+          },
+        ],
+      },
     });
 
-    apiReqId =
-      data?.withdraw_queues[data?.withdraw_queues.length - 1]?.request_id;
+    apiReqId = data?.findFirstWithdraw_queue?.request_id;
   } catch (error) {
     console.error("apiReqIdError:", error);
     throw error;
   }
 
-  if (contractReqId === apiReqId) {
+  if (contractReqId <= apiReqId) {
     return NextResponse.json({
       status: "active",
       contractReqId,
