@@ -31,10 +31,11 @@ export async function GET(_req: Request) {
       error,
     });
   }
+  console.log("latest_block", latest_block);
 
   try {
     const res = await wqContract.call("get_queue_state", [], {
-      blockIdentifier: Math.max(latest_block - 2, 0), // check the state matches for atleast 2 blocks before
+      blockIdentifier: Math.max(latest_block - 10, 0), // check the state matches for atleast 2 blocks before
     });
     // @ts-ignore
     contractReqId = Number(res?.max_request_id);
@@ -72,6 +73,8 @@ export async function GET(_req: Request) {
     throw error;
   }
 
+  console.log("contractReqId", contractReqId);
+  console.log("apiReqId", apiReqId);
   if (contractReqId <= apiReqId) {
     return NextResponse.json({
       status: "active",
