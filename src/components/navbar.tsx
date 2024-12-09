@@ -23,6 +23,10 @@ import {
   StarknetkitConnector,
 } from "starknetkit";
 import {
+  isInBraavosMobileAppBrowser,
+  BraavosMobileConnector,
+} from "starknetkit/braavosMobile";
+import {
   ArgentMobileConnector,
   isInArgentMobileAppBrowser,
 } from "starknetkit/argentMobile";
@@ -69,6 +73,10 @@ export function getConnectors(isMobile: boolean) {
     },
   });
 
+  const braavosMobile = BraavosMobileConnector.init({
+    inAppBrowserOptions: {},
+  }) as StarknetkitConnector;
+
   const webWalletConnector = new WebWalletConnector({
     url: "https://web.argent.xyz",
   }) as StarknetkitConnector;
@@ -77,8 +85,10 @@ export function getConnectors(isMobile: boolean) {
   if (isMainnet) {
     if (isInArgentMobileAppBrowser()) {
       return [mobileConnector];
+    } else if (isInBraavosMobileAppBrowser()) {
+      return [braavosMobile];
     } else if (isMobile) {
-      return [mobileConnector, braavosConnector, webWalletConnector];
+      return [mobileConnector, braavosMobile, webWalletConnector];
     }
     return [
       argentXConnector,
