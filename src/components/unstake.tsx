@@ -466,7 +466,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
       <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md text-xs font-semibold text-[#939494] lg:text-[13px]">
+        <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
           <p className="flex items-center gap-1">
             You will get
             <TooltipProvider delayDuration={0}>
@@ -487,7 +487,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
               </Tooltip>
             </TooltipProvider>
           </p>
-          <span>{youWillGet} STRK</span>
+          <span className="text-lg lg:text-xl">{youWillGet} STRK</span>
         </div>
 
         <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
@@ -545,7 +545,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
             onClick={form.handleSubmit(onSubmit)}
             disabled={
               Number(form.getValues("unstakeAmount")) <= 0 ||
-              isNaN(Number(form.getValues("unstakeAmount")))
+                isNaN(Number(form.getValues("unstakeAmount")))
                 ? true
                 : false
             }
