@@ -1,9 +1,11 @@
+import { useAtomValue } from "jotai";
 import Link from "next/link";
 import React from "react";
 
 import { Icons } from "./Icons";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { protocolYieldsAtom } from "@/store/defi.store";
 
 const defiLinks = {
   strkfarm: "",  // not yet available
@@ -25,16 +27,18 @@ const protocolTypes: Record<string, ProtocolBadge[]> = {
   fibrous: [{ type: "DEX Aggregator", color: "bg-[#F3E8FF] text-[#9333EA]" }],
   ekubo: [
     { type: "DEX", color: "bg-[#F3E8FF] text-[#9333EA]" },
-    { type: "Liquidity", color: "bg-[#FFF7ED] text-[#EA580C]" }  
+    { type: "Liquidity", color: "bg-[#FFF7ED] text-[#EA580C]" }
   ],
 };
 
-const mockYields = {
-  strkfarm: "8.2%",
-  vesu: "12.4%",
-  avnu: "5.6%",
-  fibrous: "6.8%",
-  ekubo: "9.3%"
+type ProtocolType = "dexAggregator" | "lending" | "farming" | "lpAndDex";
+
+const protocolCategories: Record<keyof typeof defiLinks, ProtocolType> = {
+  strkfarm: "farming",
+  vesu: "lending",
+  avnu: "dexAggregator",
+  fibrous: "dexAggregator",
+  ekubo: "lpAndDex"
 };
 
 interface DefiCardProps {
@@ -44,6 +48,10 @@ interface DefiCardProps {
 }
 
 const DefiCard: React.FC<DefiCardProps> = ({ dapp, tokens, description }) => {
+  const yields = useAtomValue(protocolYieldsAtom);
+  const yieldData = yields[dapp];
+  const protocolType = protocolCategories[dapp];
+
   const getDappIcon = (dappName: string) => {
     switch (dappName.toLowerCase()) {
       case "endur":
@@ -79,26 +87,41 @@ const DefiCard: React.FC<DefiCardProps> = ({ dapp, tokens, description }) => {
   const isDex = ["avnu", "fibrous", "ekubo"].includes(dapp);
   const link = defiLinks[dapp];
 
+  const renderAPY = () => {
+    if (yieldData.isLoading) return "Loading...";
+    if (yieldData.error || yieldData.value === null) return "-";
+    return `${yieldData.value.toFixed(2)}%`;
+  };
+
   return (
     <div className="flex h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
+          <div className="flex items-center">
             {getTokenIcon(tokens[0])}
+            {getTokenIcon(tokens[1]) && (
+              <div className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white">
+                {getTokenIcon(tokens[1])}
+              </div>
+            )}
+          </div>
             <span className="text-sm font-medium">
               {isDex ? "xSTRK/STRK" : tokens[0]}
             </span>
           </div>
           
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-[#8D9C9C]">APY</span>
-            <span className="text-lg font-semibold text-[#17876D]">
-              {mockYields[dapp]}
-            </span>
-          </div>
+          {protocolType !== "dexAggregator" && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-[#8D9C9C]">APY</span>
+              <span className="text-lg font-semibold text-[#17876D]">
+                {renderAPY()}
+              </span>
+            </div>
+          )}
         </div>
         
-        <div className="flex items-start gap-2">
+        <div className="flex items-center gap-2">
           <div className="flex flex-wrap gap-1.5 justify-end max-w-[180px]">
             {protocolTypes[dapp].map((badge, index) => (
               <div
