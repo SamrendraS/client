@@ -381,7 +381,7 @@ const Stake = () => {
 
       <div className="flex w-full items-center px-7 pb-3 pt-5 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-xs text-[#06302B]">Enter Amount</p>
+          <p className="text-xs text-[#06302B]">Enter Amount (STRK)</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <FormField
@@ -443,7 +443,7 @@ const Stake = () => {
 
           <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#8D9C9C] lg:text-sm">
             <Icons.wallet className="size-3 lg:size-5" />
-            Balance:
+            <span className="hidden md:block">Balance:</span>
             <span className="font-bold">
               {balance?.formatted ? Number(balance?.formatted).toFixed(2) : "0"}{" "}
               STRK
@@ -455,7 +455,7 @@ const Stake = () => {
       <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+        <div className="flex items-center justify-between rounded-md text-xs font-semibold text-[#939494] lg:text-[13px]">
           <p className="flex items-center gap-1">
             You will get
             <TooltipProvider delayDuration={0}>

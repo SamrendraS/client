@@ -23,7 +23,11 @@ import {
 import Unstake from "./unstake";
 import WithdrawLog from "./withdraw-log";
 
-const Tabs: React.FC = () => {
+interface TabsProps {
+  avgWaitTime: string;
+}
+
+const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
   const [tabs, setTabs] = React.useState("stake");
   const { open } = useSidebar();
 
@@ -58,7 +62,7 @@ const Tabs: React.FC = () => {
     <>
       <div
         className={cn(
-          "mt-12 h-[31.5rem] w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[36.3rem] xl:mt-6",
+          "mt-12 min-h-[31.5rem] w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[36.3rem] xl:mt-6",
           {
             "lg:-ml-32": open,
           },
@@ -92,7 +96,7 @@ const Tabs: React.FC = () => {
               Withdraw log
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
-                  <TooltipTrigger className="ml-1">
+                  <TooltipTrigger className="ml-1" tabIndex={-1}>
                     <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
                   </TooltipTrigger>
                   <TooltipContent
@@ -125,7 +129,7 @@ const Tabs: React.FC = () => {
             value="unstake"
             className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
-            <Unstake />
+            <Unstake avgWaitTime={avgWaitTime} />
           </TabsContent>
 
           <TabsContent
