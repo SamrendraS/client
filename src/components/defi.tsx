@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-
 import { cn } from "@/lib/utils";
-
 import DefiCard from "./defi-card";
 import { useSidebar } from "./ui/sidebar";
 
