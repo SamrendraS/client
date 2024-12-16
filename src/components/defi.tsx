@@ -1,29 +1,30 @@
 "use client";
 
-import { useAtomValue } from "jotai";
 import React from "react";
+import { useAtomValue } from "jotai";
 import { cn } from "@/lib/utils";
-import DefiCard from "./defi-card";
-import { Icons } from "./Icons";
-import { useSidebar } from "./ui/sidebar";
+import DefiCard, { ProtocolAction, ProtocolBadge, TokenDisplay } from "./defi-card";
+import { useSidebar } from "@/components/ui/sidebar";
 import { protocolYieldsAtom } from "@/store/defi.store";
+import { Icons } from "./Icons";
 
-const defiLinks = {
-  strkfarm: "",  // not yet available
-  vesu: "https://vesu.xyz/lend",
-  avnu: "https://app.avnu.fi/en?mode=simple&tokenFrom=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&tokenTo=0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&amount=0.001",
-  fibrous: "https://app.fibrous.finance/en?network=starknet&mode=swap&source=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&destination=0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
-  ekubo: "https://app.ekubo.org/positions/new?baseCurrency=xSTRK&quoteCurrency=STRK&fee=170141183460469235273462165868118016&tickSpacing=1000&poolOnly=true"
-} as const;
+interface ProtocolConfig {
+  tokens: TokenDisplay[];
+  protocolIcon: React.ReactNode;
+  badges: ProtocolBadge[];
+  description: string;
+  actions: ProtocolAction[];
+}
 
-const protocolConfigs = {
+const protocolConfigs: Record<string, ProtocolConfig> = {
   strkfarm: {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" }
     ],
     protocolIcon: <Icons.strkfarmLogo className="size-8" />,
     badges: [{ type: "Yield Farming", color: "bg-[#E9F3F0] text-[#17876D]" }],
-    description: "Auto compound defi spring rewards on xSTRK"
+    description: "Auto compound defi spring rewards on xSTRK",
+    actions: []
   },
   vesu: {
     tokens: [
@@ -31,7 +32,15 @@ const protocolConfigs = {
     ],
     protocolIcon: <Icons.vesuLogo className="size-8 rounded-full" />,
     badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
-    description: "Earn DeFi Spring rewards & yield, use xSTRK as collateral to Borrow and Multiply"
+    description: "Earn DeFi Spring rewards & yield, use xSTRK as collateral to Borrow and Multiply",
+    actions: [
+      {
+        type: "lend",
+        link: "https://vesu.xyz/lend",
+        buttonText: "Lend xSTRK",
+        primary: true
+      }
+    ]
   },
   avnu: {
     tokens: [
@@ -40,7 +49,15 @@ const protocolConfigs = {
     ],
     protocolIcon: <Icons.avnuLogo className="size-8 rounded-full border" />,
     badges: [{ type: "DEX Aggregator", color: "bg-[#F3E8FF] text-[#9333EA]" }],
-    description: "Swap xSTRK for STRK on Avnu"
+    description: "Swap xSTRK for STRK on Avnu",
+    actions: [
+      {
+        type: "swap",
+        link: "https://app.avnu.fi/en?mode=simple&tokenFrom=0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&tokenTo=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&amount=100",
+        buttonText: "Swap Tokens",
+        primary: true
+      }
+    ]
   },
   fibrous: {
     tokens: [
@@ -49,19 +66,15 @@ const protocolConfigs = {
     ],
     protocolIcon: <Icons.fibrousLogo className="size-8 rounded-full" />,
     badges: [{ type: "DEX Aggregator", color: "bg-[#F3E8FF] text-[#9333EA]" }],
-    description: "Swap xSTRK for STRK on Fibrous"
-  },
-  ekubo: {
-    tokens: [
-      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
-      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" }
-    ],
-    protocolIcon: <Icons.ekuboLogo className="size-8 rounded-full" />,
-    badges: [
-      { type: "DEX", color: "bg-[#F3E8FF] text-[#9333EA]" },
-      { type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }
-    ],
-    description: "Provide liquidity for xSTRK/STRK on Ekubo"
+    description: "Swap xSTRK for STRK on Fibrous",
+    actions: [
+      {
+        type: "swap",
+        link: "https://app.fibrous.finance/en?network=starknet&mode=swap&source=0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&destination=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+        buttonText: "Swap Tokens",
+        primary: true
+      }
+    ]
   },
   nostra: {
     tokens: [
@@ -74,9 +87,27 @@ const protocolConfigs = {
       { type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" },
       { type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }
     ],
-    description: "Provide liquidity to the xSTRK/STRK pool, use xSTRK as collateral and swap xSTRK on Nostra"
+    description: "Provide liquidity to the xSTRK/STRK pool, use xSTRK as collateral and swap xSTRK on Nostra",
+    actions: [
+      {
+        type: "swap",
+        link: "https://nostra.finance/swap",
+        buttonText: "Swap Tokens",
+        primary: true
+      },
+      {
+        type: "pool",
+        link: "https://nostra.finance/pools",
+        buttonText: "Add Liquidity"
+      },
+      {
+        type: "lend",
+        link: "https://nostra.finance/lend",
+        buttonText: "Lend Assets"
+      }
+    ]
   }
-} as const;
+};
 
 const Defi: React.FC = () => {
   const { open } = useSidebar();
@@ -111,7 +142,7 @@ const Defi: React.FC = () => {
                 badges={config.badges}
                 description={config.description}
                 apy={shouldShowApy ? yields[protocol] : undefined}
-                link={defiLinks[protocol]}
+                actions={config.actions}
               />
             );
           })}

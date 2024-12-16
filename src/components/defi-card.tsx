@@ -1,16 +1,22 @@
-import Link from "next/link";
-import { Button } from "./ui/button";
 import React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-interface TokenDisplay {
+export interface TokenDisplay {
   icon: React.ReactNode;
   name: string;
 }
 
-interface ProtocolBadge {
+export interface ProtocolBadge {
   type: string;
   color: string;
+}
+
+export interface ProtocolAction {
+  type: string;
+  link: string;
+  buttonText: string;
+  primary?: boolean;
 }
 
 interface DefiCardProps {
@@ -23,7 +29,7 @@ interface DefiCardProps {
     error: boolean;
     value: number | null;
   };
-  link?: string;
+  actions: ProtocolAction[];
 }
 
 const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
@@ -74,16 +80,55 @@ const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
   </div>
 );
 
+const ActionButton: React.FC<{ action: ProtocolAction }> = ({ action }) => {
+  const baseStyles = "w-full rounded-full px-4 py-2.5 text-sm font-medium transition-colors";
+  
+  const styles = action.primary
+    ? "bg-[#17876D] text-white hover:bg-[#146D57]"
+    : "bg-[#E9F3F0] text-[#17876D] hover:bg-[#D7E8E3]";
+
+  return (
+    <Link
+      href={action.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex-1"
+    >
+      <Button className={cn(baseStyles, styles)}>
+        {action.buttonText}
+      </Button>
+    </Link>
+  );
+};
+
+const ActionButtons: React.FC<{ actions: ProtocolAction[] }> = ({ actions }) => {
+  if (actions.length === 0) {
+    return (
+      <Button className="w-full rounded-full bg-[#03624C4D] px-4 py-2.5 text-sm font-medium text-[#17876D] hover:bg-[#03624C4D]">
+        Coming soon
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {actions.map((action, index) => (
+        <ActionButton key={index} action={action} />
+      ))}
+    </div>
+  );
+};
+
 const DefiCard: React.FC<DefiCardProps> = ({
   tokens,
   protocolIcon,
   badges,
   description,
   apy,
-  link
+  actions
 }) => {
   return (
-    <div className="flex h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
+    <div className="flex h-auto min-h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-2">
           <TokenPairDisplay tokens={tokens} />
@@ -98,23 +143,8 @@ const DefiCard: React.FC<DefiCardProps> = ({
 
       <h3 className="mt-4 text-sm text-[#4B5563]">{description}</h3>
 
-      <div className="mt-auto">
-        {link ? (
-          <Link
-            href={link} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="w-full"
-          >
-            <Button className="w-full rounded-full bg-[#17876D] px-4 py-2 text-xs font-medium text-white hover:bg-[#146D57] transition-colors">
-              Launch App
-            </Button>
-          </Link>
-        ) : (
-          <Button className="w-full rounded-full bg-[#03624C4D] px-4 py-2 text-xs font-medium text-[#17876D] hover:bg-[#03624C4D]">
-            Coming soon
-          </Button>
-        )}
+      <div className="mt-auto pt-4">
+        <ActionButtons actions={actions} />
       </div>
     </div>
   );
