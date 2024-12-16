@@ -119,10 +119,10 @@ const Defi: React.FC = () => {
         "lg:pl-28": !open,
       })}
     >
-      <h1 className="text-2xl font-semibold tracking-[-1%] text-black">Defi</h1>
-      <p className="text-base font-normal tracking-[-1%] text-[#8D9C9C]">
+      <h1 className="text-2xl font-semibold tracking-[-1%] text-black">Earn extra yield by using your xSTRK on DeFi platforms</h1>
+      {/* <p className="text-base font-normal tracking-[-1%] text-[#8D9C9C]">
         Use xSTRK to unlock greater rewards with DeFi opportunities!
-      </p>
+      </p> */}
 
       <div className="mt-9">
         <div className="mb-6 rounded-md border border-[#17876D33] bg-[#17876D0A] p-4">
