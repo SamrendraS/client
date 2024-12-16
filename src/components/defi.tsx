@@ -91,18 +91,18 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     actions: [
       {
         type: "swap",
-        link: "https://nostra.finance/swap",
+        link: "https://app.nostra.finance/swap",
         buttonText: "Swap Tokens",
         primary: true
       },
       {
         type: "pool",
-        link: "https://nostra.finance/pools",
+        link: "https://app.nostra.finance/pools/xSTRK-STRK/deposit",
         buttonText: "Add Liquidity"
       },
       {
         type: "lend",
-        link: "https://nostra.finance/lend",
+        link: "https://app.nostra.finance/lend-borrow/xSTRK/deposit",
         buttonText: "Lend Assets"
       }
     ]

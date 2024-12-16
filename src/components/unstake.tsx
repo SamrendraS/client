@@ -41,6 +41,7 @@ import {
   totalStakedAtom,
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
+  userXSTRKBalanceAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
@@ -85,6 +86,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
   const exRate = useAtomValue(exchangeRateAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
+  const currentXSTRKBalance = useAtomValue(userXSTRKBalanceAtom);
   const apy = useAtomValue(snAPYAtom);
 
   const form = useForm<FormValues>({
@@ -227,7 +229,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
       });
     }
 
-    const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
+    const amount = Number(currentXSTRKBalance.value.toEtherToFixedDecimals(9));
 
     if (amount) {
       form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
@@ -249,13 +251,13 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
 
     if (
       Number(values.unstakeAmount) >
-      Number(currentStaked.value.toEtherToFixedDecimals(9))
+      Number(currentXSTRKBalance.value.toEtherToFixedDecimals(9))
     ) {
       return toast({
         description: (
           <div className="flex items-center gap-2">
             <Info className="size-5" />
-            Insufficient staked(xSTRK) balance
+            Insufficient xSTRK balance
           </div>
         ),
       });
@@ -385,7 +387,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
             <Icons.wallet className="size-3 lg:size-5" />
             <span className="hidden md:block">Balance:</span>
             <span className="font-bold">
-              {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))}{" "}
+              {formatNumber(currentXSTRKBalance.value.toEtherToFixedDecimals(2))}{" "}
               xSTRK
             </span>
           </div>
