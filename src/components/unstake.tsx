@@ -263,7 +263,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
       });
     }
 
-    const call1 = contract.populate("withdraw", [
+    const call1 = contract.populate("redeem", [
       MyNumber.fromEther(values.unstakeAmount, 18),
       address,
       address,

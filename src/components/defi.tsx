@@ -90,20 +90,20 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     description: "Provide liquidity to the xSTRK/STRK pool, use xSTRK as collateral and swap xSTRK on Nostra",
     actions: [
       {
-        type: "swap",
-        link: "https://app.nostra.finance/swap",
-        buttonText: "Swap Tokens",
-        primary: true
-      },
-      {
         type: "pool",
         link: "https://app.nostra.finance/pools/xSTRK-STRK/deposit",
-        buttonText: "Add Liquidity"
+        buttonText: "Add Liquidity",
+        primary: true
       },
       {
         type: "lend",
         link: "https://app.nostra.finance/lend-borrow/xSTRK/deposit",
         buttonText: "Lend Assets"
+      },
+      {
+        type: "swap",
+        link: "https://app.nostra.finance/swap",
+        buttonText: "Swap Tokens"
       }
     ]
   }
@@ -125,6 +125,14 @@ const Defi: React.FC = () => {
       </p>
 
       <div className="mt-9">
+        <div className="mb-6 rounded-md border border-[#17876D33] bg-[#17876D0A] p-4">
+          <p className="text-sm text-[#03624C]">
+            Please note: The protocols listed here are third-party services not affiliated with or endorsed by Endur.
+            This list is provided for informational convenience only. Always do your own research and understand the risks
+            before using any DeFi protocol.
+          </p>
+        </div>
+
         <p className="text-2xl font-normal tracking-[-1%] text-black">
           Opportunities
         </p>
@@ -133,7 +141,7 @@ const Defi: React.FC = () => {
           {(Object.keys(protocolConfigs) as Array<keyof typeof protocolConfigs>).map((protocol) => {
             const config = protocolConfigs[protocol];
             const shouldShowApy = !["avnu", "fibrous"].includes(protocol);
-            
+
             return (
               <DefiCard
                 key={protocol}
