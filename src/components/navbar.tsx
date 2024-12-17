@@ -44,6 +44,7 @@ import {
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
+import MigrateNostra from "./migrate-nostra";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 
@@ -306,7 +307,7 @@ const Navbar = ({ className }: { className?: string }) => {
       )}
 
       <div className="flex items-center gap-4">
-        {/* <MigrateNostra /> */}
+        <MigrateNostra />
 
         <button
           className={cn(

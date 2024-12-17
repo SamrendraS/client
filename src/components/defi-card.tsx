@@ -16,7 +16,7 @@ export interface ProtocolAction {
   type: string;
   link: string;
   buttonText: string;
-  variant?: 'primary' | 'secondary' | 'tertiary';  // Added variant instead of boolean primary
+  variant?: "primary" | "secondary" | "tertiary"; // Added variant instead of boolean primary
 }
 
 interface DefiCardProps {
@@ -43,12 +43,12 @@ const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
       )}
     </div>
     <span className="text-sm font-medium">
-      {tokens.map(t => t.name).join("/")}
+      {tokens.map((t) => t.name).join("/")}
     </span>
   </div>
 );
 
-const ApyDisplay: React.FC<{ apy: DefiCardProps['apy'] }> = ({ apy }) => {
+const ApyDisplay: React.FC<{ apy: DefiCardProps["apy"] }> = ({ apy }) => {
   if (!apy) return null;
 
   const renderValue = () => {
@@ -68,11 +68,14 @@ const ApyDisplay: React.FC<{ apy: DefiCardProps['apy'] }> = ({ apy }) => {
 };
 
 const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
-  <div className="flex flex-wrap gap-1.5 justify-end max-w-[180px]">
+  <div className="flex max-w-[180px] flex-wrap justify-end gap-1.5">
     {badges.map((badge, index) => (
       <div
         key={index}
-        className={cn("rounded-full px-2.5 py-1 text-xs whitespace-nowrap", badge.color)}
+        className={cn(
+          "whitespace-nowrap rounded-full px-2.5 py-1 text-xs",
+          badge.color,
+        )}
       >
         {badge.type}
       </div>
@@ -81,15 +84,18 @@ const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
 );
 
 const ActionButton: React.FC<{ action: ProtocolAction }> = ({ action }) => {
-  const baseStyles = "grow rounded-xl px-4 py-2.5 text-sm font-medium transition-all";
-  
+  const baseStyles =
+    "grow rounded-xl px-4 py-2.5 text-sm font-medium transition-all";
+
   const variantStyles = {
     primary: "bg-[#17876D] text-white hover:bg-[#146D57]",
-    secondary: "bg-[#E9F3F0] text-[#17876D] border border-[#17876D33] hover:bg-[#DBE9E4]",
-    tertiary: "bg-white text-[#17876D] border border-[#17876D33] hover:bg-[#F7FAF9]"
+    secondary:
+      "bg-[#E9F3F0] text-[#17876D] border border-[#17876D33] hover:bg-[#DBE9E4]",
+    tertiary:
+      "bg-white text-[#17876D] border border-[#17876D33] hover:bg-[#F7FAF9]",
   };
 
-  const styles = variantStyles[action.variant || 'primary'];
+  const styles = variantStyles[action.variant || "primary"];
 
   return (
     <Link
@@ -98,14 +104,14 @@ const ActionButton: React.FC<{ action: ProtocolAction }> = ({ action }) => {
       rel="noopener noreferrer"
       className="flex min-w-0 flex-1 basis-0"
     >
-      <Button className={cn(baseStyles, styles)}>
-        {action.buttonText}
-      </Button>
+      <Button className={cn(baseStyles, styles)}>{action.buttonText}</Button>
     </Link>
   );
 };
 
-const ActionButtons: React.FC<{ actions: ProtocolAction[] }> = ({ actions }) => {
+const ActionButtons: React.FC<{ actions: ProtocolAction[] }> = ({
+  actions,
+}) => {
   if (actions.length === 0) {
     return (
       <Button className="w-full rounded-xl bg-[#E9F3F0] px-4 py-2.5 text-sm font-medium text-[#17876D] hover:bg-[#DBE9E4]">
@@ -123,10 +129,10 @@ const ActionButtons: React.FC<{ actions: ProtocolAction[] }> = ({ actions }) => 
         rel="noopener noreferrer"
         className="block w-full"
       >
-        <Button 
+        <Button
           className={cn(
             "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
-            "bg-[#17876D] text-white hover:bg-[#146D57]"
+            "bg-[#17876D] text-white hover:bg-[#146D57]",
           )}
         >
           {actions[0].buttonText}
@@ -145,14 +151,16 @@ const ActionButtons: React.FC<{ actions: ProtocolAction[] }> = ({ actions }) => 
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Button 
+          <Button
             className={cn(
               "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
               {
                 "bg-[#17876D] text-white hover:bg-[#146D57]": index === 0,
-                "bg-[#E9F3F0] text-[#17876D] border border-[#17876D33] hover:bg-[#DBE9E4]": index === 1,
-                "bg-white text-[#17876D] border border-[#17876D33] hover:bg-[#F7FAF9]": index === 2
-              }
+                "border border-[#17876D33] bg-[#E9F3F0] text-[#17876D] hover:bg-[#DBE9E4]":
+                  index === 1,
+                "border border-[#17876D33] bg-white text-[#17876D] hover:bg-[#F7FAF9]":
+                  index === 2,
+              },
             )}
           >
             {action.buttonText}
@@ -168,7 +176,7 @@ const DefiCard: React.FC<DefiCardProps> = ({
   badges,
   description,
   apy,
-  actions
+  actions,
 }) => {
   return (
     <div className="flex h-auto min-h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
@@ -177,7 +185,7 @@ const DefiCard: React.FC<DefiCardProps> = ({
           <TokenPairDisplay tokens={tokens} />
           <ApyDisplay apy={apy} />
         </div>
-        
+
         <div className="flex items-center gap-2">
           <ProtocolBadges badges={badges} />
           {protocolIcon}

@@ -387,7 +387,9 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
             <Icons.wallet className="size-3 lg:size-5" />
             <span className="hidden md:block">Balance:</span>
             <span className="font-bold">
-              {formatNumber(currentXSTRKBalance.value.toEtherToFixedDecimals(2))}{" "}
+              {formatNumber(
+                currentXSTRKBalance.value.toEtherToFixedDecimals(2),
+              )}{" "}
               xSTRK
             </span>
           </div>
@@ -547,7 +549,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
             onClick={form.handleSubmit(onSubmit)}
             disabled={
               Number(form.getValues("unstakeAmount")) <= 0 ||
-                isNaN(Number(form.getValues("unstakeAmount")))
+              isNaN(Number(form.getValues("unstakeAmount")))
                 ? true
                 : false
             }

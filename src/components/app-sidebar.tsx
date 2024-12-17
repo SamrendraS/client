@@ -109,17 +109,20 @@ export function AppSidebar({ className }: { className?: string }) {
               </SidebarGroup>
             </Link>
 
-            <SidebarGroup
-              className={cn(
-                "group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
-              )}
+            <Link
+              href={"https://dune.com/endurfi/xstrk-analytics"}
+              target="_blank"
+              style={{ display: "flex" }}
             >
-              <ChartPie className="size-5 shrink-0" />
-              <p className="flex flex-col gap-0">
-                xSTRK Analytics{" "}
-                <span className="text-sm font-thin">(coming soon)</span>
-              </p>
-            </SidebarGroup>
+              <SidebarGroup
+                className={cn(
+                  "group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                )}
+              >
+                <ChartPie className="size-5 shrink-0" />
+                <p className="flex flex-col gap-0">xSTRK Analytics </p>
+              </SidebarGroup>
+            </Link>
 
             <hr className="border-[#AACBC480]" />
 

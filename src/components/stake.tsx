@@ -483,8 +483,8 @@ const Stake = () => {
           <span className="text-lg lg:text-xl">
             {form.watch("stakeAmount")
               ? formatNumberWithCommas(
-                Number(form.watch("stakeAmount")) / exchangeRate.rate,
-              )
+                  Number(form.watch("stakeAmount")) / exchangeRate.rate,
+                )
               : 0}{" "}
             xSTRK
           </span>
@@ -574,7 +574,7 @@ const Stake = () => {
             type="submit"
             disabled={
               Number(form.getValues("stakeAmount")) <= 0 ||
-                isNaN(Number(form.getValues("stakeAmount")))
+              isNaN(Number(form.getValues("stakeAmount")))
                 ? true
                 : false
             }

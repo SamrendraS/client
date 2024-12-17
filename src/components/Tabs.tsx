@@ -61,9 +61,11 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
 
   return (
     <>
-      <div className={cn("w-full max-w-xl", {
-        "lg:-ml-32": open,
-      })}>
+      <div
+        className={cn("w-full max-w-xl", {
+          "lg:-ml-32": open,
+        })}
+      >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Icons.strkLogo className="size-8" />
@@ -80,7 +82,8 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
         </div>
 
         <p className="mt-2 text-[#8D9C9C]">
-          Convert your STRK into xSTRK to earn staking rewards and participate in DeFi opportunities across the Starknet ecosystem.
+          Convert your STRK into xSTRK to earn staking rewards and participate
+          in DeFi opportunities across the Starknet ecosystem.
         </p>
       </div>
       <div
@@ -183,7 +186,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
 
       <p
         className={cn(
-          "mt-8 flex items-center text-xs text-[#707D7D] lg:mb-3 lg:mt-auto lg:text-sm",
+          "mt-4 flex items-center text-xs text-[#707D7D] lg:mb-3 lg:text-sm",
           {
             "lg:-ml-32": open,
           },
