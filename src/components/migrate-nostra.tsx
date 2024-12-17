@@ -91,16 +91,19 @@ const MigrateNostra = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-2 rounded-md bg-[#16876C] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#1b5649]">
-          <Icons.migrate />
-          Migrate Nostra STRK
+        <button className="flex shrink-0 items-center gap-2 rounded-md bg-[#16876C] px-2 py-2 text-xs font-medium text-white transition-all hover:bg-[#1b5649] md:px-3 md:text-sm">
+          <Icons.migrate className="size-3 md:size-5" />
+          Migrate
         </button>
       </DialogTrigger>
       <DialogContent
-        className={cn(font.className, "px-8 pb-8 pt-12 sm:max-w-[668px]")}
+        className={cn(
+          font.className,
+          "px-3 pb-8 pt-12 sm:max-w-[668px] md:px-8",
+        )}
       >
         <DialogHeader>
-          <DialogTitle className="text-2xl font-semibold text-[#0B453A]">
+          <DialogTitle className="mt-6 text-2xl font-semibold text-[#0B453A] md:mt-0">
             Migrate your Nostra staked STRK to Endur
           </DialogTitle>
           <DialogDescription className="!mt-3.5 text-base font-normal text-[#8D9C9C]">

@@ -12,7 +12,7 @@ export default async function Home() {
       <AppSidebar />
 
       <div className="flex flex-1 flex-col justify-between">
-        <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
+        <div className="flex h-full w-full flex-col items-center overflow-hidden px-3 py-3 md:px-7 lg:py-0">
           <Navbar />
           <Tabs avgWaitTime={avgWaitTime} />
         </div>
