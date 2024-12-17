@@ -41,6 +41,7 @@ import {
   totalStakedAtom,
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
+  userXSTRKBalanceAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
@@ -85,6 +86,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
   const exRate = useAtomValue(exchangeRateAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
+  const currentXSTRKBalance = useAtomValue(userXSTRKBalanceAtom);
   const apy = useAtomValue(snAPYAtom);
 
   const form = useForm<FormValues>({
@@ -227,7 +229,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
       });
     }
 
-    const amount = Number(currentStaked.value.toEtherToFixedDecimals(9));
+    const amount = Number(currentXSTRKBalance.value.toEtherToFixedDecimals(9));
 
     if (amount) {
       form.setValue("unstakeAmount", ((amount * percentage) / 100).toString());
@@ -249,19 +251,19 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
 
     if (
       Number(values.unstakeAmount) >
-      Number(currentStaked.value.toEtherToFixedDecimals(9))
+      Number(currentXSTRKBalance.value.toEtherToFixedDecimals(9))
     ) {
       return toast({
         description: (
           <div className="flex items-center gap-2">
             <Info className="size-5" />
-            Insufficient staked(xSTRK) balance
+            Insufficient xSTRK balance
           </div>
         ),
       });
     }
 
-    const call1 = contract.populate("withdraw", [
+    const call1 = contract.populate("redeem", [
       MyNumber.fromEther(values.unstakeAmount, 18),
       address,
       address,
@@ -385,7 +387,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
             <Icons.wallet className="size-3 lg:size-5" />
             <span className="hidden md:block">Balance:</span>
             <span className="font-bold">
-              {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))}{" "}
+              {formatNumber(currentXSTRKBalance.value.toEtherToFixedDecimals(2))}{" "}
               xSTRK
             </span>
           </div>
@@ -466,7 +468,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
       <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md text-xs font-semibold text-[#939494] lg:text-[13px]">
+        <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
           <p className="flex items-center gap-1">
             You will get
             <TooltipProvider delayDuration={0}>
@@ -487,7 +489,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
               </Tooltip>
             </TooltipProvider>
           </p>
-          <span>{youWillGet} STRK</span>
+          <span className="text-lg lg:text-xl">{youWillGet} STRK</span>
         </div>
 
         <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
@@ -545,7 +547,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
             onClick={form.handleSubmit(onSubmit)}
             disabled={
               Number(form.getValues("unstakeAmount")) <= 0 ||
-              isNaN(Number(form.getValues("unstakeAmount")))
+                isNaN(Number(form.getValues("unstakeAmount")))
                 ? true
                 : false
             }

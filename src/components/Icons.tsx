@@ -1,3 +1,4 @@
+import { LucideProps } from "lucide-react";
 import React from "react";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
@@ -1277,6 +1278,22 @@ export const Icons = {
         stroke-miterlimit="10"
         stroke-linecap="round"
         stroke-linejoin="round"
+      />
+    </svg>
+  ),
+  shield: (props: LucideProps) => (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),

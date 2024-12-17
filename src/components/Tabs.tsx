@@ -22,6 +22,7 @@ import {
 } from "./ui/tabs";
 import Unstake from "./unstake";
 import WithdrawLog from "./withdraw-log";
+import { Icons } from "./Icons";
 
 interface TabsProps {
   avgWaitTime: string;
@@ -60,9 +61,31 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
 
   return (
     <>
+      <div className={cn("w-full max-w-xl", {
+        "lg:-ml-32": open,
+      })}>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Icons.strkLogo className="size-8" />
+            <h1 className="text-2xl font-bold text-black">Stake STRK</h1>
+          </div>
+          <Link
+            href="https://endur.fi/audit"
+            target="_blank"
+            className="flex items-center gap-1 rounded-full border border-[#17876D33] bg-[#17876D1A] px-3 py-1 transition-opacity hover:opacity-80"
+          >
+            <Icons.shield className="size-4 text-[#17876D]" />
+            <span className="text-sm text-[#17876D]">Secure and audited</span>
+          </Link>
+        </div>
+
+        <p className="mt-2 text-[#8D9C9C]">
+          Convert your STRK into xSTRK to earn staking rewards and participate in DeFi opportunities across the Starknet ecosystem.
+        </p>
+      </div>
       <div
         className={cn(
-          "mt-12 min-h-[31.5rem] w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[36.3rem] xl:mt-6",
+          "mt-6 min-h-[31.5rem] w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-[37rem] xl:mt-6",
           {
             "lg:-ml-32": open,
           },

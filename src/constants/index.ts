@@ -66,13 +66,16 @@ export function convertTimeString(timeString: string): string {
   if (!match) {
     throw new Error("Invalid time format. Expected format '0 00:00:04.876'");
   }
+  // currently returns upper end of estimate; 
+  // can update as withdrawal queue becomes more automated
 
-  const [_, days, hours, minutes, seconds] = match.map(Number);
+  const hours = parseFloat(`${match[4]}.${match[5]}`);
 
-  if (days > 0) return `${days} ${days === 1 ? "day" : "days"}`;
-  if (hours > 0) return `${hours} ${hours === 1 ? "hour" : "hours"}`;
-  if (minutes > 0) return `${minutes} ${minutes === 1 ? "min" : "mins"}`;
-  if (seconds > 0) return `${seconds} ${seconds === 1 ? "sec" : "secs"}`;
-
-  return "0 secs";
+  if (hours < 1) return "1-2 hours";
+  if (hours < 24) {
+    const roundedHour = Math.ceil(hours);
+    return `${roundedHour}-${roundedHour + 2} hours`;
+  }
+  const days = Math.ceil(hours / 24);
+  return `${days}-${days + 1} days`;
 }

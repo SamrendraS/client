@@ -105,7 +105,7 @@ export function AppSidebar({ className }: { className?: string }) {
                     <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
                   </>
                 )}
-                DeFi <span className="text-sm font-thin">(coming soon)</span>
+                DeFi <span className="text-sm font-thin">with xSTRK</span>
               </SidebarGroup>
             </Link>
 
@@ -191,7 +191,7 @@ export function AppSidebar({ className }: { className?: string }) {
                 side="right"
                 className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
               >
-                <p>DeFi (coming soon)</p>
+                <p>xSTRK on DeFi</p>
               </TooltipContent>
             </Tooltip>
 
