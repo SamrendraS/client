@@ -208,12 +208,17 @@ export function AppSidebar({ className }: { className?: string }) {
                   <ChartPie className="size-5 shrink-0" />
                 </SidebarGroup>
               </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              <Link
+                href={"https://dune.com/endurfi/xstrk-analytics"}
+                target="_blank"
               >
-                <p>xSTRK Analytics (coming soon)</p>
-              </TooltipContent>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>xSTRK Analytics</p>
+                </TooltipContent>
+              </Link>
             </Tooltip>
 
             <hr className="border-[#AACBC480]" />

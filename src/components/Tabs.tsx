@@ -66,7 +66,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
           "lg:-ml-32": open,
         })}
       >
-        <div className="flex items-center gap-3">
+        <div className="items-center gap-3 md:flex">
           <div className="flex items-center gap-2">
             <Icons.strkLogo className="size-8" />
             <h1 className="text-2xl font-bold text-black">Stake STRK</h1>
@@ -74,7 +74,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
           <Link
             href="https://endur.fi/audit"
             target="_blank"
-            className="flex items-center gap-1 rounded-full border border-[#17876D33] bg-[#17876D1A] px-3 py-1 transition-opacity hover:opacity-80"
+            className="mt-2 flex items-center gap-1 rounded-full border border-[#17876D33] bg-[#17876D1A] px-3 py-1 transition-opacity hover:opacity-80 md:mt-0"
           >
             <Icons.shield className="size-4 text-[#17876D]" />
             <span className="text-sm text-[#17876D]">Secure and audited</span>

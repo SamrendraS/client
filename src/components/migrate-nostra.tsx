@@ -104,8 +104,8 @@ const MigrateNostra = () => {
             Migrate your Nostra staked STRK
           </DialogTitle>
           <DialogDescription className="!mt-3.5 text-base font-normal text-[#8D9C9C]">
-            Nostra is retiring soon. Easily migrate your staked STRK to xSTRK,
-            and lend to Nostra again to earn high yield.
+            nstSTRK is retiring. Easily migrate your nstSTRK to xSTRK, and lend
+            to Nostra again to earn high yield.
           </DialogDescription>
         </DialogHeader>
 
