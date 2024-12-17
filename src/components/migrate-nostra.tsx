@@ -104,8 +104,15 @@ const MigrateNostra = () => {
             Migrate your Nostra staked STRK to Endur
           </DialogTitle>
           <DialogDescription className="!mt-3.5 text-base font-normal text-[#8D9C9C]">
-            Nostra Staked STRK is <a style={{textDecoration: 'underline'}} href="https://snapshot.box/#/sn:0x07c251045154318a2376a3bb65be47d3c90df1740d8e35c9b9d943aa3f240e50/proposal/5">retired</a>. One click migrate your staked STRK to Endur,
-            and earn more with xSTRK
+            Nostra Staked STRK is{" "}
+            <a
+              style={{ textDecoration: "underline" }}
+              href="https://snapshot.box/#/sn:0x07c251045154318a2376a3bb65be47d3c90df1740d8e35c9b9d943aa3f240e50/proposal/5"
+            >
+              retired
+            </a>
+            . One click migrate your staked STRK to Endur, and earn more with
+            xSTRK
           </DialogDescription>
         </DialogHeader>
 
@@ -124,7 +131,7 @@ const MigrateNostra = () => {
           <div className="mt-1 flex flex-col rounded-md bg-[#E8F3F0] px-3 py-3.5 text-[#17876D]">
             <div className="flex items-center justify-between">
               <span>You will stake</span>
-              <span>{formatNumberWithCommas(youWillStake, 4)} STRK</span>
+              <span>{formatNumberWithCommas(youWillStake)} STRK</span>
             </div>
 
             <div className="mt-2 flex items-center justify-between">
@@ -132,9 +139,9 @@ const MigrateNostra = () => {
               <span>
                 {exchangeRate.rate !== 0
                   ? formatNumberWithCommas(
-                      (Number(youWillStake) / exchangeRate.rate).toFixed(4),
+                      (Number(youWillStake) / exchangeRate.rate).toFixed(8),
                     )
-                  : formatNumberWithCommas(youWillStake, 4)}{" "}
+                  : formatNumberWithCommas(youWillStake)}{" "}
                 xSTRK
               </span>
             </div>
