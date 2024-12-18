@@ -149,7 +149,7 @@ const MigrateNostra = () => {
               </div>
               <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
                 <span className="text-[18px] font-semibold text-[#075A5A]">
-                  Transfering...
+                  transferring...
                 </span>
               </div>
             </div>
