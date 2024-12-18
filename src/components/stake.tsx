@@ -455,7 +455,7 @@ const Stake = () => {
       <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md text-xs font-semibold text-[#939494] lg:text-[13px]">
+        <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
           <p className="flex items-center gap-1">
             You will get
             <TooltipProvider delayDuration={0}>
@@ -480,7 +480,7 @@ const Stake = () => {
               </Tooltip>
             </TooltipProvider>
           </p>
-          <span>
+          <span className="text-lg lg:text-xl">
             {form.watch("stakeAmount")
               ? formatNumberWithCommas(
                   Number(form.watch("stakeAmount")) / exchangeRate.rate,

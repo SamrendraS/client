@@ -1,81 +1,155 @@
-import Image from "next/image";
 import React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
-import { Icons } from "./Icons";
-import { Button } from "./ui/button";
-
-interface DefiCardProps {
-  dapp: string;
-  tokens: [string, string];
-  description: string;
+export interface TokenDisplay {
+  icon: React.ReactNode;
+  name: string;
 }
 
-const DefiCard: React.FC<DefiCardProps> = ({ dapp, tokens, description }) => {
-  const getDappIcon = (dappName: string) => {
-    switch (dappName.toLowerCase()) {
-      case "endur":
-        return <Icons.endurLogo />;
-      case "strkfarm":
-        return <Icons.strkfarmLogo />;
-      case "vesu":
-        return <Icons.vesuLogo className="rounded-full" />;
-      case "avnu":
-        return <Icons.avnuLogo className="rounded-full border" />;
-      case "fibrous":
-        return <Icons.fibrousLogo className="rounded-full" />;
-      case "ekubo":
-        return <Icons.ekuboLogo className="rounded-full" />;
-      default:
-        return null;
-    }
-  };
+export interface ProtocolBadge {
+  type: string;
+  color: string;
+}
 
-  const getTokenIcon = (tokenName: string) => {
-    switch (tokenName.toLowerCase()) {
-      case "strk":
-        return <Icons.strkLogo className="size-[22px]" />;
-      case "xstrk":
-        return <Icons.endurLogo />;
-      case "usdc":
-        return <Icons.usdcLogo />;
-      default:
-        return null;
-    }
+export interface ProtocolAction {
+  type: string;
+  link: string;
+  buttonText: string;
+  variant?: "primary" | "secondary" | "tertiary";
+}
+
+interface DefiCardProps {
+  tokens: TokenDisplay[];
+  protocolIcon: React.ReactNode;
+  badges: ProtocolBadge[];
+  description: string;
+  apy?: { value: number | null; error: Error | null; isLoading: boolean };
+  action: ProtocolAction | undefined;
+}
+
+const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
+  <div className="flex items-center gap-2">
+    <div className="flex items-center">
+      {tokens[0].icon}
+      {tokens[1]?.icon && (
+        <div className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white">
+          {tokens[1].icon}
+        </div>
+      )}
+    </div>
+    <span className="text-sm font-medium">
+      {tokens.map((t) => t.name).join("/")}
+    </span>
+  </div>
+);
+
+const ApyDisplay: React.FC<{ apy: DefiCardProps["apy"] }> = ({ apy }) => {
+  if (!apy) return null;
+
+  const renderValue = () => {
+    if (apy.isLoading) return <Skeleton className="h-6 w-16" />;
+    if (apy.error || apy.value === null) return "-";
+    return `${apy.value.toFixed(2)}%`;
   };
 
   return (
-    <div className="h-[230px] w-full min-w-[330px] rounded-xl bg-white px-4 py-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-sm">
-          <div className="flex items-center">
-            {getTokenIcon(tokens[0])}
-            {getTokenIcon(tokens[1]) && (
-              <div className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white">
-                {getTokenIcon(tokens[1])}
-              </div>
-            )}
-          </div>
-          {tokens[0]}
-          {getTokenIcon(tokens[1]) && `-${tokens[1]}`}
-        </div>
+    <div className="flex items-center gap-2">
+      <span className="text-sm text-[#8D9C9C]">APY</span>
+      <span className="text-lg font-semibold text-[#17876D]">
+        {renderValue()}
+      </span>
+    </div>
+  );
+};
 
-        {getDappIcon(dapp)}
+const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
+  <div className="flex max-w-[180px] flex-wrap justify-end gap-1.5">
+    {badges.map((badge, index) => (
+      <div
+        key={index}
+        className={cn(
+          "whitespace-nowrap rounded-full px-2.5 py-1 text-xs",
+          badge.color,
+        )}
+      >
+        {badge.type}
       </div>
+    ))}
+  </div>
+);
 
-      <p className="mt-4 text-sm text-black">{description}</p>
-
-      <div className="relative h-[69px] w-full">
-        <Image
-          className="mt-2 object-contain"
-          src="/blur.svg"
-          fill
-          alt="blur"
-        />
-      </div>
-
-      <Button className="mt-8 w-full rounded-full bg-[#03624C4D] text-[13px] font-bold tracking-[-1%] text-[#17876D] hover:bg-[#03624C4D]">
+const ActionButtons: React.FC<{ action: ProtocolAction | undefined }> = ({
+  action,
+}) => {
+  if (!action) {
+    return (
+      <Button className="w-full rounded-xl bg-[#E9F3F0] px-4 py-2.5 text-sm font-medium text-[#17876D] hover:bg-[#DBE9E4]">
         Coming soon
       </Button>
+    );
+  }
+
+  return (
+    <Link
+      href={action.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block w-full"
+    >
+      <Button
+        className={cn(
+          "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
+          "bg-[#17876D] text-white hover:bg-[#146D57]",
+        )}
+      >
+        {action.buttonText}
+      </Button>
+    </Link>
+  );
+};
+
+const DefiCard: React.FC<DefiCardProps> = ({
+  tokens,
+  protocolIcon,
+  badges,
+  description,
+  apy,
+  action,
+}) => {
+  if (apy && apy.isLoading) {
+    return (
+      <div className="flex h-auto min-h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
+        <Skeleton className="mb-2 h-6 w-1/2" />
+        <Skeleton className="mb-4 h-6 w-1/3" />
+        <Skeleton className="mb-2 h-4 w-full" />
+        <Skeleton className="mb-4 h-4 w-2/3" />
+        <Skeleton className="mt-auto h-10 w-full" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-auto min-h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
+      <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-2">
+          <TokenPairDisplay tokens={tokens} />
+          <ApyDisplay apy={apy} />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <ProtocolBadges badges={badges} />
+          {protocolIcon}
+        </div>
+      </div>
+
+      <h3 className="mt-4 text-sm text-[#4B5563]">{description}</h3>
+
+      <div className="mt-auto pt-4">
+        <ActionButtons action={action} />
+      </div>
     </div>
   );
 };

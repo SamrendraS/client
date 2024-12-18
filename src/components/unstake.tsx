@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,15 +44,8 @@ import {
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  convertTimeString,
-  getProvider,
-  NETWORK,
-  REWARD_FEES,
-} from "@/constants";
-import { formatNumber } from "@/lib/utils";
-
+import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
+import { formatNumber, formatNumberWithCommas } from "@/lib/utils";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -72,9 +64,7 @@ const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
-const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
-  const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("endur");
-
+const Unstake = () => {
   const { address } = useAccount();
   const { connect: connectSnReact } = useConnect();
 
@@ -193,16 +183,6 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
     };
   }, [isMobile]);
 
-  const youWillGet = React.useMemo(() => {
-    if (form.getValues("unstakeAmount") && txnDapp === "endur") {
-      return (Number(form.getValues("unstakeAmount")) * exRate.rate).toFixed(2);
-    } else if (form.getValues("unstakeAmount") && txnDapp === "dex") {
-      return (Number(form.getValues("unstakeAmount")) * 0.9).toFixed(2);
-    }
-
-    return "0";
-  }, [exRate.rate, form.watch("unstakeAmount"), txnDapp]);
-
   async function connectWallet(config = connectorConfig) {
     try {
       const { connector } = await connect(config);
@@ -307,21 +287,20 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-[41px]">
+      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-20">
         <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
           <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK
         </div>
-
         <div className="rounded-md bg-[#17876D] px-2 py-1 text-xs text-white">
           Current staked:{" "}
           {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))} STRK
         </div>
       </div>
 
-      <div className="flex h-[88px] w-full items-center px-7 pb-3 pt-5 md:h-[84px] lg:h-fit lg:gap-2">
+      <div className="flex h-[88px] w-full items-center gap-2 px-7 pb-3 pt-5 md:h-[84px] lg:h-fit">
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-xs text-[#06302B]">Enter Amount (xSTRK)</p>
+          <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <FormField
@@ -338,7 +317,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="absolute -bottom-3 left-1 text-xs" />
+                    <FormMessage className="absolute -bottom-5 left-1 text-xs" />
                   </FormItem>
                 )}
               />
@@ -380,95 +359,15 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
           >
             Max
           </button>
-
-          <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-[#8D9C9C] lg:text-sm">
-            <Icons.wallet className="size-3 lg:size-5" />
-            <span className="hidden md:block">Balance:</span>
-            <span className="font-bold">
-              {formatNumber(currentStaked.value.toEtherToFixedDecimals(2))}{" "}
-              xSTRK
-            </span>
-          </div>
         </div>
       </div>
 
-      <Tabs
-        value={txnDapp}
-        defaultValue="endur"
-        className="w-full max-w-none pt-1"
-        onValueChange={(value) => setTxnDapp(value as "endur" | "dex")}
-      >
-        <TabsList className="flex h-full w-full flex-col items-center justify-between gap-3 bg-transparent px-6 md:flex-row">
-          <TabsTrigger
-            value="endur"
-            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D]"
-          >
-            <div className="flex w-full items-center justify-between font-semibold">
-              <p>Use Endur</p>
-
-              <Icons.endurLogo className="size-6" />
-            </div>
-
-            <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
-              <div className="flex items-center gap-0.5">
-                Rate
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      className="ounded-md border border-[#03624C] bg-white text-[#03624C]"
-                    >
-                      {exRate.rate === 0
-                        ? "-"
-                        : `1 xSTRK = ${exRate.rate.toFixed(4)} STRK`}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <p>{exRate.rate === 0 ? "-" : `1=${exRate.rate.toFixed(4)}`}</p>
-            </div>
-
-            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
-              <p>Waiting time:</p>
-              <p>~ {convertTimeString(avgWaitTime)}</p>
-            </div>
-          </TabsTrigger>
-
-          <TabsTrigger
-            value="dex"
-            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D]"
-          >
-            <div className="flex w-full items-center justify-between font-semibold">
-              <p>Use DEX</p>
-              <div className="flex items-center">
-                <Icons.ekuboLogo className="size-6 rounded-full" />
-                <Icons.nostraLogo className="-ml-3 size-[26px]" />
-                <Icons.avnuLogo className="-ml-3 size-[26px] rounded-full border border-[#8D9C9C20]" />
-              </div>
-            </div>
-
-            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939394]">
-              <p>Rate:</p>
-              <p>1:0.9</p>
-            </div>
-
-            <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
-              <p>Waiting time:</p>
-              <p>~ Instant</p>
-            </div>
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-
-      <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
+      <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="space-y-3 px-7">
-        <div className="flex items-center justify-between rounded-md text-xs font-semibold text-[#939494] lg:text-[13px]">
+        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
           <p className="flex items-center gap-1">
-            You will get
+            Burnt xSTRK
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger>
@@ -478,16 +377,54 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  {/* Burnt <strong>xSTRK</strong> is the amount of xSTRK that
-                      will be redeemed to unstake the requested STRK */}
-                  You will receive the equivalent amount of STRK for the xSTRK
-                  you are unstaking. The amount of STRK you receive will be
-                  based on the current exchange rate of xSTRK to STRK.
+                  Burnt <strong>xSTRK</strong> is the amount of xSTRK that will
+                  be redeemed to unstake the requested STRK
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </p>
-          <span>{youWillGet} STRK</span>
+          <span>
+            {form.watch("unstakeAmount")
+              ? formatNumberWithCommas(
+                  Number(form.watch("unstakeAmount")) / exRate.rate,
+                )
+              : 0}{" "}
+            xSTRK
+          </span>
+        </div>
+
+        <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+          <p className="flex items-center gap-1">
+            Exchange rate
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-64 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                >
+                  <strong>xSTRK</strong> is a yield bearing token whose value
+                  will appreciate against STRK as you get more STRK rewards. The
+                  increase in exchange rate of xSTRK will determine your share
+                  of rewards.{" "}
+                  <Link
+                    target="_blank"
+                    href="https://docs.endur.fi/docs"
+                    className="text-blue-600 underline"
+                  >
+                    Learn more
+                  </Link>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
+          <span>
+            {exRate.rate === 0
+              ? "-"
+              : `1 xSTRK = ${exRate.rate.toFixed(4)} STRK`}
+          </span>
         </div>
 
         <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">

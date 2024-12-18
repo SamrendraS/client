@@ -23,18 +23,21 @@ export function getNstSTRKContract(provider: RpcProvider) {
 const userXSTRKBalanceQueryAtom = atomWithQuery((get) => {
   return {
     // current block atom only to trigger a change when the block changes
-    queryKey: ["userXSTRKBalance", get(currentBlockAtom), get(userAddressAtom)],
+    queryKey: [
+      "userXSTRKBalance",
+      get(currentBlockAtom),
+      get(userAddressAtom),
+      get(providerAtom),
+    ],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const [, , userAddress] = queryKey;
       const provider = get(providerAtom);
-      // console.log("userXSTRKBalanceAtom", provider, userAddress);
       if (!provider || !userAddress) {
         return MyNumber.fromZero();
       }
       try {
         const lstContract = getLSTContract(provider);
         const balance = await lstContract.call("balance_of", [userAddress]);
-        // console.log("userXSTRKBalanceAtom [2]", balance.toString());
         return new MyNumber(balance.toString(), STRK_DECIMALS);
       } catch (error) {
         console.error("userXSTRKBalanceAtom [3]", error);
@@ -59,6 +62,7 @@ export const userNstSTRKBalanceQueryAtom = atomWithQuery((get) => {
       "userNstSTRKBalance",
       get(currentBlockAtom),
       get(userAddressAtom),
+      get(providerAtom),
     ],
     queryFn: async ({ _queryKey }: any): Promise<MyNumber> => {
       const provider = get(providerAtom);
@@ -86,22 +90,19 @@ export const nstStrkWithdrawalFeeQueryAtom = atomWithQuery((get) => {
       "userNstWithdrawalFee",
       get(currentBlockAtom),
       get(userAddressAtom),
+      get(providerAtom),
     ],
     queryFn: async ({ _queryKey }: any): Promise<MyNumber> => {
-      console.log("nstStrkWithdrawalFeeQueryAtom [1]");
       const provider = get(providerAtom);
       const userAddress = get(userAddressAtom);
 
       if (!provider || !userAddress) {
-        console.log("nstStrkWithdrawalFeeQueryAtom [1.1]");
         return MyNumber.fromZero();
       }
 
       try {
-        console.log("nstStrkWithdrawalFeeQueryAtom [1.2]");
         const nstContract = getNstSTRKContract(provider);
         const balance = await nstContract.call("withdrawal_fee");
-        console.log("nstStrkWithdrawalFeeQueryAtom [2]", balance.toString());
         return new MyNumber(balance.toString(), STRK_DECIMALS);
       } catch (error) {
         console.error("nstStrkWithdrawalFeeQueryAtom [3]", error);
@@ -118,6 +119,7 @@ export const userSTRKBalanceQueryAtom = atomWithQuery((get) => {
       get(currentBlockAtom),
       get(userAddressAtom),
       get(userXSTRKBalanceAtom),
+      get(providerAtom),
     ],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const { data, error } = get(userXSTRKBalanceQueryAtom);
@@ -171,7 +173,7 @@ export const userSTRKBalanceAtom = atom((get) => {
 
 export const totalStakedQueryAtom = atomWithQuery((get) => {
   return {
-    queryKey: ["totalStaked", get(currentBlockAtom)],
+    queryKey: ["totalStaked", get(currentBlockAtom), get(providerAtom)],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const provider = get(providerAtom);
       if (!provider) {
@@ -201,7 +203,7 @@ export const totalStakedAtom = atom((get) => {
 
 export const totalSupplyQueryAtom = atomWithQuery((get) => {
   return {
-    queryKey: ["totalSupply", get(currentBlockAtom)],
+    queryKey: ["totalSupply", get(currentBlockAtom), get(providerAtom)],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const provider = get(providerAtom);
       if (!provider) {
@@ -239,13 +241,18 @@ export const exchangeRateAtom = atom((get) => {
     // in our requests and return 0 to avoid any user side confusion
     return {
       rate: 0,
+      preciseRate: MyNumber.fromZero(),
       isLoading: totalStaked.isLoading || totalSupply.isLoading,
     };
   }
+  console.log("exchangeRateAtom", totalStaked.value, totalSupply.value);
   return {
     rate:
       Number(totalStaked.value.toEtherStr()) /
       Number(totalSupply.value.toEtherStr()),
+    preciseRate: totalStaked.value
+      .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
+      .operate("div", totalSupply.value.toString()),
     isLoading: totalStaked.isLoading || totalSupply.isLoading,
   };
 });
