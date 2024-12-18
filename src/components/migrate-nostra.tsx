@@ -67,7 +67,8 @@ const MigrateNostra = () => {
   const youWillStake = youWillStakeFull.toEtherToFixedDecimals(4);
 
   const xSTRKAmount = useMemo(() => {
-    if (exchangeRate.rate === 0) return MyNumber.fromZero();
+    if (exchangeRate.rate === 0 || nstStrkBalance.isZero())
+      return MyNumber.fromZero();
     const amount = youWillStakeFull
       .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
       .operate("div", exchangeRate.preciseRate.toString());
@@ -271,7 +272,7 @@ const MigrateNostra = () => {
           </div>
         </div>
 
-        {!isMigrationDone && (
+        {!isMigrationDone && !nstStrkBalance.isZero() && (
           <button
             className={cn(
               fontInter.className,
@@ -282,6 +283,13 @@ const MigrateNostra = () => {
             <Icons.migrate />
             Transfer
           </button>
+        )}
+        {!isMigrationDone && nstStrkBalance.isZero() && (
+          <div className="mt-4 items-center gap-2 rounded-md bg-[#FFC4664D] px-3 py-3.5 text-[#3F6870]">
+            <p className="font-bold">
+              ⚠️ You do not have any Nostra Staked STRK (nstSTRK) to migrate
+            </p>
+          </div>
         )}
         {isMigrationDone && (
           <div className="mt-4 items-center gap-2 rounded-md bg-[#17876D] px-3 py-3.5 text-[#E8F3F0]">
