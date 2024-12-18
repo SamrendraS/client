@@ -309,7 +309,9 @@ const Navbar = ({ className }: { className?: string }) => {
       )}
 
       <div className="flex items-center gap-4">
-        {!isMobile && <MigrateNostra />}
+        {!isMobile && NETWORK == constants.NetworkName.SN_MAIN && (
+          <MigrateNostra />
+        )}
 
         <button
           className={cn(

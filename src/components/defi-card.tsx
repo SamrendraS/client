@@ -18,7 +18,7 @@ export interface ProtocolAction {
   type: string;
   link: string;
   buttonText: string;
-  variant?: 'primary' | 'secondary' | 'tertiary';
+  variant?: "primary" | "secondary" | "tertiary";
 }
 
 interface DefiCardProps {
@@ -27,7 +27,7 @@ interface DefiCardProps {
   badges: ProtocolBadge[];
   description: string;
   apy?: { value: number | null; error: Error | null; isLoading: boolean };
-  action: ProtocolAction | null;
+  action: ProtocolAction | undefined;
 }
 
 const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
@@ -81,7 +81,9 @@ const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
   </div>
 );
 
-const ActionButtons: React.FC<{ action: ProtocolAction | null }> = ({ action }) => {
+const ActionButtons: React.FC<{ action: ProtocolAction | undefined }> = ({
+  action,
+}) => {
   if (!action) {
     return (
       <Button className="w-full rounded-xl bg-[#E9F3F0] px-4 py-2.5 text-sm font-medium text-[#17876D] hover:bg-[#DBE9E4]">
@@ -100,7 +102,7 @@ const ActionButtons: React.FC<{ action: ProtocolAction | null }> = ({ action }) 
       <Button
         className={cn(
           "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
-          "bg-[#17876D] text-white hover:bg-[#146D57]"
+          "bg-[#17876D] text-white hover:bg-[#146D57]",
         )}
       >
         {action.buttonText}
@@ -115,16 +117,16 @@ const DefiCard: React.FC<DefiCardProps> = ({
   badges,
   description,
   apy,
-  action
+  action,
 }) => {
   if (apy && apy.isLoading) {
     return (
       <div className="flex h-auto min-h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
-        <Skeleton className="h-6 w-1/2 mb-2" />
-        <Skeleton className="h-6 w-1/3 mb-4" />
-        <Skeleton className="h-4 w-full mb-2" />
-        <Skeleton className="h-4 w-2/3 mb-4" />
-        <Skeleton className="h-10 w-full mt-auto" />
+        <Skeleton className="mb-2 h-6 w-1/2" />
+        <Skeleton className="mb-4 h-6 w-1/3" />
+        <Skeleton className="mb-2 h-4 w-full" />
+        <Skeleton className="mb-4 h-4 w-2/3" />
+        <Skeleton className="mt-auto h-10 w-full" />
       </div>
     );
   }

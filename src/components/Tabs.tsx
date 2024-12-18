@@ -155,7 +155,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
             value="unstake"
             className="h-full pb-3 focus-visible:ring-0 focus-visible:ring-offset-0 lg:pb-0"
           >
-            <Unstake avgWaitTime={avgWaitTime} />
+            <Unstake />
           </TabsContent>
 
           <TabsContent

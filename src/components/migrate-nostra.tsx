@@ -7,12 +7,11 @@ import { Figtree, Inter } from "next/font/google";
 import { Contract, uint256 } from "starknet";
 import Link from "next/link";
 import erc4626Abi from "@/abi/erc4626.abi.json";
-import nostraIXSTRK from '@/abi/ixstrk.abi.json';
+import nostraIXSTRK from "@/abi/ixstrk.abi.json";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogClose,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -33,6 +32,8 @@ import React, { useEffect, useMemo } from "react";
 import { Icons } from "./Icons";
 import MyNumber from "@/lib/MyNumber";
 import { isTxAccepted } from "@/store/transactions.atom";
+import { snAPYAtom } from "@/store/staking.store";
+import { nostraLendYieldAtom } from "@/store/defi.store";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 const fontInter = Inter({ subsets: ["latin-ext"] });
@@ -46,14 +47,16 @@ const MigrateNostra = () => {
   const nstStrkBalanceRes = useAtomValue(userNstSTRKBalanceAtom);
   const nstStrkWithdrawal = useAtomValue(nstStrkWithdrawalFeeAtom);
   const exchangeRate = useAtomValue(exchangeRateAtom);
+  const stakingApy = useAtomValue(snAPYAtom);
+  const nostraLendApy = useAtomValue(nostraLendYieldAtom);
 
   const nstStrkWithdrawalFee = parseFloat(
     nstStrkWithdrawal.value.toEtherToFixedDecimals(4),
   );
 
   const nstStrkBalance = useMemo(() => {
-    // return nstStrkBalanceRes.value;
-    return MyNumber.fromEther("0.1", 18);
+    return nstStrkBalanceRes.value;
+    // return MyNumber.fromEther("0.1", 18); // for testing
   }, [nstStrkBalanceRes]);
 
   const youWillStakeFull = nstStrkBalance.operate(
@@ -72,7 +75,12 @@ const MigrateNostra = () => {
   }, [youWillStake, exchangeRate]);
 
   useEffect(() => {
-    console.log('exchangeRateAtom', xSTRKAmount.toString(), exchangeRate.rate, exchangeRate.preciseRate.toString());
+    console.log(
+      "exchangeRateAtom",
+      xSTRKAmount.toString(),
+      exchangeRate.rate,
+      exchangeRate.preciseRate.toString(),
+    );
   }, [xSTRKAmount]);
 
   const handleMigrateToEndur = async () => {
@@ -198,12 +206,10 @@ const MigrateNostra = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button 
-        className="flex items-center gap-2 rounded-md bg-[#FF4240] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#b03d3c]"
-      >
-        <Icons.migrate />
-        Migrate Nostra STRK
-      </button>
+        <button className="flex items-center gap-2 rounded-md bg-[#FF4240] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#b03d3c]">
+          <Icons.migrate />
+          Migrate Nostra STRK
+        </button>
       </DialogTrigger>
       <DialogContent
         className={cn(font.className, "px-8 pb-8 pt-12 sm:max-w-[668px]")}
@@ -216,21 +222,20 @@ const MigrateNostra = () => {
             nstSTRK is{" "}
             <a
               style={{ textDecoration: "underline" }}
+              target="_blank"
               href="https://snapshot.box/#/sn:0x07c251045154318a2376a3bb65be47d3c90df1740d8e35c9b9d943aa3f240e50/proposal/5"
             >
               retired
             </a>
-            . Easily migrate your nstSTRK to xSTRK, and lend
-            to Nostra again to earn high yield.
+            . Easily migrate your nstSTRK to xSTRK, and lend to Nostra again to
+            earn high yield.
           </DialogDescription>
         </DialogHeader>
 
         <div className="mt-2 flex items-center justify-between rounded-md bg-[#E8F3F0] px-3 py-3.5 text-[#17876D]">
           <span>Current staked STRK on Nostra</span>
           <span>
-            {formatNumberWithCommas(
-              nstStrkBalance.toEtherToFixedDecimals(4),
-            )}{" "}
+            {formatNumberWithCommas(nstStrkBalance.toEtherToFixedDecimals(4))}{" "}
             STRK
           </span>
         </div>
@@ -245,40 +250,51 @@ const MigrateNostra = () => {
 
             <div className="mt-2 flex items-center justify-between">
               <span>You will receive</span>
-              <span>
-                {xSTRKAmount.toEtherToFixedDecimals(2)}{" "}
-                xSTRK
-              </span>
+              <span>{xSTRKAmount.toEtherToFixedDecimals(2)} xSTRK</span>
             </div>
             <div className="mt-2 flex items-center justify-between">
               <span>
                 xSTRK is automatically lent to{" "}
                 <span className="color-[#FF4240]">Nostra</span>
               </span>
-              <span>+5% APY</span>
+              <span>{nostraLendApy.value?.toFixed(2)}% APY</span>
             </div>
             <div className="mt-2 flex items-center justify-between font-bold">
-              <span>Net APY:</span>
-              <span>24% APY</span>
+              <span>Net APY (Incl. Staking yield)</span>
+              <span>
+                {(stakingApy.value * 100 + (nostraLendApy.value || 0)).toFixed(
+                  2,
+                )}
+                % APY
+              </span>
             </div>
           </div>
         </div>
 
-        {!isMigrationDone && <button
-          className={cn(
-            fontInter.className,
-            "mx-auto mt-4 flex w-fit items-center gap-2 rounded-lg bg-[#17876D] px-5 py-3 text-sm font-medium text-white transition-all",
-          )}
-          onClick={() => handleMigrateToEndur()}
-        >
-          <Icons.migrate />
-          Transfer
-        </button>}
+        {!isMigrationDone && (
+          <button
+            className={cn(
+              fontInter.className,
+              "mx-auto mt-4 flex w-fit items-center gap-2 rounded-lg bg-[#17876D] px-5 py-3 text-sm font-medium text-white transition-all",
+            )}
+            onClick={() => handleMigrateToEndur()}
+          >
+            <Icons.migrate />
+            Transfer
+          </button>
+        )}
         {isMigrationDone && (
-          <div className="mt-4 items-center gap-2 bg-[#17876D] rounded-md px-3 py-3.5 text-[#E8F3F0]">
+          <div className="mt-4 items-center gap-2 rounded-md bg-[#17876D] px-3 py-3.5 text-[#E8F3F0]">
             <p className="font-bold">Migration completed</p>
-            <span className="text-sm">Your nstSTRK is converted to xSTRK and deposited into Nostra. You can check it{" "}
-              <Link href="https://app.nostra.finance/pools" target="_blank"><u>here.</u></Link>
+            <span className="text-sm">
+              Your nstSTRK is converted to xSTRK and deposited into Nostra. You
+              can check it{" "}
+              <Link
+                href="https://app.nostra.finance/lend-borrow"
+                target="_blank"
+              >
+                <u>here.</u>
+              </Link>
             </span>
           </div>
         )}

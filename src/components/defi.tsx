@@ -17,7 +17,7 @@ interface ProtocolConfig {
   protocolIcon: React.ReactNode;
   badges: ProtocolBadge[];
   description: string;
-  action?: ProtocolAction | ProtocolAction[];
+  action?: ProtocolAction;
 }
 
 const protocolConfigs: Record<string, ProtocolConfig> = {
@@ -28,7 +28,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     protocolIcon: <Icons.strkfarmLogo className="size-8" />,
     badges: [{ type: "Yield Farming", color: "bg-[#E9F3F0] text-[#17876D]" }],
     description: "Auto compound defi spring rewards on xSTRK",
-    action: null
+    action: undefined,
   },
   vesu: {
     tokens: [
@@ -36,12 +36,13 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     ],
     protocolIcon: <Icons.vesuLogo className="size-8 rounded-full" />,
     badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
-    description: "Earn DeFi Spring rewards & yield, use xSTRK as collateral to Borrow and Multiply",
+    description:
+      "Earn DeFi Spring rewards & yield, use xSTRK as collateral to Borrow and Multiply",
     action: {
       type: "lend",
-      link: "https://vesu.xyz/lend",
+      link: "https://vesu.xyz/lend?form=true&poolId=2345856225134458665876812536882617294246962319062565703131100435311373119841&collateralAddress=0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a",
       buttonText: "Lend xSTRK",
-    }
+    },
   },
   avnu: {
     tokens: [
@@ -55,7 +56,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
       type: "swap",
       link: "https://app.avnu.fi/en?mode=simple&tokenFrom=0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&tokenTo=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&amount=100",
       buttonText: "Swap Tokens",
-    }
+    },
   },
   fibrous: {
     tokens: [
@@ -69,23 +70,24 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
       type: "swap",
       link: "https://app.fibrous.finance/en?network=starknet&mode=swap&source=0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&destination=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
       buttonText: "Swap Tokens",
-    }
+    },
   },
-  'nostra-pool': {
+  "nostra-pool": {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
       { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
     ],
     protocolIcon: <Icons.nostraLogo className="size-8 rounded-full" />,
     badges: [{ type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }],
-    description: "Provide liquidity to the xSTRK/STRK pool on Nostra and earn trading fees",
+    description:
+      "Provide liquidity to the xSTRK/STRK pool on Nostra and earn trading fees",
     action: {
       type: "pool",
       link: "https://app.nostra.finance/pools/xSTRK-STRK/deposit",
       buttonText: "Add Liquidity",
     },
   },
-  'nostra-lend': {
+  "nostra-lend": {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
     ],
@@ -101,22 +103,23 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
   ekubo: {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
-      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" }
+      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
     ],
     protocolIcon: <Icons.ekuboLogo className="size-8 rounded-full" />,
     badges: [{ type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }],
-    description: "Provide liquidity to the xSTRK/STRK pool on Ekubo and earn trading fees & DeFi Spring rewards",
+    description:
+      "Provide liquidity to the xSTRK/STRK pool on Ekubo and earn trading fees & DeFi Spring rewards",
     action: {
       type: "pool",
-      link: "https://app.ekubo.org/pool",
+      link: "https://app.ekubo.org/positions/new?quoteCurrency=xSTRK&baseCurrency=STRK",
       buttonText: "Add Liquidity",
-    }
+    },
   },
 };
 
 const Defi: React.FC = () => {
   const { open } = useSidebar();
-  const yields = useAtomValue(protocolYieldsAtom);
+  const yields: any = useAtomValue(protocolYieldsAtom);
   console.log(yields);
 
   const sortedProtocols = useMemo(() => {
@@ -143,13 +146,13 @@ const Defi: React.FC = () => {
         Use xSTRK to unlock greater rewards with DeFi opportunities!
       </p> */}
 
-      <div className="mt-9">
+      <div className="mt-6">
         <div className="mb-6 rounded-md border border-[#17876D33] bg-[#17876D0A] p-4">
           <p className="text-sm text-[#03624C]">
-            Please note: The protocols listed here are third-party services not
-            affiliated with or endorsed by Endur. This list is provided for
-            informational convenience only. Always do your own research and
-            understand the risks before using any DeFi protocol.
+            <b>Please note:</b> The protocols listed here are third-party
+            services not affiliated with or endorsed by Endur. This list is
+            provided for informational convenience only. Always do your own
+            research and understand the risks before using any DeFi protocol.
           </p>
         </div>
 
@@ -157,7 +160,7 @@ const Defi: React.FC = () => {
           Opportunities
         </p>
 
-        <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
           {sortedProtocols.map((protocol) => {
             const config = protocolConfigs[protocol];
             const shouldShowApy = !["avnu", "fibrous"].includes(protocol);
