@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useAtomValue } from "jotai";
 import { cn } from "@/lib/utils";
 import DefiCard, {
@@ -17,7 +17,7 @@ interface ProtocolConfig {
   protocolIcon: React.ReactNode;
   badges: ProtocolBadge[];
   description: string;
-  actions: ProtocolAction[];
+  action?: ProtocolAction | ProtocolAction[];
 }
 
 const protocolConfigs: Record<string, ProtocolConfig> = {
@@ -28,7 +28,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     protocolIcon: <Icons.strkfarmLogo className="size-8" />,
     badges: [{ type: "Yield Farming", color: "bg-[#E9F3F0] text-[#17876D]" }],
     description: "Auto compound defi spring rewards on xSTRK",
-    actions: [],
+    action: null
   },
   vesu: {
     tokens: [
@@ -36,15 +36,12 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     ],
     protocolIcon: <Icons.vesuLogo className="size-8 rounded-full" />,
     badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
-    description:
-      "Earn DeFi Spring rewards & yield, use xSTRK as collateral to Borrow and Multiply",
-    actions: [
-      {
-        type: "lend",
-        link: "https://vesu.xyz/lend",
-        buttonText: "Lend xSTRK",
-      },
-    ],
+    description: "Earn DeFi Spring rewards & yield, use xSTRK as collateral to Borrow and Multiply",
+    action: {
+      type: "lend",
+      link: "https://vesu.xyz/lend",
+      buttonText: "Lend xSTRK",
+    }
   },
   avnu: {
     tokens: [
@@ -54,13 +51,11 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     protocolIcon: <Icons.avnuLogo className="size-8 rounded-full border" />,
     badges: [{ type: "DEX Aggregator", color: "bg-[#F3E8FF] text-[#9333EA]" }],
     description: "Swap xSTRK for STRK on Avnu",
-    actions: [
-      {
-        type: "swap",
-        link: "https://app.avnu.fi/en?mode=simple&tokenFrom=0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&tokenTo=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&amount=100",
-        buttonText: "Swap Tokens",
-      },
-    ],
+    action: {
+      type: "swap",
+      link: "https://app.avnu.fi/en?mode=simple&tokenFrom=0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&tokenTo=0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d&amount=100",
+      buttonText: "Swap Tokens",
+    }
   },
   fibrous: {
     tokens: [
@@ -70,50 +65,70 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     protocolIcon: <Icons.fibrousLogo className="size-8 rounded-full" />,
     badges: [{ type: "DEX Aggregator", color: "bg-[#F3E8FF] text-[#9333EA]" }],
     description: "Swap xSTRK for STRK on Fibrous",
-    actions: [
-      {
-        type: "swap",
-        link: "https://app.fibrous.finance/en?network=starknet&mode=swap&source=0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&destination=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-        buttonText: "Swap Tokens",
-      },
-    ],
+    action: {
+      type: "swap",
+      link: "https://app.fibrous.finance/en?network=starknet&mode=swap&source=0x028d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a&destination=0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+      buttonText: "Swap Tokens",
+    }
   },
-  nostra: {
+  'nostra-pool': {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
       { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
     ],
     protocolIcon: <Icons.nostraLogo className="size-8 rounded-full" />,
-    badges: [
-      { type: "DEX", color: "bg-[#F3E8FF] text-[#9333EA]" },
-      { type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" },
-      { type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" },
+    badges: [{ type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }],
+    description: "Provide liquidity to the xSTRK/STRK pool on Nostra and earn trading fees",
+    action: {
+      type: "pool",
+      link: "https://app.nostra.finance/pools/xSTRK-STRK/deposit",
+      buttonText: "Add Liquidity",
+    },
+  },
+  'nostra-lend': {
+    tokens: [
+      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
     ],
-    description:
-      "Provide liquidity to the xSTRK/STRK pool, use xSTRK as collateral and swap xSTRK on Nostra",
-    actions: [
-      {
-        type: "pool",
-        link: "https://app.nostra.finance/pools/xSTRK-STRK/deposit",
-        buttonText: "Add Liquidity",
-      },
-      {
-        type: "lend",
-        link: "https://app.nostra.finance/lend-borrow/xSTRK/deposit",
-        buttonText: "Lend Assets",
-      },
-      {
-        type: "swap",
-        link: "https://app.nostra.finance/swap",
-        buttonText: "Swap Tokens",
-      },
+    protocolIcon: <Icons.nostraLogo className="size-8 rounded-full" />,
+    badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
+    description: "Lend your xSTRK on Nostra to earn additional yield",
+    action: {
+      type: "lend",
+      link: "https://app.nostra.finance/lend-borrow/xSTRK/deposit",
+      buttonText: "Lend Assets",
+    },
+  },
+  ekubo: {
+    tokens: [
+      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
+      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" }
     ],
+    protocolIcon: <Icons.ekuboLogo className="size-8 rounded-full" />,
+    badges: [{ type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }],
+    description: "Provide liquidity to the xSTRK/STRK pool on Ekubo and earn trading fees & DeFi Spring rewards",
+    action: {
+      type: "pool",
+      link: "https://app.ekubo.org/pool",
+      buttonText: "Add Liquidity",
+    }
   },
 };
 
 const Defi: React.FC = () => {
   const { open } = useSidebar();
   const yields = useAtomValue(protocolYieldsAtom);
+  console.log(yields);
+
+  const sortedProtocols = useMemo(() => {
+    return Object.entries(protocolConfigs)
+      .filter(([protocol]) => !["avnu", "fibrous"].includes(protocol))
+      .sort(([a], [b]) => {
+        const yieldA = yields[a]?.value ?? -Infinity;
+        const yieldB = yields[b]?.value ?? -Infinity;
+        return yieldB - yieldA;
+      })
+      .map(([protocol]) => protocol);
+  }, [yields]);
 
   return (
     <div
@@ -143,12 +158,24 @@ const Defi: React.FC = () => {
         </p>
 
         <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          {(
-            Object.keys(protocolConfigs) as Array<keyof typeof protocolConfigs>
-          ).map((protocol) => {
+          {sortedProtocols.map((protocol) => {
             const config = protocolConfigs[protocol];
             const shouldShowApy = !["avnu", "fibrous"].includes(protocol);
-            const _yields: any = yields;
+
+            if (Array.isArray(config.action)) {
+              return config.action.map((action, index) => (
+                <DefiCard
+                  key={`${protocol}-${index}`}
+                  tokens={config.tokens}
+                  protocolIcon={config.protocolIcon}
+                  badges={config.badges}
+                  description={`${config.description} - ${action.buttonText}`}
+                  apy={shouldShowApy ? yields[protocol] : undefined}
+                  action={action}
+                />
+              ));
+            }
+
             return (
               <DefiCard
                 key={protocol}
@@ -156,8 +183,21 @@ const Defi: React.FC = () => {
                 protocolIcon={config.protocolIcon}
                 badges={config.badges}
                 description={config.description}
-                apy={shouldShowApy ? _yields[protocol] : undefined}
-                actions={config.actions}
+                apy={shouldShowApy ? yields[protocol] : undefined}
+                action={config.action}
+              />
+            );
+          })}
+          {["avnu", "fibrous"].map((protocol) => {
+            const config = protocolConfigs[protocol];
+            return (
+              <DefiCard
+                key={protocol}
+                tokens={config.tokens}
+                protocolIcon={config.protocolIcon}
+                badges={config.badges}
+                description={config.description}
+                action={config.action}
               />
             );
           })}
