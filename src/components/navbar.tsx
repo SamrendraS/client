@@ -42,10 +42,7 @@ import {
 } from "@/store/common.store";
 
 import { Icons } from "./Icons";
-import {
-  default as MigrateNostra,
-  default as MigrateNostra,
-} from "./migrate-nostra";
+import { default as MigrateNostra } from "./migrate-nostra";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
 
