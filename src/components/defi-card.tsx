@@ -2,6 +2,8 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+
 export interface TokenDisplay {
   icon: React.ReactNode;
   name: string;
@@ -16,7 +18,7 @@ export interface ProtocolAction {
   type: string;
   link: string;
   buttonText: string;
-  variant?: 'primary' | 'secondary' | 'tertiary';  // Added variant instead of boolean primary
+  variant?: 'primary' | 'secondary' | 'tertiary';
 }
 
 interface DefiCardProps {
@@ -25,11 +27,11 @@ interface DefiCardProps {
   badges: ProtocolBadge[];
   description: string;
   apy?: {
-    isLoading: boolean;
-    error: boolean;
     value: number | null;
+    error: string | null;
+    isLoading: boolean;
   };
-  actions: ProtocolAction[];
+  action: ProtocolAction;
 }
 
 const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
@@ -52,7 +54,7 @@ const ApyDisplay: React.FC<{ apy: DefiCardProps['apy'] }> = ({ apy }) => {
   if (!apy) return null;
 
   const renderValue = () => {
-    if (apy.isLoading) return "Loading...";
+    if (apy.isLoading) return <Skeleton className="h-6 w-16" />;
     if (apy.error || apy.value === null) return "-";
     return `${apy.value.toFixed(2)}%`;
   };
@@ -80,33 +82,8 @@ const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
   </div>
 );
 
-const ActionButton: React.FC<{ action: ProtocolAction }> = ({ action }) => {
-  const baseStyles = "grow rounded-xl px-4 py-2.5 text-sm font-medium transition-all";
-  
-  const variantStyles = {
-    primary: "bg-[#17876D] text-white hover:bg-[#146D57]",
-    secondary: "bg-[#E9F3F0] text-[#17876D] border border-[#17876D33] hover:bg-[#DBE9E4]",
-    tertiary: "bg-white text-[#17876D] border border-[#17876D33] hover:bg-[#F7FAF9]"
-  };
-
-  const styles = variantStyles[action.variant || 'primary'];
-
-  return (
-    <Link
-      href={action.link}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex min-w-0 flex-1 basis-0"
-    >
-      <Button className={cn(baseStyles, styles)}>
-        {action.buttonText}
-      </Button>
-    </Link>
-  );
-};
-
-const ActionButtons: React.FC<{ actions: ProtocolAction[] }> = ({ actions }) => {
-  if (actions.length === 0) {
+const ActionButtons: React.FC<{ action: ProtocolAction }> = ({ action }) => {
+  if (!action) {
     return (
       <Button className="w-full rounded-xl bg-[#E9F3F0] px-4 py-2.5 text-sm font-medium text-[#17876D] hover:bg-[#DBE9E4]">
         Coming soon
@@ -114,62 +91,45 @@ const ActionButtons: React.FC<{ actions: ProtocolAction[] }> = ({ actions }) => 
     );
   }
 
-  // For single button, use full width
-  if (actions.length === 1) {
-    return (
-      <Link
-        href={actions[0].link}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block w-full"
-      >
-        <Button 
-          className={cn(
-            "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
-            "bg-[#17876D] text-white hover:bg-[#146D57]"
-          )}
-        >
-          {actions[0].buttonText}
-        </Button>
-      </Link>
-    );
-  }
-
-  // For multiple buttons, use grid layout
   return (
-    <div className="grid grid-cols-3 gap-3">
-      {actions.map((action, index) => (
-        <Link
-          key={index}
-          href={action.link}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Button 
-            className={cn(
-              "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
-              {
-                "bg-[#17876D] text-white hover:bg-[#146D57]": index === 0,
-                "bg-[#E9F3F0] text-[#17876D] border border-[#17876D33] hover:bg-[#DBE9E4]": index === 1,
-                "bg-white text-[#17876D] border border-[#17876D33] hover:bg-[#F7FAF9]": index === 2
-              }
-            )}
-          >
-            {action.buttonText}
-          </Button>
-        </Link>
-      ))}
-    </div>
+    <Link
+      href={action.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="block w-full"
+    >
+      <Button 
+        className={cn(
+          "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
+          "bg-[#17876D] text-white hover:bg-[#146D57]"
+        )}
+      >
+        {action.buttonText}
+      </Button>
+    </Link>
   );
 };
+
 const DefiCard: React.FC<DefiCardProps> = ({
   tokens,
   protocolIcon,
   badges,
   description,
   apy,
-  actions
+  action 
 }) => {
+  if (apy && apy.isLoading) {
+    return (
+      <div className="flex h-auto min-h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
+        <Skeleton className="h-6 w-1/2 mb-2" />
+        <Skeleton className="h-6 w-1/3 mb-4" />
+        <Skeleton className="h-4 w-full mb-2" />
+        <Skeleton className="h-4 w-2/3 mb-4" />
+        <Skeleton className="h-10 w-full mt-auto" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-auto min-h-[200px] w-full min-w-[330px] flex-col rounded-xl bg-white p-5">
       <div className="flex items-start justify-between">
@@ -187,10 +147,11 @@ const DefiCard: React.FC<DefiCardProps> = ({
       <h3 className="mt-4 text-sm text-[#4B5563]">{description}</h3>
 
       <div className="mt-auto pt-4">
-        <ActionButtons actions={actions} />
+        <ActionButtons action={action} />
       </div>
     </div>
   );
 };
 
 export default DefiCard;
+
