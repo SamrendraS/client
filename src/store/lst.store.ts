@@ -23,7 +23,12 @@ export function getNstSTRKContract(provider: RpcProvider) {
 const userXSTRKBalanceQueryAtom = atomWithQuery((get) => {
   return {
     // current block atom only to trigger a change when the block changes
-    queryKey: ["userXSTRKBalance", get(currentBlockAtom), get(userAddressAtom)],
+    queryKey: [
+      "userXSTRKBalance",
+      get(currentBlockAtom),
+      get(userAddressAtom),
+      get(providerAtom),
+    ],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const [, , userAddress] = queryKey;
       const provider = get(providerAtom);
@@ -59,6 +64,7 @@ export const userNstSTRKBalanceQueryAtom = atomWithQuery((get) => {
       "userNstSTRKBalance",
       get(currentBlockAtom),
       get(userAddressAtom),
+      get(providerAtom),
     ],
     queryFn: async ({ _queryKey }: any): Promise<MyNumber> => {
       const provider = get(providerAtom);
@@ -86,6 +92,7 @@ export const nstStrkWithdrawalFeeQueryAtom = atomWithQuery((get) => {
       "userNstWithdrawalFee",
       get(currentBlockAtom),
       get(userAddressAtom),
+      get(providerAtom),
     ],
     queryFn: async ({ _queryKey }: any): Promise<MyNumber> => {
       console.log("nstStrkWithdrawalFeeQueryAtom [1]");
@@ -118,6 +125,7 @@ export const userSTRKBalanceQueryAtom = atomWithQuery((get) => {
       get(currentBlockAtom),
       get(userAddressAtom),
       get(userXSTRKBalanceAtom),
+      get(providerAtom),
     ],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const { data, error } = get(userXSTRKBalanceQueryAtom);
@@ -171,7 +179,7 @@ export const userSTRKBalanceAtom = atom((get) => {
 
 export const totalStakedQueryAtom = atomWithQuery((get) => {
   return {
-    queryKey: ["totalStaked", get(currentBlockAtom)],
+    queryKey: ["totalStaked", get(currentBlockAtom), get(providerAtom)],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const provider = get(providerAtom);
       if (!provider) {
@@ -201,7 +209,7 @@ export const totalStakedAtom = atom((get) => {
 
 export const totalSupplyQueryAtom = atomWithQuery((get) => {
   return {
-    queryKey: ["totalSupply", get(currentBlockAtom)],
+    queryKey: ["totalSupply", get(currentBlockAtom), get(providerAtom)],
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const provider = get(providerAtom);
       if (!provider) {
