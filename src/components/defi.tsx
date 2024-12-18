@@ -3,7 +3,11 @@
 import React, { useMemo } from "react";
 import { useAtomValue } from "jotai";
 import { cn } from "@/lib/utils";
-import DefiCard, { ProtocolAction, ProtocolBadge, TokenDisplay } from "./defi-card";
+import DefiCard, {
+  ProtocolAction,
+  ProtocolBadge,
+  TokenDisplay,
+} from "./defi-card";
 import { useSidebar } from "@/components/ui/sidebar";
 import { protocolYieldsAtom } from "@/store/defi.store";
 import { Icons } from "./Icons";
@@ -19,7 +23,7 @@ interface ProtocolConfig {
 const protocolConfigs: Record<string, ProtocolConfig> = {
   strkfarm: {
     tokens: [
-      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" }
+      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
     ],
     protocolIcon: <Icons.strkfarmLogo className="size-8" />,
     badges: [{ type: "Yield Farming", color: "bg-[#E9F3F0] text-[#17876D]" }],
@@ -28,7 +32,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
   },
   vesu: {
     tokens: [
-      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" }
+      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
     ],
     protocolIcon: <Icons.vesuLogo className="size-8 rounded-full" />,
     badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
@@ -42,7 +46,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
   avnu: {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
-      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" }
+      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
     ],
     protocolIcon: <Icons.avnuLogo className="size-8 rounded-full border" />,
     badges: [{ type: "DEX Aggregator", color: "bg-[#F3E8FF] text-[#9333EA]" }],
@@ -56,7 +60,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
   fibrous: {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
-      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" }
+      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
     ],
     protocolIcon: <Icons.fibrousLogo className="size-8 rounded-full" />,
     badges: [{ type: "DEX Aggregator", color: "bg-[#F3E8FF] text-[#9333EA]" }],
@@ -70,7 +74,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
   'nostra-pool': {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
-      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" }
+      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
     ],
     protocolIcon: <Icons.nostraLogo className="size-8 rounded-full" />,
     badges: [{ type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }],
@@ -132,7 +136,9 @@ const Defi: React.FC = () => {
         "lg:pl-28": !open,
       })}
     >
-      <h1 className="text-2xl font-semibold tracking-[-1%] text-black">Earn extra yield by using your xSTRK on DeFi platforms</h1>
+      <h1 className="text-2xl font-semibold tracking-[-1%] text-black">
+        Earn extra yield by using your xSTRK on DeFi platforms
+      </h1>
       {/* <p className="text-base font-normal tracking-[-1%] text-[#8D9C9C]">
         Use xSTRK to unlock greater rewards with DeFi opportunities!
       </p> */}
@@ -140,9 +146,10 @@ const Defi: React.FC = () => {
       <div className="mt-9">
         <div className="mb-6 rounded-md border border-[#17876D33] bg-[#17876D0A] p-4">
           <p className="text-sm text-[#03624C]">
-            Please note: The protocols listed here are third-party services not affiliated with or endorsed by Endur.
-            This list is provided for informational convenience only. Always do your own research and understand the risks
-            before using any DeFi protocol.
+            Please note: The protocols listed here are third-party services not
+            affiliated with or endorsed by Endur. This list is provided for
+            informational convenience only. Always do your own research and
+            understand the risks before using any DeFi protocol.
           </p>
         </div>
 
@@ -201,4 +208,3 @@ const Defi: React.FC = () => {
 };
 
 export default Defi;
-

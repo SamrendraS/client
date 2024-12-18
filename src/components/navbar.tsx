@@ -23,6 +23,10 @@ import {
   StarknetkitConnector,
 } from "starknetkit";
 import {
+  isInBraavosMobileAppBrowser,
+  BraavosMobileConnector,
+} from "starknetkit/braavosMobile";
+import {
   ArgentMobileConnector,
   isInArgentMobileAppBrowser,
 } from "starknetkit/argentMobile";
@@ -40,6 +44,7 @@ import {
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
+import MigrateNostra from "./migrate-nostra";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 
@@ -69,6 +74,10 @@ export function getConnectors(isMobile: boolean) {
     },
   });
 
+  const braavosMobile = BraavosMobileConnector.init({
+    inAppBrowserOptions: {},
+  }) as StarknetkitConnector;
+
   const webWalletConnector = new WebWalletConnector({
     url: "https://web.argent.xyz",
   }) as StarknetkitConnector;
@@ -78,8 +87,10 @@ export function getConnectors(isMobile: boolean) {
   if (isMainnet) {
     if (isInArgentMobileAppBrowser()) {
       return [mobileConnector];
+    } else if (isInBraavosMobileAppBrowser()) {
+      return [braavosMobile];
     } else if (isMobile) {
-      return [mobileConnector, braavosConnector, webWalletConnector];
+      return [mobileConnector, braavosMobile, webWalletConnector];
     }
     return [
       argentXConnector,
@@ -267,16 +278,18 @@ const Navbar = ({ className }: { className?: string }) => {
                       <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
                     </>
                   )}
-                  DeFi <span className="text-sm font-thin">(coming soon)</span>
+                  xSTRK on DeFi
                 </Link>
 
-                <div className="group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-                  <ChartPie className="size-5 shrink-0" />
-                  <p className="flex flex-col gap-0">
-                    xSTRK Analytics{" "}
-                    <span className="text-sm font-thin">(coming soon)</span>
-                  </p>
-                </div>
+                <Link
+                  href={"https://dune.com/endurfi/xstrk-analytics"}
+                  target="_blank"
+                >
+                  <div className="group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                    <ChartPie className="size-5 shrink-0" />
+                    <p className="flex flex-col gap-0">xSTRK Analytics </p>
+                  </div>
+                </Link>
 
                 <hr className="border-[#AACBC480]" />
 
@@ -296,7 +309,7 @@ const Navbar = ({ className }: { className?: string }) => {
       )}
 
       <div className="flex items-center gap-4">
-        {/* <MigrateNostra /> */}
+        {!isMobile && <MigrateNostra />}
 
         <button
           className={cn(

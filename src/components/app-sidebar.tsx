@@ -109,17 +109,20 @@ export function AppSidebar({ className }: { className?: string }) {
               </SidebarGroup>
             </Link>
 
-            <SidebarGroup
-              className={cn(
-                "group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
-              )}
+            <Link
+              href={"https://dune.com/endurfi/xstrk-analytics"}
+              target="_blank"
+              style={{ display: "flex" }}
             >
-              <ChartPie className="size-5 shrink-0" />
-              <p className="flex flex-col gap-0">
-                xSTRK Analytics{" "}
-                <span className="text-sm font-thin">(coming soon)</span>
-              </p>
-            </SidebarGroup>
+              <SidebarGroup
+                className={cn(
+                  "group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                )}
+              >
+                <ChartPie className="size-5 shrink-0" />
+                <p className="flex flex-col gap-0">xSTRK Analytics </p>
+              </SidebarGroup>
+            </Link>
 
             <hr className="border-[#AACBC480]" />
 
@@ -205,12 +208,17 @@ export function AppSidebar({ className }: { className?: string }) {
                   <ChartPie className="size-5 shrink-0" />
                 </SidebarGroup>
               </TooltipTrigger>
-              <TooltipContent
-                side="right"
-                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+              <Link
+                href={"https://dune.com/endurfi/xstrk-analytics"}
+                target="_blank"
               >
-                <p>xSTRK Analytics (coming soon)</p>
-              </TooltipContent>
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  <p>xSTRK Analytics</p>
+                </TooltipContent>
+              </Link>
             </Tooltip>
 
             <hr className="border-[#AACBC480]" />

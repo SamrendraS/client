@@ -91,7 +91,7 @@ const MigrateNostra = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-2 rounded-md bg-[#16876C] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#1b5649]">
+        <button className="flex items-center gap-2 rounded-md bg-[#FF4240] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#b03d3c]">
           <Icons.migrate />
           Migrate Nostra STRK
         </button>
@@ -101,11 +101,11 @@ const MigrateNostra = () => {
       >
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-[#0B453A]">
-            Migrate your Nostra staked STRK to Endur
+            Migrate your Nostra staked STRK
           </DialogTitle>
           <DialogDescription className="!mt-3.5 text-base font-normal text-[#8D9C9C]">
-            Nostra is retiring soon. Easily migrate your staked STRK to Endur,
-            and earn more with xSTRK
+            nstSTRK is retiring. Easily migrate your nstSTRK to xSTRK, and lend
+            to Nostra again to earn high yield.
           </DialogDescription>
         </DialogHeader>
 
@@ -138,6 +138,17 @@ const MigrateNostra = () => {
                 xSTRK
               </span>
             </div>
+            <div className="mt-2 flex items-center justify-between">
+              <span>
+                xSTRK is automatically lent to{" "}
+                <span className="color-[#FF4240]">Nostra</span>
+              </span>
+              <span>+5% APY</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between font-bold">
+              <span>Net APY:</span>
+              <span>24% APY</span>
+            </div>
           </div>
         </div>
 
@@ -149,7 +160,7 @@ const MigrateNostra = () => {
           onClick={() => handleMigrateToEndur()}
         >
           <Icons.migrate />
-          Migrate to Endur
+          Transfer
         </button>
       </DialogContent>
     </Dialog>

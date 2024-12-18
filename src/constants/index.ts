@@ -66,7 +66,7 @@ export function convertTimeString(timeString: string): string {
   if (!match) {
     throw new Error("Invalid time format. Expected format '0 00:00:04.876'");
   }
-  // currently returns upper end of estimate; 
+  // currently returns upper end of estimate;
   // can update as withdrawal queue becomes more automated
 
   const hours = parseFloat(`${match[4]}.${match[5]}`);

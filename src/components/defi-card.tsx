@@ -41,12 +41,12 @@ const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
       )}
     </div>
     <span className="text-sm font-medium">
-      {tokens.map(t => t.name).join("/")}
+      {tokens.map((t) => t.name).join("/")}
     </span>
   </div>
 );
 
-const ApyDisplay: React.FC<{ apy: DefiCardProps['apy'] }> = ({ apy }) => {
+const ApyDisplay: React.FC<{ apy: DefiCardProps["apy"] }> = ({ apy }) => {
   if (!apy) return null;
 
   const renderValue = () => {
@@ -66,11 +66,14 @@ const ApyDisplay: React.FC<{ apy: DefiCardProps['apy'] }> = ({ apy }) => {
 };
 
 const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
-  <div className="flex flex-wrap gap-1.5 justify-end max-w-[180px]">
+  <div className="flex max-w-[180px] flex-wrap justify-end gap-1.5">
     {badges.map((badge, index) => (
       <div
         key={index}
-        className={cn("rounded-full px-2.5 py-1 text-xs whitespace-nowrap", badge.color)}
+        className={cn(
+          "whitespace-nowrap rounded-full px-2.5 py-1 text-xs",
+          badge.color,
+        )}
       >
         {badge.type}
       </div>
@@ -150,4 +153,3 @@ const DefiCard: React.FC<DefiCardProps> = ({
 };
 
 export default DefiCard;
-

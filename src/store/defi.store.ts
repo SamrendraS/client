@@ -84,14 +84,14 @@ const vesuYieldQueryAtom = atomWithQuery(() => ({
 
       return {
         value: (supplyApy + defiSpringApr) * 100,
-        isLoading: false
+        isLoading: false,
       };
     } catch (error) {
       console.error("vesuYieldQueryAtom error:", error);
       return {
         value: null,
         isLoading: false,
-        error: "Failed to fetch Vesu yield"
+        error: "Failed to fetch Vesu yield",
       };
     }
   },
@@ -209,10 +209,10 @@ const strkFarmYieldQueryAtom = atomWithQuery(() => ({
     return {
       value: null,
       isLoading: false,
-      error: "Coming soon"
+      error: "Coming soon",
     };
   },
-  refetchInterval: 60000
+  refetchInterval: 60000,
 }));
 
 export const vesuYieldAtom = atom((get) => {
