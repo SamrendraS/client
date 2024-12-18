@@ -139,7 +139,3 @@ export function convertFutureTimestamp(unixTimestamp: number): string {
   }
   return "Anytime soon";
 }
-
-// Example usage:
-const futureTimestamp = Math.floor(Date.now() / 1000) + 3600 * 48; // 48 hours from now
-console.log(convertFutureTimestamp(futureTimestamp)); // Output: "in 2 days"

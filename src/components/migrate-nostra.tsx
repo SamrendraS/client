@@ -5,8 +5,9 @@ import { useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import { Figtree, Inter } from "next/font/google";
 import { Contract, uint256 } from "starknet";
-
+import Link from "next/link";
 import erc4626Abi from "@/abi/erc4626.abi.json";
+import nostraIXSTRK from "@/abi/ixstrk.abi.json";
 import {
   Dialog,
   DialogContent,
@@ -15,8 +16,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { STRK_TOKEN } from "@/constants";
-import { toast } from "@/hooks/use-toast";
+import { LST_ADDRRESS, NOSTRA_IXSTRK, STRK_TOKEN } from "@/constants";
+import { toast, useToast } from "@/hooks/use-toast";
 import { cn, formatNumberWithCommas } from "@/lib/utils";
 import { providerAtom } from "@/store/common.store";
 import {
@@ -27,29 +28,60 @@ import {
   userNstSTRKBalanceAtom,
 } from "@/store/lst.store";
 
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Icons } from "./Icons";
+import MyNumber from "@/lib/MyNumber";
+import { isTxAccepted } from "@/store/transactions.atom";
+import { snAPYAtom } from "@/store/staking.store";
+import { nostraLendYieldAtom } from "@/store/defi.store";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 const fontInter = Inter({ subsets: ["latin-ext"] });
 
 const MigrateNostra = () => {
   const { address } = useAccount();
-  const { sendAsync } = useSendTransaction({});
+  const { sendAsync, data, isPending, error } = useSendTransaction({});
+  const [isMigrationDone, setIsMigrationDone] = React.useState(false);
 
   const rpcProvider = useAtomValue(providerAtom);
-  const nstStrkBalance = useAtomValue(userNstSTRKBalanceAtom);
+  const nstStrkBalanceRes = useAtomValue(userNstSTRKBalanceAtom);
   const nstStrkWithdrawal = useAtomValue(nstStrkWithdrawalFeeAtom);
   const exchangeRate = useAtomValue(exchangeRateAtom);
+  const stakingApy = useAtomValue(snAPYAtom);
+  const nostraLendApy = useAtomValue(nostraLendYieldAtom);
 
   const nstStrkWithdrawalFee = parseFloat(
     nstStrkWithdrawal.value.toEtherToFixedDecimals(4),
   );
-  const youWillStakeFull = nstStrkBalance.value.operate(
+
+  const nstStrkBalance = useMemo(() => {
+    return nstStrkBalanceRes.value;
+    // return MyNumber.fromEther("0.1", 18); // for testing
+  }, [nstStrkBalanceRes]);
+
+  const youWillStakeFull = nstStrkBalance.operate(
     "multipliedBy",
     1 - nstStrkWithdrawalFee,
   );
+
   const youWillStake = youWillStakeFull.toEtherToFixedDecimals(4);
+
+  const xSTRKAmount = useMemo(() => {
+    if (exchangeRate.rate === 0) return MyNumber.fromZero();
+    const amount = youWillStakeFull
+      .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
+      .operate("div", exchangeRate.preciseRate.toString());
+    return amount.subtract(MyNumber.fromEther("0.00001", 18));
+  }, [youWillStake, exchangeRate]);
+
+  useEffect(() => {
+    console.log(
+      "exchangeRateAtom",
+      xSTRKAmount.toString(),
+      exchangeRate.rate,
+      exchangeRate.preciseRate.toString(),
+    );
+  }, [xSTRKAmount]);
 
   const handleMigrateToEndur = async () => {
     if (!address) {
@@ -68,9 +100,11 @@ const MigrateNostra = () => {
     const lstContract = getLSTContract(rpcProvider);
     const nstContract = getNstSTRKContract(rpcProvider);
     const strkContract = new Contract(erc4626Abi, STRK_TOKEN);
+    const xSTRKContract = new Contract(erc4626Abi, LST_ADDRRESS);
+    const ixSTRKContract = new Contract(nostraIXSTRK, NOSTRA_IXSTRK);
 
     const call1 = nstContract.populate("redeem", [
-      uint256.bnToUint256(nstStrkBalance.value.toString()),
+      uint256.bnToUint256(nstStrkBalance.toString()),
       address,
       address,
     ]);
@@ -80,18 +114,99 @@ const MigrateNostra = () => {
       uint256.bnToUint256(youWillStakeFull.toString()),
     ]);
 
-    const call3 = lstContract.populate("deposit", [
-      uint256.bnToUint256(youWillStakeFull.toString()),
+    const call3 = lstContract.populate("mint", [
+      uint256.bnToUint256(xSTRKAmount.toString()),
       address,
     ]);
 
-    await sendAsync([call1, call2, call3]);
+    const call4 = xSTRKContract.populate("approve", [
+      NOSTRA_IXSTRK,
+      uint256.bnToUint256(xSTRKAmount.toString()),
+    ]);
+
+    const call5 = ixSTRKContract.populate("mint", [
+      address,
+      uint256.bnToUint256(xSTRKAmount.toString()),
+    ]);
+
+    await sendAsync([call1, call2, call3, call4, call5]);
   };
+
+  const { dismiss } = useToast();
+  React.useEffect(() => {
+    (async () => {
+      if (isPending) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none">
+              <div className="relative shrink-0">
+                <div className="absolute left-3 top-3 z-10 size-[52px] rounded-full bg-[#BBC2CC]" />
+                <Icons.toastPending className="animate-spin" />
+                <Icons.clock className="absolute left-[26.5px] top-[26.5px] z-20" />
+              </div>
+              <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                <span className="text-[18px] font-semibold text-[#075A5A]">
+                  Transfering...
+                </span>
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (error?.name?.includes("UserRejectedRequestError")) {
+        dismiss();
+      }
+
+      if (error?.name && !error?.name?.includes("UserRejectedRequestError")) {
+        toast({
+          itemID: "stake",
+          variant: "pending",
+          description: (
+            <div className="flex items-center gap-5 border-none pl-2">
+              ❌
+              <div className="flex flex-col items-start text-sm font-medium text-[#3F6870]">
+                <span className="text-base font-semibold text-[#075A5A]">
+                  Something went wrong
+                </span>
+                Please try again
+              </div>
+            </div>
+          ),
+        });
+      }
+
+      if (data) {
+        const res = await isTxAccepted(data?.transaction_hash);
+
+        if (res) {
+          setIsMigrationDone(true);
+          toast({
+            itemID: "stake",
+            variant: "complete",
+            duration: 3000,
+            description: (
+              <div className="flex items-center gap-2 border-none">
+                <Icons.toastSuccess />
+                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                  <span className="text-[18px] font-semibold text-[#075A5A]">
+                    Success 🎉
+                  </span>
+                </div>
+              </div>
+            ),
+          });
+        }
+      }
+    })();
+  }, [data, data?.transaction_hash, error?.name, isPending]);
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-2 rounded-md bg-[#16876C] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#1b5649]">
+        <button className="flex items-center gap-2 rounded-md bg-[#FF4240] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#b03d3c]">
           <Icons.migrate />
           Migrate Nostra STRK
         </button>
@@ -101,27 +216,26 @@ const MigrateNostra = () => {
       >
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-[#0B453A]">
-            Migrate your Nostra staked STRK to Endur
+            Migrate your Nostra staked STRK
           </DialogTitle>
           <DialogDescription className="!mt-3.5 text-base font-normal text-[#8D9C9C]">
-            Nostra Staked STRK is{" "}
+            nstSTRK is{" "}
             <a
               style={{ textDecoration: "underline" }}
+              target="_blank"
               href="https://snapshot.box/#/sn:0x07c251045154318a2376a3bb65be47d3c90df1740d8e35c9b9d943aa3f240e50/proposal/5"
             >
               retired
             </a>
-            . One click migrate your staked STRK to Endur, and earn more with
-            xSTRK
+            . Easily migrate your nstSTRK to xSTRK, and lend to Nostra again to
+            earn high yield.
           </DialogDescription>
         </DialogHeader>
 
         <div className="mt-2 flex items-center justify-between rounded-md bg-[#E8F3F0] px-3 py-3.5 text-[#17876D]">
           <span>Current staked STRK on Nostra</span>
           <span>
-            {formatNumberWithCommas(
-              nstStrkBalance.value.toEtherToFixedDecimals(4),
-            )}{" "}
+            {formatNumberWithCommas(nstStrkBalance.toEtherToFixedDecimals(4))}{" "}
             STRK
           </span>
         </div>
@@ -136,28 +250,54 @@ const MigrateNostra = () => {
 
             <div className="mt-2 flex items-center justify-between">
               <span>You will receive</span>
+              <span>{xSTRKAmount.toEtherToFixedDecimals(2)} xSTRK</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between">
               <span>
-                {exchangeRate.rate !== 0
-                  ? formatNumberWithCommas(
-                      (Number(youWillStake) / exchangeRate.rate).toFixed(8),
-                    )
-                  : formatNumberWithCommas(youWillStake)}{" "}
-                xSTRK
+                xSTRK is automatically lent to{" "}
+                <span className="color-[#FF4240]">Nostra</span>
+              </span>
+              <span>{nostraLendApy.value?.toFixed(2)}% APY</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between font-bold">
+              <span>Net APY (Incl. Staking yield)</span>
+              <span>
+                {(stakingApy.value * 100 + (nostraLendApy.value || 0)).toFixed(
+                  2,
+                )}
+                % APY
               </span>
             </div>
           </div>
         </div>
 
-        <button
-          className={cn(
-            fontInter.className,
-            "mx-auto mt-4 flex w-fit items-center gap-2 rounded-lg bg-[#1b5649] px-5 py-3 text-sm font-medium text-white transition-all",
-          )}
-          onClick={() => handleMigrateToEndur()}
-        >
-          <Icons.migrate />
-          Migrate to Endur
-        </button>
+        {!isMigrationDone && (
+          <button
+            className={cn(
+              fontInter.className,
+              "mx-auto mt-4 flex w-fit items-center gap-2 rounded-lg bg-[#17876D] px-5 py-3 text-sm font-medium text-white transition-all",
+            )}
+            onClick={() => handleMigrateToEndur()}
+          >
+            <Icons.migrate />
+            Transfer
+          </button>
+        )}
+        {isMigrationDone && (
+          <div className="mt-4 items-center gap-2 rounded-md bg-[#17876D] px-3 py-3.5 text-[#E8F3F0]">
+            <p className="font-bold">Migration completed</p>
+            <span className="text-sm">
+              Your nstSTRK is converted to xSTRK and deposited into Nostra. You
+              can check it{" "}
+              <Link
+                href="https://app.nostra.finance/lend-borrow"
+                target="_blank"
+              >
+                <u>here.</u>
+              </Link>
+            </span>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

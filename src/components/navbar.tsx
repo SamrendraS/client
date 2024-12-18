@@ -44,6 +44,7 @@ import {
 import { Icons } from "./Icons";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
+import MigrateNostra from "./migrate-nostra";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 
@@ -82,6 +83,7 @@ export function getConnectors(isMobile: boolean) {
   }) as StarknetkitConnector;
 
   const isMainnet = NETWORK === constants.NetworkName.SN_MAIN;
+
   if (isMainnet) {
     if (isInArgentMobileAppBrowser()) {
       return [mobileConnector];
@@ -276,16 +278,18 @@ const Navbar = ({ className }: { className?: string }) => {
                       <Icons.defiLight className="hidden size-5 group-hover/defi:flex" />
                     </>
                   )}
-                  DeFi <span className="text-sm font-thin">(coming soon)</span>
+                  xSTRK on DeFi
                 </Link>
 
-                <div className="group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
-                  <ChartPie className="size-5 shrink-0" />
-                  <p className="flex flex-col gap-0">
-                    xSTRK Analytics{" "}
-                    <span className="text-sm font-thin">(coming soon)</span>
-                  </p>
-                </div>
+                <Link
+                  href={"https://dune.com/endurfi/xstrk-analytics"}
+                  target="_blank"
+                >
+                  <div className="group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                    <ChartPie className="size-5 shrink-0" />
+                    <p className="flex flex-col gap-0">xSTRK Analytics </p>
+                  </div>
+                </Link>
 
                 <hr className="border-[#AACBC480]" />
 
@@ -305,7 +309,9 @@ const Navbar = ({ className }: { className?: string }) => {
       )}
 
       <div className="flex items-center gap-4">
-        {/* {!isMobile && <MigrateNostra />} */}
+        {!isMobile && NETWORK == constants.NetworkName.SN_MAIN && (
+          <MigrateNostra />
+        )}
 
         <button
           className={cn(
