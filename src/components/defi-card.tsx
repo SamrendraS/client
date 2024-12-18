@@ -26,12 +26,8 @@ interface DefiCardProps {
   protocolIcon: React.ReactNode;
   badges: ProtocolBadge[];
   description: string;
-  apy?: {
-    value: number | null;
-    error: string | null;
-    isLoading: boolean;
-  };
-  action: ProtocolAction;
+  apy?: { value: number | null; error: Error | null; isLoading: boolean };
+  action: ProtocolAction | null;
 }
 
 const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
@@ -82,7 +78,7 @@ const ProtocolBadges: React.FC<{ badges: ProtocolBadge[] }> = ({ badges }) => (
   </div>
 );
 
-const ActionButtons: React.FC<{ action: ProtocolAction }> = ({ action }) => {
+const ActionButtons: React.FC<{ action: ProtocolAction | null }> = ({ action }) => {
   if (!action) {
     return (
       <Button className="w-full rounded-xl bg-[#E9F3F0] px-4 py-2.5 text-sm font-medium text-[#17876D] hover:bg-[#DBE9E4]">
@@ -98,7 +94,7 @@ const ActionButtons: React.FC<{ action: ProtocolAction }> = ({ action }) => {
       rel="noopener noreferrer"
       className="block w-full"
     >
-      <Button 
+      <Button
         className={cn(
           "w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
           "bg-[#17876D] text-white hover:bg-[#146D57]"
@@ -116,7 +112,7 @@ const DefiCard: React.FC<DefiCardProps> = ({
   badges,
   description,
   apy,
-  action 
+  action
 }) => {
   if (apy && apy.isLoading) {
     return (
@@ -137,7 +133,7 @@ const DefiCard: React.FC<DefiCardProps> = ({
           <TokenPairDisplay tokens={tokens} />
           <ApyDisplay apy={apy} />
         </div>
-        
+
         <div className="flex items-center gap-2">
           <ProtocolBadges badges={badges} />
           {protocolIcon}

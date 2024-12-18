@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import { useAtomValue } from "jotai";
 import { cn } from "@/lib/utils";
 import DefiCard, { ProtocolAction, ProtocolBadge, TokenDisplay } from "./defi-card";
@@ -24,7 +24,7 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     protocolIcon: <Icons.strkfarmLogo className="size-8" />,
     badges: [{ type: "Yield Farming", color: "bg-[#E9F3F0] text-[#17876D]" }],
     description: "Auto compound defi spring rewards on xSTRK",
-    // action: null
+    action: null
   },
   vesu: {
     tokens: [
@@ -115,6 +115,17 @@ const Defi: React.FC = () => {
   const yields = useAtomValue(protocolYieldsAtom);
   console.log(yields);
 
+  const sortedProtocols = useMemo(() => {
+    return Object.entries(protocolConfigs)
+      .filter(([protocol]) => !["avnu", "fibrous"].includes(protocol))
+      .sort(([a], [b]) => {
+        const yieldA = yields[a]?.value ?? -Infinity;
+        const yieldB = yields[b]?.value ?? -Infinity;
+        return yieldB - yieldA;
+      })
+      .map(([protocol]) => protocol);
+  }, [yields]);
+
   return (
     <div
       className={cn("mx-auto mt-12 w-full max-w-7xl px-4 sm:px-14", {
@@ -140,12 +151,12 @@ const Defi: React.FC = () => {
         </p>
 
         <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-3">
-          {(Object.keys(protocolConfigs) as Array<keyof typeof protocolConfigs>).flatMap((protocol) => {
+          {sortedProtocols.map((protocol) => {
             const config = protocolConfigs[protocol];
             const shouldShowApy = !["avnu", "fibrous"].includes(protocol);
 
-            if (Array.isArray(config.actions)) {
-              return config.actions.map((action, index) => (
+            if (Array.isArray(config.action)) {
+              return config.action.map((action, index) => (
                 <DefiCard
                   key={`${protocol}-${index}`}
                   tokens={config.tokens}
@@ -170,6 +181,19 @@ const Defi: React.FC = () => {
               />
             );
           })}
+          {["avnu", "fibrous"].map((protocol) => {
+            const config = protocolConfigs[protocol];
+            return (
+              <DefiCard
+                key={protocol}
+                tokens={config.tokens}
+                protocolIcon={config.protocolIcon}
+                badges={config.badges}
+                description={config.description}
+                action={config.action}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
@@ -177,3 +201,4 @@ const Defi: React.FC = () => {
 };
 
 export default Defi;
+
