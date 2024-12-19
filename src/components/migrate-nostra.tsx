@@ -34,6 +34,7 @@ import MyNumber from "@/lib/MyNumber";
 import { isTxAccepted } from "@/store/transactions.atom";
 import { snAPYAtom } from "@/store/staking.store";
 import { nostraLendYieldAtom } from "@/store/defi.store";
+import { MyAnalytics } from "@/lib/analytics";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 const fontInter = Inter({ subsets: ["latin-ext"] });
@@ -72,7 +73,7 @@ const MigrateNostra = () => {
     const amount = youWillStakeFull
       .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
       .operate("div", exchangeRate.preciseRate.toString());
-    return amount.subtract(MyNumber.fromEther("0.00001", 18));
+    return amount.subtract(MyNumber.fromEther("0.001", 18));
   }, [youWillStake, exchangeRate]);
 
   useEffect(() => {
@@ -83,6 +84,16 @@ const MigrateNostra = () => {
       exchangeRate.preciseRate.toString(),
     );
   }, [xSTRKAmount]);
+
+  useEffect(() => {
+    if (!nstStrkBalance.isZero()) {
+      // track the user has nstStrk
+      MyAnalytics.track("Has Nostra STRK", {
+        address,
+        nstStrkBalance: nstStrkBalance.toEtherStr(),
+      });
+    }
+  });
 
   const handleMigrateToEndur = async () => {
     if (!address) {
@@ -130,6 +141,12 @@ const MigrateNostra = () => {
       uint256.bnToUint256(xSTRKAmount.toString()),
     ]);
 
+    MyAnalytics.track("Init Nostra migrate", {
+      address,
+      nstStrkBalance: nstStrkBalance.toEtherStr(),
+      youWillStake: youWillStakeFull.toEtherStr(),
+      xSTRKAmount: xSTRKAmount.toEtherStr(),
+    });
     await sendAsync([call1, call2, call3, call4, call5]);
   };
 
@@ -155,6 +172,13 @@ const MigrateNostra = () => {
             </div>
           ),
         });
+        MyAnalytics.track("Init Tx Nostra migrate", {
+          address,
+          nstStrkBalance: nstStrkBalance.toEtherStr(),
+          youWillStake: youWillStakeFull.toEtherStr(),
+          xSTRKAmount: xSTRKAmount.toEtherStr(),
+          transactionHash: data?.transaction_hash,
+        });
       }
 
       if (error?.name?.includes("UserRejectedRequestError")) {
@@ -177,6 +201,13 @@ const MigrateNostra = () => {
             </div>
           ),
         });
+        MyAnalytics.track("Error Nostra migrate", {
+          address,
+          nstStrkBalance: nstStrkBalance.toEtherStr(),
+          youWillStake: youWillStakeFull.toEtherStr(),
+          xSTRKAmount: xSTRKAmount.toEtherStr(),
+          error: error?.name || JSON.stringify(error),
+        });
       }
 
       if (data) {
@@ -198,6 +229,13 @@ const MigrateNostra = () => {
                 </div>
               </div>
             ),
+          });
+          MyAnalytics.track("Completed Nostra migrate", {
+            address,
+            nstStrkBalance: nstStrkBalance.toEtherStr(),
+            youWillStake: youWillStakeFull.toEtherStr(),
+            xSTRKAmount: xSTRKAmount.toEtherStr(),
+            transactionHash: data?.transaction_hash,
           });
         }
       }
@@ -228,8 +266,8 @@ const MigrateNostra = () => {
             >
               retired
             </a>
-            . Easily migrate your nstSTRK to xSTRK, and lend to Nostra again to
-            earn high yield.
+            . Easily migrate your nstSTRK to xSTRK, and lent to get ixSTRK on
+            Nostra to earn high yield .
           </DialogDescription>
         </DialogHeader>
 
@@ -250,12 +288,12 @@ const MigrateNostra = () => {
             </div>
 
             <div className="mt-2 flex items-center justify-between">
-              <span>You will receive</span>
+              <span>xSTRK minted</span>
               <span>{xSTRKAmount.toEtherToFixedDecimals(2)} xSTRK</span>
             </div>
             <div className="mt-2 flex items-center justify-between">
               <span>
-                xSTRK is automatically lent to{" "}
+                xSTRK is automatically sent to{" "}
                 <span className="color-[#FF4240]">Nostra</span>
               </span>
               <span>{nostraLendApy.value?.toFixed(2)}% APY</span>
@@ -273,22 +311,42 @@ const MigrateNostra = () => {
         </div>
 
         {!isMigrationDone && !nstStrkBalance.isZero() && (
-          <button
-            className={cn(
-              fontInter.className,
-              "mx-auto mt-4 flex w-fit items-center gap-2 rounded-lg bg-[#17876D] px-5 py-3 text-sm font-medium text-white transition-all",
-            )}
-            onClick={() => handleMigrateToEndur()}
-          >
-            <Icons.migrate />
-            Transfer
-          </button>
+          <div>
+            <button
+              className={cn(
+                fontInter.className,
+                "mx-auto mt-4 flex w-fit items-center gap-2 rounded-lg bg-[#17876D] px-5 py-3 text-sm font-medium text-white transition-all",
+              )}
+              onClick={() => handleMigrateToEndur()}
+            >
+              <Icons.migrate />
+              Transfer
+            </button>
+            <div className="mt-4 items-center gap-2 rounded-md bg-[#FFC4664D] px-3 py-3.5 text-[#3F6870]">
+              <span className="text-sm">
+                <b>Note: </b>On clicking Transfer, Your nstSTRK is converted to
+                xSTRK and deposited into Nostra (ixSTRK). You will find your
+                assets{" "}
+                <Link
+                  href="https://app.nostra.finance/lend-borrow"
+                  target="_blank"
+                >
+                  <u>here on Nostra.</u>
+                </Link>
+              </span>
+            </div>
+          </div>
         )}
-        {!isMigrationDone && nstStrkBalance.isZero() && (
+        {!isMigrationDone && nstStrkBalance.isZero() && address && (
           <div className="mt-4 items-center gap-2 rounded-md bg-[#FFC4664D] px-3 py-3.5 text-[#3F6870]">
             <p className="font-bold">
               ⚠️ You do not have any Nostra Staked STRK (nstSTRK) to migrate
             </p>
+          </div>
+        )}
+        {!isMigrationDone && nstStrkBalance.isZero() && !address && (
+          <div className="mt-4 items-center gap-2 rounded-md bg-[#FFC4664D] px-3 py-3.5 text-[#3F6870]">
+            <p className="font-bold">⚠️ Wallet not connected</p>
           </div>
         )}
         {isMigrationDone && (
