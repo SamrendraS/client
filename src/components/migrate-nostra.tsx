@@ -56,6 +56,9 @@ const MigrateNostra = () => {
   );
 
   const nstStrkBalance = useMemo(() => {
+    if (Number(nstStrkBalanceRes.value.toEtherStr()) < 0.01) {
+      return MyNumber.fromZero();
+    }
     return nstStrkBalanceRes.value;
     // return MyNumber.fromEther("0.1", 18); // for testing
   }, [nstStrkBalanceRes]);
@@ -245,7 +248,15 @@ const MigrateNostra = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-2 rounded-md bg-[#FF4240] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#b03d3c]">
+        <button
+          className="flex items-center gap-2 rounded-md bg-[#FF4240] px-3 py-2 text-sm font-medium text-white transition-all hover:bg-[#b03d3c]"
+          onClick={() => {
+            MyAnalytics.track("Click Migrate Nostra STRK", {
+              address,
+              nstStrkBalance: nstStrkBalance.toEtherStr(),
+            });
+          }}
+        >
           <Icons.migrate />
           Migrate Nostra STRK
         </button>
@@ -258,7 +269,7 @@ const MigrateNostra = () => {
             Migrate your Nostra staked STRK
           </DialogTitle>
           <DialogDescription className="!mt-3.5 text-base font-normal text-[#8D9C9C]">
-            nstSTRK is{" "}
+            nstSTRK is now{" "}
             <a
               style={{ textDecoration: "underline" }}
               target="_blank"
@@ -266,8 +277,8 @@ const MigrateNostra = () => {
             >
               retired
             </a>
-            . Easily migrate your nstSTRK to xSTRK, and lent to get ixSTRK on
-            Nostra to earn high yield .
+            . Effortlessly migrate your nstSTRK to xSTRK and lend it on Nostra
+            to receive ixSTRK, unlocking high-yield earning opportunities.
           </DialogDescription>
         </DialogHeader>
 
