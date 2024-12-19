@@ -33,10 +33,8 @@ const provider = jsonRpcProvider({
   },
 });
 
-const Providers: React.FC<ProvidersProps> = ({ children }) => {
+const StarknetProvider: React.FC<ProvidersProps> = ({ children }) => {
   const isMobile = useIsMobile();
-
-  if (typeof window === "undefined") return null;
 
   return (
     <StarknetConfig
@@ -47,6 +45,10 @@ const Providers: React.FC<ProvidersProps> = ({ children }) => {
       {children}
     </StarknetConfig>
   );
+};
+
+const Providers: React.FC<ProvidersProps> = ({ children }) => {
+  return <StarknetProvider>{children}</StarknetProvider>;
 };
 
 export default Providers;
