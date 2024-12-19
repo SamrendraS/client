@@ -51,68 +51,55 @@ const font = Figtree({ subsets: ["latin-ext"] });
 export const CONNECTOR_NAMES = ["Braavos", "Argent X", "Argent (mobile)"];
 
 export function getConnectors(isMobile: boolean) {
-  if (typeof window === "undefined") {
-    return [];
-  }
+  const mobileConnector = ArgentMobileConnector.init({
+    options: {
+      dappName: "Endurfi",
+      url: window.location.hostname,
+      chainId: constants.NetworkName.SN_MAIN,
+    },
+    inAppBrowserOptions: {},
+  }) as StarknetkitConnector;
 
-  const connectors = [];
+  const argentXConnector = new InjectedConnector({
+    options: {
+      id: "argentX",
+      name: "Argent X",
+    },
+  });
+
+  const braavosConnector = new InjectedConnector({
+    options: {
+      id: "braavos",
+      name: "Braavos",
+    },
+  });
+
+  const braavosMobile = BraavosMobileConnector.init({
+    inAppBrowserOptions: {},
+  }) as StarknetkitConnector;
+
+  const webWalletConnector = new WebWalletConnector({
+    url: "https://web.argent.xyz",
+  }) as StarknetkitConnector;
 
   const isMainnet = NETWORK === constants.NetworkName.SN_MAIN;
 
   if (isMainnet) {
     if (isInArgentMobileAppBrowser()) {
-      const mobileConnector = ArgentMobileConnector.init({
-        options: {
-          dappName: "Endurfi",
-          url: window.location.hostname,
-          chainId: constants.NetworkName.SN_MAIN,
-        },
-        inAppBrowserOptions: {},
-      });
       return [mobileConnector];
-    }
-
-    if (isInBraavosMobileAppBrowser()) {
-      const braavosMobile = BraavosMobileConnector.init({
-        inAppBrowserOptions: {},
-      });
+    } else if (isInBraavosMobileAppBrowser()) {
       return [braavosMobile];
-    }
-
-    if (isMobile) {
-      const mobileConnector = ArgentMobileConnector.init({
-        options: {
-          dappName: "Endurfi",
-          url: window.location.hostname,
-          chainId: constants.NetworkName.SN_MAIN,
-        },
-        inAppBrowserOptions: {},
-      });
-      const braavosMobile = BraavosMobileConnector.init({
-        inAppBrowserOptions: {},
-      });
-      const webWalletConnector = new WebWalletConnector({
-        url: "https://web.argent.xyz",
-      });
+    } else if (isMobile) {
       return [mobileConnector, braavosMobile, webWalletConnector];
     }
-
-    const argentXConnector = new InjectedConnector({
-      options: { id: "argentX", name: "Argent X" },
-    });
-    const braavosConnector = new InjectedConnector({
-      options: { id: "braavos", name: "Braavos" },
-    });
-    const webWalletConnector = new WebWalletConnector({
-      url: "https://web.argent.xyz",
-    });
-    return [argentXConnector, braavosConnector, webWalletConnector];
+    return [
+      argentXConnector,
+      braavosConnector,
+      mobileConnector,
+      webWalletConnector,
+    ];
   }
-
-  return [
-    new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
-    new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
-  ];
+  return [argentXConnector, braavosConnector];
 }
 
 const Navbar = ({ className }: { className?: string }) => {
