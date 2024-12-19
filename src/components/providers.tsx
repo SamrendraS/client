@@ -11,7 +11,6 @@ import React from "react";
 import { constants, RpcProviderOptions } from "starknet";
 
 import { NETWORK } from "@/constants";
-import { getConnectors } from "./navbar";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -35,13 +34,18 @@ const provider = jsonRpcProvider({
 
 const StarknetProvider: React.FC<ProvidersProps> = ({ children }) => {
   const isMobile = useIsMobile();
+  const [connectors, setConnectors] = React.useState<Connector[]>([]);
+
+  React.useEffect(() => {
+    const initConnectors = async () => {
+      const { getConnectors } = await import("./navbar");
+      setConnectors(getConnectors(isMobile) as Connector[]);
+    };
+    initConnectors();
+  }, [isMobile]);
 
   return (
-    <StarknetConfig
-      chains={chains}
-      provider={provider}
-      connectors={getConnectors(isMobile) as Connector[]}
-    >
+    <StarknetConfig chains={chains} provider={provider} connectors={connectors}>
       {children}
     </StarknetConfig>
   );

@@ -192,25 +192,30 @@ const Stake = () => {
     })();
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
-  const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
-    return {
-      modalMode: "canAsk",
-      modalTheme: "light",
-      webWalletUrl: "https://web.argent.xyz",
-      argentMobileOptions: {
+  const [connectorConfig, setConnectorConfig] = React.useState<ConnectOptionsWithConnectors | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setConnectorConfig({
+        modalMode: "canAsk",
+        modalTheme: "light",
+        webWalletUrl: "https://web.argent.xyz",
+        argentMobileOptions: {
+          dappName: "Endur.fi",
+          chainId: NETWORK,
+          url: window.location.hostname,
+        },
         dappName: "Endur.fi",
-        chainId: NETWORK,
-        url: window.location.hostname,
-      },
-      dappName: "Endur.fi",
-      connectors: getConnectors(isMobile) as StarknetkitConnector[],
-    };
+        connectors: getConnectors(isMobile) as StarknetkitConnector[],
+      });
+    }
   }, [isMobile]);
 
   async function connectWallet(config = connectorConfig) {
+    if (!config) return;
+    
     try {
       const { connector } = await connect(config);
-
       if (connector) {
         connectSnReact({ connector: connector as any });
       }
