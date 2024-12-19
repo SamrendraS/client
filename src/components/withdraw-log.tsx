@@ -51,7 +51,6 @@ const WithdrawLog: React.FC = () => {
         }, {}),
       ).sort((a: any, b: any) => b.timestamp - a.timestamp);
 
-      console.log(uniqueWithdrawals);
       setLoading(false);
 
       setWithdrawals(uniqueWithdrawals.reverse());

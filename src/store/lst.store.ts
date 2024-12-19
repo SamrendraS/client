@@ -32,14 +32,12 @@ const userXSTRKBalanceQueryAtom = atomWithQuery((get) => {
     queryFn: async ({ queryKey }: any): Promise<MyNumber> => {
       const [, , userAddress] = queryKey;
       const provider = get(providerAtom);
-      // console.log("userXSTRKBalanceAtom", provider, userAddress);
       if (!provider || !userAddress) {
         return MyNumber.fromZero();
       }
       try {
         const lstContract = getLSTContract(provider);
         const balance = await lstContract.call("balance_of", [userAddress]);
-        // console.log("userXSTRKBalanceAtom [2]", balance.toString());
         return new MyNumber(balance.toString(), STRK_DECIMALS);
       } catch (error) {
         console.error("userXSTRKBalanceAtom [3]", error);
@@ -95,20 +93,16 @@ export const nstStrkWithdrawalFeeQueryAtom = atomWithQuery((get) => {
       get(providerAtom),
     ],
     queryFn: async ({ _queryKey }: any): Promise<MyNumber> => {
-      console.log("nstStrkWithdrawalFeeQueryAtom [1]");
       const provider = get(providerAtom);
       const userAddress = get(userAddressAtom);
 
       if (!provider || !userAddress) {
-        console.log("nstStrkWithdrawalFeeQueryAtom [1.1]");
         return MyNumber.fromZero();
       }
 
       try {
-        console.log("nstStrkWithdrawalFeeQueryAtom [1.2]");
         const nstContract = getNstSTRKContract(provider);
         const balance = await nstContract.call("withdrawal_fee");
-        console.log("nstStrkWithdrawalFeeQueryAtom [2]", balance.toString());
         return new MyNumber(balance.toString(), STRK_DECIMALS);
       } catch (error) {
         console.error("nstStrkWithdrawalFeeQueryAtom [3]", error);
@@ -247,13 +241,18 @@ export const exchangeRateAtom = atom((get) => {
     // in our requests and return 0 to avoid any user side confusion
     return {
       rate: 0,
+      preciseRate: MyNumber.fromZero(),
       isLoading: totalStaked.isLoading || totalSupply.isLoading,
     };
   }
+  console.log("exchangeRateAtom", totalStaked.value, totalSupply.value);
   return {
     rate:
       Number(totalStaked.value.toEtherStr()) /
       Number(totalSupply.value.toEtherStr()),
+    preciseRate: totalStaked.value
+      .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
+      .operate("div", totalSupply.value.toString()),
     isLoading: totalStaked.isLoading || totalSupply.isLoading,
   };
 });

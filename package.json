@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
+    "@duneanalytics/client-sdk": "^0.2.4",
     "@hookform/resolvers": "^3.9.1",
     "@prisma/client": "5.22.0",
     "@radix-ui/react-collapsible": "^1.1.1",

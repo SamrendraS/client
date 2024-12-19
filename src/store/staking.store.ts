@@ -15,7 +15,7 @@ import { currentBlockAtom, providerAtom } from "./common.store";
 
 const snTotalStakedQueryAtom = atomWithQuery((get) => {
   return {
-    queryKey: ["snTotalStaked", get(currentBlockAtom)],
+    queryKey: ["snTotalStaked", get(currentBlockAtom), get(providerAtom)],
     queryFn: async ({ queryKey }: any) => {
       const provider = get(providerAtom);
       if (!provider) {
@@ -49,7 +49,7 @@ export const snTotalStakedAtom = atom((get) => {
 
 export const yearlyMintingQueryAtom = atomWithQuery((get) => {
   return {
-    queryKey: ["yearlyMinting", get(currentBlockAtom)],
+    queryKey: ["yearlyMinting", get(currentBlockAtom), get(providerAtom)],
     queryFn: async ({ queryKey }: any) => {
       const provider = get(providerAtom);
       if (!provider) {

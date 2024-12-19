@@ -1,3 +1,4 @@
+import { LucideProps } from "lucide-react";
 import React from "react";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
@@ -1003,6 +1004,50 @@ export const Icons = {
       </defs>
     </svg>
   ),
+  nostraLogo: (props: IconProps) => (
+    <svg
+      {...props}
+      width="24"
+      height="25"
+      viewBox="0 0 24 25"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g clip-path="url(#clip0_477_5301)">
+        <mask
+          id="mask0_477_5301"
+          maskUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="24"
+          height="25"
+        >
+          <path d="M24 0.634766H0V24.6348H24V0.634766Z" fill="white" />
+        </mask>
+        <g mask="url(#mask0_477_5301)">
+          <path
+            d="M12 1.13477C18.3513 1.13477 23.5 6.28349 23.5 12.6348C23.5 18.986 18.3513 24.1348 12 24.1348C5.64873 24.1348 0.5 18.986 0.5 12.6348C0.5 6.28349 5.64873 1.13477 12 1.13477Z"
+            fill="#0A1326"
+            stroke="white"
+          />
+          <path
+            d="M4.56006 14.3146L10.5601 10.8346L4.56006 7.35455V14.3146ZM12.0003 11.6703L4.56006 15.9946L12.0003 20.3146L19.4401 15.9946V7.35455L12.0003 11.6703ZM11.8801 5.91455L8.52006 7.95455L12.0001 9.99455L15.4801 7.95455L11.8801 5.91455Z"
+            fill="#FF4240"
+          />
+        </g>
+      </g>
+      <defs>
+        <clipPath id="clip0_477_5301">
+          <rect
+            width="24"
+            height="24"
+            fill="white"
+            transform="translate(0 0.634766)"
+          />
+        </clipPath>
+      </defs>
+    </svg>
+  ),
   ekuboLogo: (props: IconProps) => (
     <svg
       {...props}
@@ -1233,6 +1278,22 @@ export const Icons = {
         stroke-miterlimit="10"
         stroke-linecap="round"
         stroke-linejoin="round"
+      />
+    </svg>
+  ),
+  shield: (props: LucideProps) => (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),
