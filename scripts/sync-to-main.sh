@@ -12,11 +12,11 @@ confirm_action() {
 
 confirm_main_rebase() {
     read -p "Do you want to fetch and rebase main to remote? (y/N): " confirm
-    confirm=${confirm,,} # Convert to lowercase
     if [[ $confirm == "y" ]]; then
+        echo "Rebasing main..."
         return 0
     else
-        echo "Skipping $1."
+        echo "Skipping rebasing main."
         return 1
     fi
 }
@@ -24,6 +24,7 @@ confirm_main_rebase() {
 process_branch() {
     branch=$1
     if confirm_action "$branch"; then
+        echo "Processing $branch..."
         git checkout "$branch" || exit 1
         git reset --hard main || exit 1
         git push origin --force "$branch" || exit 1
@@ -39,8 +40,5 @@ if confirm_main_rebase; then
 fi
 
 # Process branches
-git checkout main
-git fetch
-git rebase origin/main
 process_branch "staging-main"
 process_branch "testnet"
