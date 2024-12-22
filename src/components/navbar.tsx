@@ -8,7 +8,7 @@ import {
   useProvider,
   useSwitchChain,
 } from "@starknet-react/core";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { ChartPie, X } from "lucide-react";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
@@ -23,13 +23,13 @@ import {
   StarknetkitConnector,
 } from "starknetkit";
 import {
-  isInBraavosMobileAppBrowser,
-  BraavosMobileConnector,
-} from "starknetkit/braavosMobile";
-import {
   ArgentMobileConnector,
   isInArgentMobileAppBrowser,
 } from "starknetkit/argentMobile";
+import {
+  BraavosMobileConnector,
+  isInBraavosMobileAppBrowser,
+} from "starknetkit/braavosMobile";
 import { WebWalletConnector } from "starknetkit/webwallet";
 
 import { DASHBOARD_URL, getProvider, NETWORK } from "@/constants";
@@ -41,11 +41,12 @@ import {
   userAddressAtom,
 } from "@/store/common.store";
 
+import { MyAnalytics } from "@/lib/analytics";
+import { tabsAtom } from "@/store/tabs.store";
 import { Icons } from "./Icons";
+import MigrateNostra from "./migrate-nostra";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { useSidebar } from "./ui/sidebar";
-import MigrateNostra from "./migrate-nostra";
-import { MyAnalytics } from "@/lib/analytics";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 
@@ -120,6 +121,7 @@ const Navbar = ({ className }: { className?: string }) => {
 
   const [__, setAddress] = useAtom(userAddressAtom);
   const [_, setLastWallet] = useAtom(lastWalletAtom);
+  const activeTab = useAtomValue(tabsAtom);
   const setProvider = useSetAtom(providerAtom);
 
   // set tracking person
@@ -319,8 +321,8 @@ const Navbar = ({ className }: { className?: string }) => {
         </Sheet>
       )}
 
-      <div className="flex items-center gap-4">
-        {!isMobile && NETWORK == constants.NetworkName.SN_MAIN && (
+      <div className="relative flex items-center gap-4">
+        {!isMobile && NETWORK === constants.NetworkName.SN_MAIN && (
           <MigrateNostra />
         )}
 
@@ -389,6 +391,28 @@ const Navbar = ({ className }: { className?: string }) => {
             </>
           )}
         </button>
+
+        {activeTab !== "withdraw" && (
+          <div className="hidden lg:block">
+            <div className="group absolute -bottom-[138px] right-12">
+              <Icons.bell1Faded className="group-hover:hidden" />
+              <Icons.bell1 className="hidden group-hover:block" />
+              <p className="absolute -bottom-[5.5rem] -left-12 hidden w-44 rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+                We love you for being on Starknet and choosing Endur to stake
+                with.
+              </p>
+            </div>
+
+            <div className="group absolute -bottom-[65px] right-6">
+              <Icons.bell2Faded className="group-hover:hidden" />
+              <Icons.bell2 className="hidden group-hover:block" />
+              <p className="absolute -bottom-[5.5rem] -left-24 hidden w-44 rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+                We love you for being on Starknet and choosing Endur to stake
+                with.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

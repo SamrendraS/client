@@ -251,7 +251,11 @@ const Unstake = () => {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="relative h-full w-full">
+      <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden lg:block">
+        <Icons.cloud />
+      </div>
+
       <div className="flex items-center justify-between px-3 py-2 lg:px-6">
         <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
           <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
@@ -287,7 +291,7 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-20">
+      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-12">
         <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
           <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK

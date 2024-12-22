@@ -297,7 +297,11 @@ const Stake = () => {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="relative h-full w-full">
+      <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden lg:block">
+        <Icons.cloud />
+      </div>
+
       <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
         <DialogContent className={cn(font.className, "p-16 sm:max-w-xl")}>
           <DialogHeader>
@@ -367,7 +371,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-20">
+      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-12">
         <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
           <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK
