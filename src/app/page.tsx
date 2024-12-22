@@ -8,15 +8,16 @@ import Footer from "@/components/footer";
 import { Icons } from "@/components/Icons";
 import Navbar from "@/components/navbar";
 import Tabs from "@/components/Tabs";
-import { tabsAtom } from "@/store/tabs.store";
+import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
 
 export default function Home() {
   const activeTab = useAtomValue(tabsAtom);
+  const isMerry = useAtomValue(isMerryChristmasAtom);
 
   return (
     <div className="relative flex h-full min-h-screen w-full overflow-x-hidden">
-      {activeTab !== "withdraw" && (
-        <div className="hidden lg:block">
+      {activeTab !== "withdraw" && isMerry && (
+        <div className="hidden transition-all duration-500 lg:block">
           <Image
             src="/merry_bg.svg"
             alt="Merry"
@@ -71,7 +72,7 @@ export default function Home() {
           <div className="group fixed bottom-0 right-2 z-20">
             <Icons.gift6Faded className="group-hover:hidden" />
             <Icons.gift6 className="hidden group-hover:block" />
-            <p className="absolute -top-32 right-0 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+            <p className="absolute -top-[5.5rem] right-0 hidden w-56 rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
               Earn DeFi Spring rewards & yield, use xSTRK as collateral to
               Borrow and Multiply
             </p>

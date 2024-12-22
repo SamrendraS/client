@@ -6,7 +6,7 @@ import {
   useConnect,
   useSendTransaction,
 } from "@starknet-react/core";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -46,6 +46,7 @@ import { isTxAccepted } from "@/store/transactions.atom";
 
 import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
 import { formatNumber, formatNumberWithCommas } from "@/lib/utils";
+import { isMerryChristmasAtom } from "@/store/merry.store";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -71,6 +72,7 @@ const Unstake = () => {
   const { isMobile } = useSidebar();
   const { dismiss } = useToast();
 
+  const [isMerry, setIsMerry] = useAtom(isMerryChristmasAtom);
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const exRate = useAtomValue(exchangeRateAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
@@ -168,6 +170,12 @@ const Unstake = () => {
     })();
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
+  React.useEffect(() => {
+    if (form.getValues("unstakeAmount").toLowerCase().includes("xstrk")) {
+      setIsMerry(true);
+    }
+  }, [form.getValues("unstakeAmount"), form]);
+
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
     return {
       modalMode: "canAsk",
@@ -252,9 +260,11 @@ const Unstake = () => {
 
   return (
     <div className="relative h-full w-full">
-      <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden lg:block">
-        <Icons.cloud />
-      </div>
+      {isMerry && (
+        <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden transition-all duration-500 lg:block">
+          <Icons.cloud />
+        </div>
+      )}
 
       <div className="flex items-center justify-between px-3 py-2 lg:px-6">
         <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
@@ -302,7 +312,7 @@ const Unstake = () => {
         </div>
       </div>
 
-      <div className="flex h-[88px] w-full items-center gap-2 px-7 pb-3 pt-5 md:h-[84px] lg:h-fit">
+      <div className="flex h-[88px] w-full items-center gap-2 px-7 pb-1.5 pt-5 md:h-[84px] lg:h-fit">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#06302B]">Enter Amount</p>
           <Form {...form}>

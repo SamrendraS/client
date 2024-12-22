@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-import { tabsAtom } from "@/store/tabs.store";
-import { useAtom } from "jotai";
+import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
+import { useAtom, useAtomValue } from "jotai";
 import { Icons } from "./Icons";
 import Stake from "./stake";
 import { useSidebar } from "./ui/sidebar";
@@ -32,6 +32,9 @@ interface TabsProps {
 
 const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
   const [activeTab, setActiveTab] = useAtom(tabsAtom);
+
+  const isMerry = useAtomValue(isMerryChristmasAtom);
+
   const { open } = useSidebar();
 
   function getMessage() {
@@ -106,9 +109,9 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
         >
           <TabsList
             className={cn(
-              "flex w-full items-center justify-start rounded-none border-b bg-transparent px-3 pb-5 pt-5 lg:pt-10",
+              "flex w-full items-center justify-start rounded-none border-b bg-transparent px-3 pb-5 pt-5 lg:pt-8",
               {
-                "lg:pt-7": activeTab === "withdraw",
+                "lg:pt-10": activeTab !== "withdraw" && isMerry,
               },
             )}
           >
@@ -197,7 +200,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
 
       <p
         className={cn(
-          "z-30 mt-4 flex items-center text-xs text-[#707D7D] lg:mb-3 lg:text-sm",
+          "z-30 mt-auto flex items-center text-xs text-[#707D7D] lg:mb-3 lg:text-sm",
           {
             "lg:-ml-32": open,
           },

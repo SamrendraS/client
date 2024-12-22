@@ -7,7 +7,7 @@ import {
   useConnect,
   useSendTransaction,
 } from "@starknet-react/core";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import { Figtree } from "next/font/google";
 import Link from "next/link";
@@ -57,6 +57,7 @@ import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
 import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
+import { isMerryChristmasAtom } from "@/store/merry.store";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -92,6 +93,7 @@ const Stake = () => {
   const { isMobile } = useSidebar();
   const { dismiss } = useToast();
 
+  const [isMerry, setIsMerry] = useAtom(isMerryChristmasAtom);
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
   const exchangeRate = useAtomValue(exchangeRateAtom);
@@ -191,6 +193,12 @@ const Stake = () => {
       }
     })();
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
+
+  React.useEffect(() => {
+    if (form.getValues("stakeAmount").toLowerCase().includes("xstrk")) {
+      setIsMerry(true);
+    }
+  }, [form.getValues("stakeAmount"), form]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
     return {
@@ -298,9 +306,11 @@ const Stake = () => {
 
   return (
     <div className="relative h-full w-full">
-      <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden lg:block">
-        <Icons.cloud />
-      </div>
+      {isMerry && (
+        <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden transition-all duration-500 lg:block">
+          <Icons.cloud />
+        </div>
+      )}
 
       <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
         <DialogContent className={cn(font.className, "p-16 sm:max-w-xl")}>
@@ -383,7 +393,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="flex w-full items-center px-7 pb-3 pt-5 lg:gap-2">
+      <div className="flex w-full items-center px-7 pb-1.5 pt-5 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#06302B]">Enter Amount (STRK)</p>
           <Form {...form}>

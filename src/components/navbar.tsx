@@ -42,7 +42,7 @@ import {
 } from "@/store/common.store";
 
 import { MyAnalytics } from "@/lib/analytics";
-import { tabsAtom } from "@/store/tabs.store";
+import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
 import { Icons } from "./Icons";
 import MigrateNostra from "./migrate-nostra";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
@@ -121,8 +121,9 @@ const Navbar = ({ className }: { className?: string }) => {
 
   const [__, setAddress] = useAtom(userAddressAtom);
   const [_, setLastWallet] = useAtom(lastWalletAtom);
-  const activeTab = useAtomValue(tabsAtom);
   const setProvider = useSetAtom(providerAtom);
+  const activeTab = useAtomValue(tabsAtom);
+  const isMerry = useAtomValue(isMerryChristmasAtom);
 
   // set tracking person
   useEffect(() => {
@@ -392,8 +393,8 @@ const Navbar = ({ className }: { className?: string }) => {
           )}
         </button>
 
-        {activeTab !== "withdraw" && (
-          <div className="hidden lg:block">
+        {activeTab !== "withdraw" && isMerry && (
+          <div className="hidden transition-all duration-500 lg:block">
             <div className="group absolute -bottom-[138px] right-12">
               <Icons.bell1Faded className="group-hover:hidden" />
               <Icons.bell1 className="hidden group-hover:block" />
