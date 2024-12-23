@@ -202,7 +202,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
 
       <p
         className={cn(
-          "z-30 mt-4 flex items-center text-xs text-[#707D7D] lg:mb-3 lg:mt-auto lg:text-sm",
+          "z-30 mt-4 flex items-center text-xs text-[#707D7D] lg:mb-1 lg:mt-auto lg:text-sm",
           {
             "lg:-ml-32": open,
           },

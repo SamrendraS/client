@@ -66,7 +66,7 @@ export default function Home() {
   }
 
   React.useEffect(() => {
-    const duration = 5000;
+    const duration = 7000;
     const animationEnd = Date.now() + duration;
     let skew = 1;
 
