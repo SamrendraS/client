@@ -233,6 +233,43 @@ const strkFarmYieldQueryAtom = atomWithQuery(() => ({
   refetchInterval: 60000,
 }));
 
+const haikoYieldQueryAtom = atomWithQuery(() => ({
+  queryKey: ["haikoYield"],
+  queryFn: async (): Promise<ProtocolYield> => {
+    try {
+      const response = await fetch(
+        "https://app.haiko.xyz/api/v1/vaults?network=mainnet&user=0x6058fd211ebc489b5f5fa98d92354a4be295ff007b211f72478702a6830c21f"
+      );
+      const data = await response.json();
+
+      const xSTRKSolver = data.inactive.find(
+        (vault: any) => vault.market.baseSymbol === "xSTRK"
+      );
+
+      if (!xSTRKSolver) {
+        return {
+          value: null,
+          isLoading: false,
+          error: "xSTRK solver not found",
+        };
+      }
+
+      return {
+        value: xSTRKSolver.apy * 100,
+        isLoading: false,
+      };
+    } catch (error) {
+      console.error("haikoYieldQueryAtom error:", error);
+      return {
+        value: null,
+        isLoading: false,
+        error: "Failed to fetch Haiko yield",
+      };
+    }
+  },
+  refetchInterval: 60000,
+}));
+
 export const vesuYieldAtom = atom((get) => {
   const { data, error } = get(vesuYieldQueryAtom);
   return {
@@ -278,6 +315,15 @@ export const strkFarmYieldAtom = atom((get) => {
   };
 });
 
+export const haikoYieldAtom = atom((get) => {
+  const response = get(haikoYieldQueryAtom);
+  return {
+    value: !response.data ? null : response.data.value,
+    error: response.error,
+    isLoading: response.isLoading || false,
+  };
+});
+
 export const protocolYieldsAtom = atom((get) => ({
   strkfarm: get(strkFarmYieldAtom),
   vesu: get(vesuYieldAtom),
@@ -286,4 +332,5 @@ export const protocolYieldsAtom = atom((get) => ({
   ekubo: get(ekuboYieldAtom),
   "nostra-pool": get(nostraLPYieldAtom),
   "nostra-lend": get(nostraLendYieldAtom),
+  haiko: get(haikoYieldAtom),
 }));

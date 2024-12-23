@@ -115,6 +115,21 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
       buttonText: "Add Liquidity",
     },
   },
+  haiko: {
+    tokens: [
+      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
+      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
+    ],
+    protocolIcon: <Icons.haikoLogo className="size-8 rounded-full" />,
+    badges: [{ type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }],
+    description:
+      "Provide liquidity to the xSTRK/STRK pool on Haiko and earn trading fees & rewards",
+    action: {
+      type: "pool",
+      link: "https://app.haiko.xyz/pools/xSTRK-STRK/deposit",
+      buttonText: "Add Liquidity",
+    },
+  },
 };
 
 const Defi: React.FC = () => {
