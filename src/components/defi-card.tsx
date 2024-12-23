@@ -51,7 +51,7 @@ const ApyDisplay: React.FC<{ apy: DefiCardProps["apy"] }> = ({ apy }) => {
 
   const renderValue = () => {
     if (apy.isLoading) return <Skeleton className="h-6 w-16" />;
-    if (apy.error || apy.value === null) return "-";
+    if (!apy.value || apy.error) return "-";
     return `${apy.value.toFixed(2)}%`;
   };
 
