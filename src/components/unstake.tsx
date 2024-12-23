@@ -177,7 +177,8 @@ const Unstake = () => {
   }, [form.getValues("unstakeAmount"), form]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
-    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const hostname =
+      typeof window !== "undefined" ? window.location.hostname : "";
     return {
       modalMode: "canAsk",
       modalTheme: "light",

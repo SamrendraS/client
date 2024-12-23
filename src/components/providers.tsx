@@ -35,7 +35,7 @@ const provider = jsonRpcProvider({
 
 const Providers: React.FC<ProvidersProps> = ({ children }) => {
   const isMobile = useIsMobile();
-  
+
   return (
     <StarknetConfig
       chains={chains}

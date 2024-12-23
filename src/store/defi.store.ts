@@ -238,12 +238,12 @@ const haikoYieldQueryAtom = atomWithQuery(() => ({
   queryFn: async (): Promise<ProtocolYield> => {
     try {
       const response = await fetch(
-        "https://app.haiko.xyz/api/v1/vaults?network=mainnet&user=0x6058fd211ebc489b5f5fa98d92354a4be295ff007b211f72478702a6830c21f"
+        "https://app.haiko.xyz/api/v1/vaults?network=mainnet&user=0x6058fd211ebc489b5f5fa98d92354a4be295ff007b211f72478702a6830c21f",
       );
       const data = await response.json();
 
       const xSTRKSolver = data.inactive.find(
-        (vault: any) => vault.market.baseSymbol === "xSTRK"
+        (vault: any) => vault.market.baseSymbol === "xSTRK",
       );
 
       if (!xSTRKSolver) {
