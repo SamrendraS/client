@@ -126,7 +126,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="ml-1 cursor-pointer">
+                    <span className="cursor-pointer">
                       <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
                     </span>
                   </TooltipTrigger>
