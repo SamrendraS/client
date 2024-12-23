@@ -1,8 +1,9 @@
-import React from "react";
 import Link from "next/link";
+import React from "react";
+
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 export interface TokenDisplay {
   icon: React.ReactNode;
@@ -32,8 +33,10 @@ interface DefiCardProps {
 
 const TokenPairDisplay: React.FC<{ tokens: TokenDisplay[] }> = ({ tokens }) => (
   <div className="flex items-center gap-2">
-    <div className="flex items-center">
-      {tokens[0].icon}
+    <div className="flex items-center border-white bg-white">
+      <div className="size-6 rounded-full border-[1.5px] border-white bg-white">
+        <img src="https://app.endur.fi/logo.svg" />
+      </div>
       {tokens[1]?.icon && (
         <div className="-ml-2 size-6 rounded-full border-[1.5px] border-white bg-white">
           {tokens[1].icon}
@@ -51,7 +54,7 @@ const ApyDisplay: React.FC<{ apy: DefiCardProps["apy"] }> = ({ apy }) => {
 
   const renderValue = () => {
     if (apy.isLoading) return <Skeleton className="h-6 w-16" />;
-    if (apy.error || apy.value === null) return "-";
+    if (!apy.value || apy.error) return "-";
     return `${apy.value.toFixed(2)}%`;
   };
 

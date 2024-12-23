@@ -4,10 +4,10 @@ import { Figtree } from "next/font/google";
 import React from "react";
 
 import Providers from "@/components/providers";
-import { Toaster } from "@/components/ui/toaster";
-
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+
 import "./globals.css";
 
 const font = Figtree({
