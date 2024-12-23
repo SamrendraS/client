@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,7 +8,7 @@ import {
   useConnect,
   useSendTransaction,
 } from "@starknet-react/core";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import { Figtree } from "next/font/google";
 import Link from "next/link";
@@ -44,6 +45,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { cn, formatNumber, formatNumberWithCommas } from "@/lib/utils";
@@ -53,10 +55,13 @@ import {
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
+import {
+  isMerryChristmasAtom,
+  isStakeInputFocusAtom,
+} from "@/store/merry.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -77,7 +82,7 @@ const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
-const Stake = () => {
+const Stake: React.FC = () => {
   const [showShareModal, setShowShareModal] = React.useState(false);
 
   const searchParams = useSearchParams();
@@ -91,6 +96,9 @@ const Stake = () => {
 
   const { isMobile } = useSidebar();
   const { dismiss } = useToast();
+
+  const [isMerry, setIsMerry] = useAtom(isMerryChristmasAtom);
+  const [focusStakeInput, setFocusStakeInput] = useAtom(isStakeInputFocusAtom);
 
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
@@ -192,8 +200,25 @@ const Stake = () => {
     })();
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
+  React.useEffect(() => {
+    if (form.getValues("stakeAmount").toLowerCase() === "xstrk") {
+      setIsMerry(true);
+    }
+  }, [form.getValues("stakeAmount"), form]);
+
+  React.useEffect(() => {
+    if (!address) return;
+
+    if (focusStakeInput) {
+      handleQuickStakePrice(100);
+      form.setFocus("stakeAmount");
+      setFocusStakeInput(false);
+    }
+  }, [address, focusStakeInput]);
+
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
-    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const hostname =
+      typeof window !== "undefined" ? window.location.hostname : "";
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -298,7 +323,13 @@ const Stake = () => {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="relative h-full w-full">
+      {isMerry && (
+        <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden transition-all duration-500 lg:block">
+          <Icons.cloud />
+        </div>
+      )}
+
       <Dialog open={showShareModal} onOpenChange={setShowShareModal}>
         <DialogContent className={cn(font.className, "p-16 sm:max-w-xl")}>
           <DialogHeader>
@@ -368,7 +399,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-20">
+      <div className="flex items-center justify-between border-b bg-gradient-to-t from-[#E9F3F0] to-white px-5 py-12 lg:py-12">
         <div className="flex items-center gap-2 text-sm font-semibold text-black lg:gap-4 lg:text-2xl">
           <Icons.strkLogo className="size-6 lg:size-[35px]" />
           STRK
@@ -380,7 +411,7 @@ const Stake = () => {
         </div>
       </div>
 
-      <div className="flex w-full items-center px-7 pb-3 pt-5 lg:gap-2">
+      <div className="flex w-full items-center px-7 pb-1.5 pt-5 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
           <p className="text-xs text-[#06302B]">Enter Amount (STRK)</p>
           <Form {...form}>
@@ -399,7 +430,13 @@ const Stake = () => {
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
+                    {form.getValues("stakeAmount").toLowerCase() === "xstrk" ? (
+                      <p className="absolute -bottom-4 left-0 text-xs font-medium text-green-500 transition-all lg:left-1">
+                        Merry Christmas!
+                      </p>
+                    ) : (
+                      <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
+                    )}
                   </FormItem>
                 )}
               />

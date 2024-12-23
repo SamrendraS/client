@@ -1,11 +1,5 @@
 "use client";
 
-import { useAccount, useSendTransaction } from "@starknet-react/core";
-import { useAtomValue } from "jotai";
-import { Info } from "lucide-react";
-import { Figtree, Inter } from "next/font/google";
-import { Contract, uint256 } from "starknet";
-import Link from "next/link";
 import erc4626Abi from "@/abi/erc4626.abi.json";
 import nostraIXSTRK from "@/abi/ixstrk.abi.json";
 import {
@@ -27,14 +21,20 @@ import {
   nstStrkWithdrawalFeeAtom,
   userNstSTRKBalanceAtom,
 } from "@/store/lst.store";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
+import { useAtomValue } from "jotai";
+import { Info } from "lucide-react";
+import { Figtree, Inter } from "next/font/google";
+import Link from "next/link";
+import { Contract, uint256 } from "starknet";
 
+import { MyAnalytics } from "@/lib/analytics";
+import MyNumber from "@/lib/MyNumber";
+import { nostraLendYieldAtom } from "@/store/defi.store";
+import { snAPYAtom } from "@/store/staking.store";
+import { isTxAccepted } from "@/store/transactions.atom";
 import React, { useEffect, useMemo } from "react";
 import { Icons } from "./Icons";
-import MyNumber from "@/lib/MyNumber";
-import { isTxAccepted } from "@/store/transactions.atom";
-import { snAPYAtom } from "@/store/staking.store";
-import { nostraLendYieldAtom } from "@/store/defi.store";
-import { MyAnalytics } from "@/lib/analytics";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 const fontInter = Inter({ subsets: ["latin-ext"] });
@@ -262,7 +262,10 @@ const MigrateNostra = () => {
         </button>
       </DialogTrigger>
       <DialogContent
-        className={cn(font.className, "px-8 pb-8 pt-12 sm:max-w-[668px]")}
+        className={cn(
+          font.className,
+          "px-3 pb-8 pt-12 sm:max-w-[668px] md:px-8",
+        )}
       >
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-[#0B453A]">

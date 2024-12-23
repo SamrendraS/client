@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useMemo } from "react";
 import { useAtomValue } from "jotai";
+import React, { useMemo } from "react";
+
+import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { protocolYieldsAtom } from "@/store/defi.store";
+
 import DefiCard, {
   ProtocolAction,
   ProtocolBadge,
   TokenDisplay,
 } from "./defi-card";
-import { useSidebar } from "@/components/ui/sidebar";
-import { protocolYieldsAtom } from "@/store/defi.store";
 import { Icons } from "./Icons";
 
 interface ProtocolConfig {
@@ -20,7 +22,7 @@ interface ProtocolConfig {
   action?: ProtocolAction;
 }
 
-const protocolConfigs: Record<string, ProtocolConfig> = {
+export const protocolConfigs: Record<string, ProtocolConfig> = {
   strkfarm: {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
@@ -137,7 +139,8 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
     ],
     protocolIcon: <Icons.opusLogo className="size-8 rounded-full" />,
     badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
-    description: "Deposit your xSTRK on Opus to borrow CASH and earn more rewards",
+    description:
+      "Deposit your xSTRK on Opus to borrow CASH and earn more rewards",
     action: {
       type: "lend",
       link: "https://app.opus.money/",
@@ -149,7 +152,6 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
 const Defi: React.FC = () => {
   const { open } = useSidebar();
   const yields: any = useAtomValue(protocolYieldsAtom);
-  console.log(yields);
 
   const sortedProtocols = useMemo(() => {
     return Object.entries(protocolConfigs)
@@ -171,9 +173,6 @@ const Defi: React.FC = () => {
       <h1 className="text-2xl font-semibold tracking-[-1%] text-black">
         Earn extra yield by using your xSTRK on DeFi platforms
       </h1>
-      {/* <p className="text-base font-normal tracking-[-1%] text-[#8D9C9C]">
-        Use xSTRK to unlock greater rewards with DeFi opportunities!
-      </p> */}
 
       <div className="mt-6">
         <div className="mb-6 rounded-md border border-[#17876D33] bg-[#17876D0A] p-4">
@@ -220,6 +219,7 @@ const Defi: React.FC = () => {
               />
             );
           })}
+
           {["avnu", "fibrous"].map((protocol) => {
             const config = protocolConfigs[protocol];
             return (
