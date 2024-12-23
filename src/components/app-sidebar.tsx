@@ -116,11 +116,11 @@ export function AppSidebar({ className }: { className?: string }) {
             >
               <SidebarGroup
                 className={cn(
-                  "group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                  "group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
                 )}
               >
                 <ChartPie className="size-5 shrink-0" />
-                <p className="flex flex-col gap-0">xSTRK Analytics </p>
+                <p className="flex flex-col gap-0">xSTRK Analytics</p>
               </SidebarGroup>
             </Link>
 
@@ -162,7 +162,7 @@ export function AppSidebar({ className }: { className?: string }) {
                 side="right"
                 className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
               >
-                <p> Liquid Staking</p>
+                <p>Liquid Staking</p>
               </TooltipContent>
             </Tooltip>
 
@@ -200,25 +200,25 @@ export function AppSidebar({ className }: { className?: string }) {
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <SidebarGroup
-                  className={cn(
-                    "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
-                  )}
+                <Link
+                  href={"https://dune.com/endurfi/xstrk-analytics"}
+                  target="_blank"
                 >
-                  <ChartPie className="size-5 shrink-0" />
-                </SidebarGroup>
+                  <SidebarGroup
+                    className={cn(
+                      "group/defi flex cursor-pointer flex-row items-center justify-center gap-2 rounded-md text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white",
+                    )}
+                  >
+                    <ChartPie className="size-5 shrink-0" />
+                  </SidebarGroup>
+                </Link>
               </TooltipTrigger>
-              <Link
-                href={"https://dune.com/endurfi/xstrk-analytics"}
-                target="_blank"
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
               >
-                <TooltipContent
-                  side="right"
-                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
-                >
-                  <p>xSTRK Analytics</p>
-                </TooltipContent>
-              </Link>
+                <p>xSTRK Analytics</p>
+              </TooltipContent>
             </Tooltip>
 
             <hr className="border-[#AACBC480]" />

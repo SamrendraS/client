@@ -12,14 +12,20 @@ import Footer from "@/components/footer";
 import { Icons } from "@/components/Icons";
 import Navbar from "@/components/navbar";
 import Tabs from "@/components/Tabs";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import { protocolYieldsAtom } from "@/store/defi.store";
 import {
   isMerryChristmasAtom,
   isStakeInputFocusAtom,
   tabsAtom,
 } from "@/store/merry.store";
+import { useAccount } from "@starknet-react/core";
+import { Info } from "lucide-react";
 
 export default function Home() {
+  const { address } = useAccount();
   const [_, setFocusStakeInput] = useAtom(isStakeInputFocusAtom);
   const [___, setActiveTab] = useAtom(tabsAtom);
 
@@ -95,128 +101,140 @@ export default function Home() {
         requestAnimationFrame(frame);
       }
     }
-    requestAnimationFrame(frame);
+    if (isMerry) {
+      requestAnimationFrame(frame);
+    }
   }, [isMerry]);
 
   return (
     <div className="relative flex h-full min-h-screen w-full overflow-x-hidden">
       {activeTab !== "withdraw" && isMerry && (
-        <>
-          {/* <Snowfetti /> */}
-          <div className="hidden transition-all duration-500 lg:block">
-            <Image
-              src="/merry_bg.svg"
-              alt="Merry"
-              fill
-              className="-z-10 object-cover"
-            />
+        <div className="transition-all duration-500 lg:block">
+          <Image
+            src="/merry_bg.svg"
+            alt="Merry"
+            fill
+            className="-z-10 object-cover"
+          />
 
-            <div className="group fixed bottom-0 left-24 hover:z-40">
-              <Icons.gift1Faded className="group-hover:hidden" />
-              <Icons.gift1 className="hidden group-hover:block" />
-              <div className="absolute -right-36 -top-[13rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-                <DefiCard
-                  key={strkfarmProtocol}
-                  tokens={strkfarmConfig.tokens}
-                  protocolIcon={strkfarmConfig.protocolIcon}
-                  badges={strkfarmConfig.badges}
-                  description={strkfarmConfig.description}
-                  apy={yields[strkfarmProtocol]}
-                  action={strkfarmConfig.action}
-                />
-              </div>
-            </div>
-
-            <div className="group fixed bottom-0 left-56 hover:z-40">
-              <Icons.gift2Faded className="group-hover:hidden" />
-              <Icons.gift2 className="hidden group-hover:block" />
-              <div className="absolute -right-20 -top-44 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-                <DefiCard
-                  key={ekuboProtocol}
-                  tokens={ekuboConfig.tokens}
-                  protocolIcon={ekuboConfig.protocolIcon}
-                  badges={ekuboConfig.badges}
-                  description={ekuboConfig.description}
-                  apy={yields[ekuboProtocol]}
-                  action={ekuboConfig.action}
-                />
-              </div>
-            </div>
-
-            <div className="group fixed bottom-0 right-[286px] z-20 hover:z-40">
-              <Icons.gift3Faded className="group-hover:hidden" />
-              <Icons.gift3 className="hidden group-hover:block" />
-              <div className="absolute -right-24 -top-[14.2rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-                <DefiCard
-                  key={nostraPoolProtocol}
-                  tokens={nostraPoolConfig.tokens}
-                  protocolIcon={nostraPoolConfig.protocolIcon}
-                  badges={nostraPoolConfig.badges}
-                  description={nostraPoolConfig.description}
-                  apy={yields[nostraPoolProtocol]}
-                  action={nostraPoolConfig.action}
-                />
-              </div>
-            </div>
-
-            <div className="group fixed bottom-0 right-[185px] z-20 hover:z-40">
-              <Icons.gift4Faded className="group-hover:hidden" />
-              <Icons.gift4 className="hidden group-hover:block" />
-              <div className="absolute -right-8 -top-[5.5rem] hidden w-44 flex-col items-center rounded-md border border-[#03624C] bg-white p-2 text-base text-[#03624C] transition-all group-hover:flex">
-                Stake your STRK and <br /> receive xSTRK
-                <button
-                  onClick={() => {
-                    setActiveTab("stake");
-                    setFocusStakeInput(true);
-                  }}
-                  className="mt-2 w-full rounded-md border border-[#03624C] p-1 text-sm transition-all hover:bg-[#03624C] hover:text-white"
-                >
-                  Stake now
-                </button>
-              </div>
-            </div>
-
-            <div className="group fixed bottom-0 right-[104px] z-20 hover:z-40">
-              <Icons.gift5Faded className="group-hover:hidden" />
-              <Icons.gift5 className="hidden group-hover:block" />
-              <div className="absolute -right-24 -top-[14.2rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-                <DefiCard
-                  key={nostraLendProtocol}
-                  tokens={nostraLendConfig.tokens}
-                  protocolIcon={nostraLendConfig.protocolIcon}
-                  badges={nostraLendConfig.badges}
-                  description={nostraLendConfig.description}
-                  apy={yields[nostraLendProtocol]}
-                  action={nostraLendConfig.action}
-                />
-              </div>
-            </div>
-
-            <div className="group fixed bottom-0 right-2 z-20 hover:z-40">
-              <Icons.gift6Faded className="group-hover:hidden" />
-              <Icons.gift6 className="hidden group-hover:block" />
-              <div className="absolute -top-[14.2rem] right-0 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-                <DefiCard
-                  key={vesuProtocol}
-                  tokens={vesuConfig.tokens}
-                  protocolIcon={vesuConfig.protocolIcon}
-                  badges={vesuConfig.badges}
-                  description={nostraLendConfig.description}
-                  apy={yields[vesuProtocol]}
-                  action={vesuConfig.action}
-                />
-              </div>
-            </div>
-
-            <div className="group fixed bottom-[120px] right-5 z-10">
-              <Icons.cTreeFaded className="group-hover:hidden" />
-              <Icons.cTree className="hidden group-hover:block" />
-              <p className="absolute -top-14 right-0 hidden rounded-md border border-[#03624C] bg-white p-2 text-base text-[#03624C] transition-all group-hover:flex">
-                Merry Christmas and a Happy new year
-              </p>
+          <div className="group fixed bottom-0 left-24 hover:z-40">
+            <Icons.gift1Faded className="group-hover:hidden" />
+            <Icons.gift1 className="hidden group-hover:block" />
+            <div className="absolute -right-36 -top-[13rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+              <DefiCard
+                key={strkfarmProtocol}
+                tokens={strkfarmConfig.tokens}
+                protocolIcon={strkfarmConfig.protocolIcon}
+                badges={strkfarmConfig.badges}
+                description={strkfarmConfig.description}
+                apy={yields[strkfarmProtocol]}
+                action={strkfarmConfig.action}
+              />
             </div>
           </div>
-        </>
+
+          <div className="group fixed bottom-0 left-56 hover:z-40">
+            <Icons.gift2Faded className="group-hover:hidden" />
+            <Icons.gift2 className="hidden group-hover:block" />
+            <div className="absolute -right-20 -top-44 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+              <DefiCard
+                key={ekuboProtocol}
+                tokens={ekuboConfig.tokens}
+                protocolIcon={ekuboConfig.protocolIcon}
+                badges={ekuboConfig.badges}
+                description={ekuboConfig.description}
+                apy={yields[ekuboProtocol]}
+                action={ekuboConfig.action}
+              />
+            </div>
+          </div>
+
+          <div className="group fixed bottom-0 right-[286px] z-20 hover:z-40">
+            <Icons.gift3Faded className="group-hover:hidden" />
+            <Icons.gift3 className="hidden group-hover:block" />
+            <div className="absolute -right-24 -top-[14.2rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+              <DefiCard
+                key={nostraPoolProtocol}
+                tokens={nostraPoolConfig.tokens}
+                protocolIcon={nostraPoolConfig.protocolIcon}
+                badges={nostraPoolConfig.badges}
+                description={nostraPoolConfig.description}
+                apy={yields[nostraPoolProtocol]}
+                action={nostraPoolConfig.action}
+              />
+            </div>
+          </div>
+
+          <div className="group fixed bottom-0 right-[185px] z-20 hover:z-40">
+            <Icons.gift4Faded className="group-hover:hidden" />
+            <Icons.gift4 className="hidden group-hover:block" />
+            <div className="absolute -right-12 -top-[8rem] hidden w-56 flex-col items-start rounded-md border border-[#03624C] bg-white p-5 text-[#03624C] transition-all group-hover:flex">
+              Stake your STRK and <br /> receive xSTRK
+              <Button
+                className={cn(
+                  "mt-4 w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
+                  "bg-[#17876D] text-white hover:bg-[#146D57]",
+                )}
+                onClick={() => {
+                  if (!address) {
+                    return toast({
+                      description: (
+                        <div className="flex items-center gap-2">
+                          <Info className="size-5" />
+                          Please connect your wallet
+                        </div>
+                      ),
+                    });
+                  }
+                  setActiveTab("stake");
+                  setFocusStakeInput(true);
+                }}
+              >
+                Stake now
+              </Button>
+            </div>
+          </div>
+
+          <div className="group fixed bottom-0 right-[104px] z-20 hover:z-40">
+            <Icons.gift5Faded className="group-hover:hidden" />
+            <Icons.gift5 className="hidden group-hover:block" />
+            <div className="absolute -right-24 -top-[14.2rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+              <DefiCard
+                key={nostraLendProtocol}
+                tokens={nostraLendConfig.tokens}
+                protocolIcon={nostraLendConfig.protocolIcon}
+                badges={nostraLendConfig.badges}
+                description={nostraLendConfig.description}
+                apy={yields[nostraLendProtocol]}
+                action={nostraLendConfig.action}
+              />
+            </div>
+          </div>
+
+          <div className="group fixed bottom-0 right-2 z-20 hover:z-40">
+            <Icons.gift6Faded className="group-hover:hidden" />
+            <Icons.gift6 className="hidden group-hover:block" />
+            <div className="absolute -top-[14.2rem] right-0 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+              <DefiCard
+                key={vesuProtocol}
+                tokens={vesuConfig.tokens}
+                protocolIcon={vesuConfig.protocolIcon}
+                badges={vesuConfig.badges}
+                description={nostraLendConfig.description}
+                apy={yields[vesuProtocol]}
+                action={vesuConfig.action}
+              />
+            </div>
+          </div>
+
+          <div className="group fixed -right-10 bottom-[120px] z-10">
+            <Icons.cTreeFaded className="group-hover:hidden" />
+            <Icons.cTree className="hidden group-hover:block" />
+            <p className="absolute -top-14 right-24 hidden rounded-md border border-[#03624C] bg-white p-2 text-base text-[#03624C] transition-all group-hover:flex">
+              Merry Christmas and a Happy new year
+            </p>
+          </div>
+        </div>
       )}
 
       <AppSidebar />
