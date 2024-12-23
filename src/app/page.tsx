@@ -109,7 +109,7 @@ export default function Home() {
   return (
     <div className="relative flex h-full min-h-screen w-full overflow-x-hidden">
       {activeTab !== "withdraw" && isMerry && (
-        <div className="transition-all duration-500 lg:block">
+        <div className="hidden transition-all duration-1000 lg:block">
           <Image
             src="/merry_bg.svg"
             alt="Merry"
