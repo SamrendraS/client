@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { ChartPie } from "lucide-react";
 import { Inter } from "next/font/google";
 import Image from "next/image";
@@ -27,12 +28,11 @@ import { Icons } from "./Icons";
 
 const font = Inter({ subsets: ["latin-ext"] });
 
-export function AppSidebar({ className }: { className?: string }) {
-  const { open, isMobile } = useSidebar();
+const SidebarNavContent = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const referrer = searchParams.get("referrer");
+  const { open, isMobile } = useSidebar();
 
   if (isMobile) return null;
 
@@ -40,7 +40,6 @@ export function AppSidebar({ className }: { className?: string }) {
     <Sidebar
       className={cn(
         "fixed top-1/2 mx-5 h-[calc(100vh-40px)] -translate-y-1/2 rounded-md rounded-r-sm border border-[#AACBC480] transition-[width] duration-1000 ease-linear",
-        className,
       )}
     >
       <SidebarHeader
@@ -49,7 +48,7 @@ export function AppSidebar({ className }: { className?: string }) {
           "flex flex-row items-center justify-start gap-3.5 bg-[#AACBC433] py-10",
           {
             "px-6": open,
-          },
+          }
         )}
       >
         <Icons.logo className={cn(open && "hidden")} />
@@ -400,5 +399,13 @@ export function AppSidebar({ className }: { className?: string }) {
         )}
       </SidebarFooter>
     </Sidebar>
+  );
+};
+
+export function AppSidebar({ className }: { className?: string }) {
+  return (
+    <Suspense fallback={<div className="w-72">Loading sidebar content...</div>}>
+      <SidebarNavContent />
+    </Suspense>
   );
 }
