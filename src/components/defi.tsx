@@ -115,6 +115,35 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
       buttonText: "Add Liquidity",
     },
   },
+  haiko: {
+    tokens: [
+      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
+      { icon: <Icons.strkLogo className="size-[22px]" />, name: "STRK" },
+    ],
+    protocolIcon: <Icons.haikoLogo className="size-8 rounded-full" />,
+    badges: [{ type: "Liquidity Pool", color: "bg-[#FFF7ED] text-[#EA580C]" }],
+    description:
+      "Provide liquidity to the xSTRK/STRK pool on Haiko and earn trading fees & rewards",
+    action: {
+      type: "pool",
+      link: "https://app.haiko.xyz/vaults/positions?type=solver&address=0x73cc79b07a02fe5dcd714903d62f9f3081e15aeb34e3725f44e495ecd88a5a1&marketId=0x60a19777e802ecb59ebc67604b28643dec2dd45ddf7683190b085c2cdd5bdcd&tab=deposit",
+      buttonText: "Add Liquidity",
+    },
+  },
+  opus: {
+    tokens: [
+      { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
+      { icon: <Icons.cashLogo className="size-[22px]" />, name: "CASH" },
+    ],
+    protocolIcon: <Icons.opusLogo className="size-8 rounded-full" />,
+    badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
+    description: "Deposit your xSTRK on Opus to borrow CASH and earn more rewards",
+    action: {
+      type: "lend",
+      link: "https://app.opus.money/",
+      buttonText: "Leverage Assets",
+    },
+  },
 };
 
 const Defi: React.FC = () => {
