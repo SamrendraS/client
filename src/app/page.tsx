@@ -16,6 +16,8 @@ import { protocolYieldsAtom } from "@/store/defi.store";
 import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
 
 export default function Home() {
+  const [isMounted, setIsMounted] = React.useState(false);
+
   const activeTab = useAtomValue(tabsAtom);
   const isMerry = useAtomValue(isMerryChristmasAtom);
   const yields: any = useAtomValue(protocolYieldsAtom);
@@ -95,6 +97,12 @@ export default function Home() {
       requestAnimationFrame(frame);
     }
   }, [isMerry]);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   return (
     <div className="relative flex h-full min-h-screen w-full overflow-x-hidden">
@@ -213,20 +221,20 @@ export default function Home() {
         </div>
       )}
 
-      <AppSidebar />
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <AppSidebar />
 
-      <div className="flex flex-1 flex-col justify-between">
-        <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
-          <React.Suspense fallback={<div>Loading...</div>}>
+        <div className="flex flex-1 flex-col justify-between">
+          <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
             <Navbar />
             <Tabs avgWaitTime={""} />
-          </React.Suspense>
-        </div>
+          </div>
 
-        <div className="lg:hidden">
-          <Footer />
+          <div className="lg:hidden">
+            <Footer />
+          </div>
         </div>
-      </div>
+      </React.Suspense>
     </div>
   );
 }
