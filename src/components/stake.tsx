@@ -431,7 +431,7 @@ const Stake: React.FC = () => {
                       </div>
                     </FormControl>
                     {form.getValues("stakeAmount").toLowerCase() === "xstrk" ? (
-                      <p className="absolute -bottom-4 left-0 text-xs font-medium text-green-500 transition-all lg:left-1">
+                      <p className="absolute -bottom-4 left-0 lg:-ml-1 text-xs font-medium text-green-500 transition-all lg:left-1">
                         Merry Christmas!
                       </p>
                     ) : (
