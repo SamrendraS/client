@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,6 +45,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { cn, formatNumber, formatNumberWithCommas } from "@/lib/utils";
@@ -53,11 +55,13 @@ import {
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
 } from "@/store/lst.store";
+import {
+  isMerryChristmasAtom,
+  isStakeInputFocusAtom,
+} from "@/store/merry.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
 
-import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
-import { isMerryChristmasAtom } from "@/store/merry.store";
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -78,7 +82,7 @@ const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
-const Stake = () => {
+const Stake: React.FC = () => {
   const [showShareModal, setShowShareModal] = React.useState(false);
 
   const searchParams = useSearchParams();
@@ -94,6 +98,8 @@ const Stake = () => {
   const { dismiss } = useToast();
 
   const [isMerry, setIsMerry] = useAtom(isMerryChristmasAtom);
+  const [focusStakeInput, setFocusStakeInput] = useAtom(isStakeInputFocusAtom);
+
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
   const exchangeRate = useAtomValue(exchangeRateAtom);
@@ -199,6 +205,16 @@ const Stake = () => {
       setIsMerry(true);
     }
   }, [form.getValues("stakeAmount"), form]);
+
+  React.useEffect(() => {
+    if (!address) return;
+
+    if (focusStakeInput) {
+      handleQuickStakePrice(100);
+      form.setFocus("stakeAmount");
+      setFocusStakeInput(false);
+    }
+  }, [address, focusStakeInput]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
     return {

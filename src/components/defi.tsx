@@ -20,7 +20,7 @@ interface ProtocolConfig {
   action?: ProtocolAction;
 }
 
-const protocolConfigs: Record<string, ProtocolConfig> = {
+export const protocolConfigs: Record<string, ProtocolConfig> = {
   strkfarm: {
     tokens: [
       { icon: <Icons.endurLogo className="size-[22px]" />, name: "xSTRK" },
@@ -120,7 +120,6 @@ const protocolConfigs: Record<string, ProtocolConfig> = {
 const Defi: React.FC = () => {
   const { open } = useSidebar();
   const yields: any = useAtomValue(protocolYieldsAtom);
-  console.log(yields);
 
   const sortedProtocols = useMemo(() => {
     return Object.entries(protocolConfigs)

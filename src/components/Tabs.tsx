@@ -1,5 +1,6 @@
 "use client";
 
+import { useAtom, useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -11,9 +12,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-
 import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
-import { useAtom, useAtomValue } from "jotai";
+
 import { Icons } from "./Icons";
 import Stake from "./stake";
 import { useSidebar } from "./ui/sidebar";
@@ -67,12 +67,14 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
   return (
     <>
       <div
-        className={cn("w-full max-w-xl", {
+        className={cn("mt-6 w-full max-w-xl lg:mt-0", {
           "lg:-ml-32": open,
-          "mb-10": activeTab !== "withdraw",
+          "mb-7 xl:mb-0": !isMerry,
+          "mb-7 lg:mb-12": isMerry,
+          "mb-7 lg:mb-7": isMerry && activeTab === "withdraw",
         })}
       >
-        <div className="items-center gap-3 md:flex">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
             <Icons.strkLogo className="size-8" />
             <h1 className="text-xl font-bold text-black">Stake STRK</h1>
@@ -80,7 +82,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
           <Link
             href="https://endur.fi/audit"
             target="_blank"
-            className="mt-2 flex items-center gap-1 rounded-full border border-[#17876D33] bg-[#17876D1A] px-3 py-1 transition-opacity hover:opacity-80 md:mt-0"
+            className="flex w-fit items-center gap-1 rounded-full border border-[#17876D33] bg-[#17876D1A] px-3 py-1 transition-opacity hover:opacity-80 md:mt-0"
           >
             <Icons.shield className="size-3.5 text-[#17876D]" />
             <span className="text-xs text-[#17876D]">Secure and audited</span>
@@ -95,7 +97,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
 
       <div
         className={cn(
-          "z-30 mt-6 min-h-[31.5rem] w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-fit lg:pb-5 xl:mt-6",
+          "z-30 min-h-[31.5rem] w-full max-w-xl rounded-xl bg-white shadow-xl lg:h-fit lg:pb-5 xl:mt-6",
           {
             "lg:-ml-32": open,
           },
@@ -184,7 +186,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
       {(activeTab === "unstake" || activeTab === "stake") && (
         <div
           className={cn(
-            "z-30 mt-5 flex max-w-xl items-center rounded-md bg-[#FFC4664D] py-3 pl-4 pr-3 text-xs text-[#D69733] lg:text-sm",
+            "z-30 mb-2 mt-5 flex max-w-xl items-center rounded-md bg-[#FFC4664D] py-3 pl-4 pr-3 text-xs text-[#D69733] lg:mb-4 lg:text-sm",
             {
               "lg:-ml-32": open,
               "bg-[#C0D5CE69] text-[#134c3d9e]": activeTab === "stake",
@@ -200,7 +202,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
 
       <p
         className={cn(
-          "z-30 mt-auto flex items-center text-xs text-[#707D7D] lg:mb-3 lg:text-sm",
+          "z-30 mt-4 flex items-center text-xs text-[#707D7D] lg:mb-3 lg:mt-auto lg:text-sm",
           {
             "lg:-ml-32": open,
           },
