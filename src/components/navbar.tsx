@@ -53,10 +53,12 @@ const font = Figtree({ subsets: ["latin-ext"] });
 export const CONNECTOR_NAMES = ["Braavos", "Argent X", "Argent (mobile)"];
 
 export function getConnectors(isMobile: boolean) {
+  const hostname =
+    typeof window !== "undefined" ? window.location.hostname : "";
   const mobileConnector = ArgentMobileConnector.init({
     options: {
       dappName: "Endurfi",
-      url: window.location.hostname,
+      url: hostname,
       chainId: constants.NetworkName.SN_MAIN,
     },
     inAppBrowserOptions: {},
@@ -133,6 +135,8 @@ const Navbar = ({ className }: { className?: string }) => {
   }, [address]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    const hostname =
+      typeof window !== "undefined" ? window.location.hostname : "";
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -140,7 +144,7 @@ const Navbar = ({ className }: { className?: string }) => {
       argentMobileOptions: {
         dappName: "Endur.fi",
         chainId: NETWORK,
-        url: window.location.hostname,
+        url: hostname,
       },
       dappName: "Endur.fi",
       connectors: getConnectors(isMobile) as StarknetkitConnector[],
@@ -220,7 +224,7 @@ const Navbar = ({ className }: { className?: string }) => {
     >
       {isMobile && (
         <Sheet>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2 md:gap-4">
             <SheetTrigger>
               <Icons.hamburger className="size-5" />
             </SheetTrigger>
@@ -329,7 +333,7 @@ const Navbar = ({ className }: { className?: string }) => {
 
         <button
           className={cn(
-            "flex h-10 items-center justify-center gap-2 rounded-lg border border-[#ECECED80] bg-[#AACBC433] text-sm font-bold text-[#03624C] focus-visible:outline-[#03624C]",
+            "flex h-8 items-center justify-center gap-2 rounded-lg border border-[#ECECED80] bg-[#AACBC433] text-xs font-bold text-[#03624C] focus-visible:outline-[#03624C] md:h-10 md:text-sm",
             {
               "h-[34px]": isMobile,
             },
@@ -339,7 +343,7 @@ const Navbar = ({ className }: { className?: string }) => {
           {!address && (
             <p
               className={cn(
-                "relative flex w-[9.5rem] select-none items-center justify-center gap-1 bg-transparent text-sm",
+                "relative flex w-[8rem] select-none items-center justify-center gap-1 bg-transparent text-xs md:w-[9.5rem] md:text-sm",
               )}
             >
               Connect Wallet
@@ -349,7 +353,7 @@ const Navbar = ({ className }: { className?: string }) => {
           {address && (
             <>
               {!isMobile ? (
-                <div className="flex w-[9.5rem] items-center justify-center gap-2">
+                <div className="flex w-[8rem] items-center justify-center gap-2 md:w-[9.5rem]">
                   <div
                     onClick={() => {
                       navigator.clipboard.writeText(address);
@@ -357,10 +361,10 @@ const Navbar = ({ className }: { className?: string }) => {
                         description: "Address copied to clipboard",
                       });
                     }}
-                    className="flex h-9 items-center justify-center gap-2 rounded-md"
+                    className="flex h-8 items-center justify-center gap-2 rounded-md md:h-9"
                   >
                     <Icons.gradient />
-                    <p className="flex items-center gap-1 text-sm">
+                    <p className="flex items-center gap-1 text-xs md:text-sm">
                       {address && shortAddress(address, 4, 4)}
                     </p>
                   </div>
@@ -371,7 +375,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   />
                 </div>
               ) : (
-                <div className="flex w-[9.5rem] items-center justify-center gap-2">
+                <div className="flex w-[8rem] items-center justify-center gap-2 md:w-[9.5rem]">
                   <div
                     onClick={() => {
                       navigator.clipboard.writeText(address);
@@ -385,7 +389,7 @@ const Navbar = ({ className }: { className?: string }) => {
 
                   <X
                     onClick={() => (disconnect(), disconnectAsync())}
-                    className="size-4 text-[#3F6870]"
+                    className="size-3 text-[#3F6870] md:size-4"
                   />
                 </div>
               )}

@@ -2,6 +2,7 @@
 
 import confetti from "canvas-confetti";
 import { useAtom, useAtomValue } from "jotai";
+import { Info } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 
@@ -22,7 +23,6 @@ import {
   tabsAtom,
 } from "@/store/merry.store";
 import { useAccount } from "@starknet-react/core";
-import { Info } from "lucide-react";
 
 export default function Home() {
   const { address } = useAccount();
@@ -241,8 +241,10 @@ export default function Home() {
 
       <div className="flex flex-1 flex-col justify-between">
         <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
-          <Navbar />
-          <Tabs avgWaitTime={""} />
+          <React.Suspense fallback={<div>Loading...</div>}>
+            <Navbar />
+            <Tabs avgWaitTime={""} />
+          </React.Suspense>
         </div>
 
         <div className="lg:hidden">

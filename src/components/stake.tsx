@@ -217,6 +217,7 @@ const Stake: React.FC = () => {
   }, [address, focusStakeInput]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -224,7 +225,7 @@ const Stake: React.FC = () => {
       argentMobileOptions: {
         dappName: "Endur.fi",
         chainId: NETWORK,
-        url: window.location.hostname,
+        url: hostname,
       },
       dappName: "Endur.fi",
       connectors: getConnectors(isMobile) as StarknetkitConnector[],
