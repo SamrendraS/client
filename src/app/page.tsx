@@ -2,17 +2,13 @@
 
 import confetti from "canvas-confetti";
 import { useAtomValue } from "jotai";
-import Image from "next/image";
 import React from "react";
 
 import { AppSidebar } from "@/components/app-sidebar";
-import { protocolConfigs } from "@/components/defi";
-import DefiCard from "@/components/defi-card";
 import Footer from "@/components/footer";
-import { Icons } from "@/components/Icons";
+import Merry from "@/components/merry";
 import Navbar from "@/components/navbar";
 import Tabs from "@/components/Tabs";
-import { protocolYieldsAtom } from "@/store/defi.store";
 import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
 
 export default function Home() {
@@ -20,44 +16,6 @@ export default function Home() {
 
   const activeTab = useAtomValue(tabsAtom);
   const isMerry = useAtomValue(isMerryChristmasAtom);
-  const yields: any = useAtomValue(protocolYieldsAtom);
-
-  const sortedProtocols = React.useMemo(() => {
-    return Object.entries(protocolConfigs)
-      .filter(([protocol]) => !["avnu", "fibrous"].includes(protocol))
-      .sort(([a], [b]) => {
-        const yieldA = yields[a]?.value ?? -Infinity;
-        const yieldB = yields[b]?.value ?? -Infinity;
-        return yieldB - yieldA;
-      })
-      .map(([protocol]) => protocol);
-  }, [yields]);
-
-  const ekuboProtocol = sortedProtocols.find(
-    (protocol) => protocol === "ekubo",
-  )!;
-  const ekuboConfig = protocolConfigs[ekuboProtocol];
-
-  const nostraPoolProtocol = sortedProtocols.find(
-    (protocol) => protocol === "nostra-pool",
-  )!;
-  const nostraPoolConfig = protocolConfigs[nostraPoolProtocol];
-
-  const nostraLendProtocol = sortedProtocols.find(
-    (protocol) => protocol === "nostra-lend",
-  )!;
-  const nostraLendConfig = protocolConfigs[nostraLendProtocol];
-
-  const vesuProtocol = sortedProtocols.find((protocol) => protocol === "vesu")!;
-  const vesuConfig = protocolConfigs[vesuProtocol];
-
-  const haikoProtocol = sortedProtocols.find(
-    (protocol) => protocol === "haiko",
-  )!;
-  const haikoConfig = protocolConfigs[haikoProtocol];
-
-  const opusProtocol = sortedProtocols.find((protocol) => protocol === "opus")!;
-  const opusConfig = protocolConfigs[opusProtocol];
 
   function randomInRange(min: number, max: number) {
     return Math.random() * (max - min) + min;
@@ -106,135 +64,20 @@ export default function Home() {
 
   return (
     <div className="relative flex h-full min-h-screen w-full overflow-x-hidden">
-      {activeTab !== "withdraw" && isMerry && (
-        <div className="hidden transition-all duration-1000 lg:block">
-          <Image
-            src="/merry_bg.svg"
-            alt="Merry"
-            fill
-            className="-z-10 object-cover"
-          />
+      {activeTab !== "withdraw" && isMerry && <Merry />}
 
-          <div className="group fixed bottom-0 left-24 hover:z-40">
-            <Icons.gift1Faded className="group-hover:hidden" />
-            <Icons.gift1 className="hidden group-hover:block" />
-            <div className="absolute -right-36 -top-[13rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-              <DefiCard
-                key={haikoProtocol}
-                tokens={haikoConfig.tokens}
-                protocolIcon={haikoConfig.protocolIcon}
-                badges={haikoConfig.badges}
-                description={haikoConfig.description}
-                apy={yields[haikoProtocol]}
-                action={haikoConfig.action}
-              />
-            </div>
-          </div>
+      <AppSidebar />
 
-          <div className="group fixed bottom-0 left-56 hover:z-40">
-            <Icons.gift2Faded className="group-hover:hidden" />
-            <Icons.gift2 className="hidden group-hover:block" />
-            <div className="absolute -right-20 -top-44 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-              <DefiCard
-                key={ekuboProtocol}
-                tokens={ekuboConfig.tokens}
-                protocolIcon={ekuboConfig.protocolIcon}
-                badges={ekuboConfig.badges}
-                description={ekuboConfig.description}
-                apy={yields[ekuboProtocol]}
-                action={ekuboConfig.action}
-              />
-            </div>
-          </div>
-
-          <div className="group fixed bottom-0 right-[286px] z-20 hover:z-40">
-            <Icons.gift3Faded className="group-hover:hidden" />
-            <Icons.gift3 className="hidden group-hover:block" />
-            <div className="absolute -right-24 -top-[14.2rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-              <DefiCard
-                key={nostraPoolProtocol}
-                tokens={nostraPoolConfig.tokens}
-                protocolIcon={nostraPoolConfig.protocolIcon}
-                badges={nostraPoolConfig.badges}
-                description={nostraPoolConfig.description}
-                apy={yields[nostraPoolProtocol]}
-                action={nostraPoolConfig.action}
-              />
-            </div>
-          </div>
-
-          <div className="group fixed bottom-0 right-[185px] z-20 hover:z-40">
-            <Icons.gift4Faded className="group-hover:hidden" />
-            <Icons.gift4 className="hidden group-hover:block" />
-            <div className="absolute -right-28 -top-[13rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-              <DefiCard
-                key={vesuProtocol}
-                tokens={vesuConfig.tokens}
-                protocolIcon={vesuConfig.protocolIcon}
-                badges={vesuConfig.badges}
-                description={nostraLendConfig.description}
-                apy={yields[vesuProtocol]}
-                action={vesuConfig.action}
-              />
-            </div>
-          </div>
-
-          <div className="group fixed bottom-0 right-[104px] z-20 hover:z-40">
-            <Icons.gift5Faded className="group-hover:hidden" />
-            <Icons.gift5 className="hidden group-hover:block" />
-            <div className="absolute -right-24 -top-[14.2rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-              <DefiCard
-                key={nostraLendProtocol}
-                tokens={nostraLendConfig.tokens}
-                protocolIcon={nostraLendConfig.protocolIcon}
-                badges={nostraLendConfig.badges}
-                description={nostraLendConfig.description}
-                apy={yields[nostraLendProtocol]}
-                action={nostraLendConfig.action}
-              />
-            </div>
-          </div>
-
-          <div className="group fixed bottom-0 right-2 z-20 hover:z-40">
-            <Icons.gift6Faded className="group-hover:hidden" />
-            <Icons.gift6 className="hidden group-hover:block" />
-            <div className="absolute -top-[13.7rem] right-0 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
-              <DefiCard
-                key={opusProtocol}
-                tokens={opusConfig.tokens}
-                protocolIcon={opusConfig.protocolIcon}
-                badges={opusConfig.badges}
-                description={opusConfig.description}
-                apy={yields[opusProtocol]}
-                action={opusConfig.action}
-              />
-            </div>
-          </div>
-
-          <div className="group fixed -right-10 bottom-[120px] z-10">
-            <Icons.cTreeFaded className="group-hover:hidden" />
-            <Icons.cTree className="hidden group-hover:block" />
-            <p className="absolute -top-14 right-24 hidden rounded-md border border-[#03624C] bg-white p-2 text-base text-[#03624C] transition-all group-hover:flex">
-              Merry Christmas and a Happy new year
-            </p>
-          </div>
+      <div className="flex flex-1 flex-col justify-between">
+        <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
+          <Navbar />
+          <Tabs avgWaitTime={""} />
         </div>
-      )}
 
-      <React.Suspense fallback={<div>Loading...</div>}>
-        <AppSidebar />
-
-        <div className="flex flex-1 flex-col justify-between">
-          <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
-            <Navbar />
-            <Tabs avgWaitTime={""} />
-          </div>
-
-          <div className="lg:hidden">
-            <Footer />
-          </div>
+        <div className="lg:hidden">
+          <Footer />
         </div>
-      </React.Suspense>
+      </div>
     </div>
   );
 }

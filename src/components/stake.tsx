@@ -201,7 +201,7 @@ const Stake: React.FC = () => {
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
   React.useEffect(() => {
-    if (form.getValues("stakeAmount").toLowerCase().includes("xstrk")) {
+    if (form.getValues("stakeAmount").toLowerCase() === "xstrk") {
       setIsMerry(true);
     }
   }, [form.getValues("stakeAmount"), form]);
@@ -217,7 +217,8 @@ const Stake: React.FC = () => {
   }, [address, focusStakeInput]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
-    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
+    const hostname =
+      typeof window !== "undefined" ? window.location.hostname : "";
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -429,7 +430,13 @@ const Stake: React.FC = () => {
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
+                    {form.getValues("stakeAmount").toLowerCase() === "xstrk" ? (
+                      <p className="absolute -bottom-4 left-0 text-xs font-medium text-green-500 transition-all lg:left-1">
+                        Merry Christmas!
+                      </p>
+                    ) : (
+                      <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
+                    )}
                   </FormItem>
                 )}
               />

@@ -1,10 +1,12 @@
 "use client";
 
+import { useAtomValue } from "jotai";
+import React, { useMemo } from "react";
+
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { protocolYieldsAtom } from "@/store/defi.store";
-import { useAtomValue } from "jotai";
-import React, { useMemo } from "react";
+
 import DefiCard, {
   ProtocolAction,
   ProtocolBadge,
@@ -137,7 +139,8 @@ export const protocolConfigs: Record<string, ProtocolConfig> = {
     ],
     protocolIcon: <Icons.opusLogo className="size-8 rounded-full" />,
     badges: [{ type: "Lend/Borrow", color: "bg-[#EEF6FF] text-[#0369A1]" }],
-    description: "Deposit your xSTRK on Opus to borrow CASH and earn more rewards",
+    description:
+      "Deposit your xSTRK on Opus to borrow CASH and earn more rewards",
     action: {
       type: "lend",
       link: "https://app.opus.money/",
