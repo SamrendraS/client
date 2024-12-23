@@ -5,6 +5,7 @@ import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
+import { Icons } from "@/components/Icons";
 import {
   Tooltip,
   TooltipContent,
@@ -14,7 +15,6 @@ import {
 import { cn } from "@/lib/utils";
 import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
 
-import { Icons } from "./Icons";
 import Stake from "./stake";
 import { useSidebar } from "./ui/sidebar";
 import {

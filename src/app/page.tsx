@@ -1,8 +1,7 @@
 "use client";
 
 import confetti from "canvas-confetti";
-import { useAtom, useAtomValue } from "jotai";
-import { Info } from "lucide-react";
+import { useAtomValue } from "jotai";
 import Image from "next/image";
 import React from "react";
 
@@ -13,22 +12,10 @@ import Footer from "@/components/footer";
 import { Icons } from "@/components/Icons";
 import Navbar from "@/components/navbar";
 import Tabs from "@/components/Tabs";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
 import { protocolYieldsAtom } from "@/store/defi.store";
-import {
-  isMerryChristmasAtom,
-  isStakeInputFocusAtom,
-  tabsAtom,
-} from "@/store/merry.store";
-import { useAccount } from "@starknet-react/core";
+import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
 
 export default function Home() {
-  const { address } = useAccount();
-  const [_, setFocusStakeInput] = useAtom(isStakeInputFocusAtom);
-  const [___, setActiveTab] = useAtom(tabsAtom);
-
   const activeTab = useAtomValue(tabsAtom);
   const isMerry = useAtomValue(isMerryChristmasAtom);
   const yields: any = useAtomValue(protocolYieldsAtom);
@@ -62,10 +49,13 @@ export default function Home() {
   const vesuProtocol = sortedProtocols.find((protocol) => protocol === "vesu")!;
   const vesuConfig = protocolConfigs[vesuProtocol];
 
-  const strkfarmProtocol = sortedProtocols.find(
-    (protocol) => protocol === "strkfarm",
+  const haikoProtocol = sortedProtocols.find(
+    (protocol) => protocol === "haiko",
   )!;
-  const strkfarmConfig = protocolConfigs[strkfarmProtocol];
+  const haikoConfig = protocolConfigs[haikoProtocol];
+
+  const opusProtocol = sortedProtocols.find((protocol) => protocol === "opus")!;
+  const opusConfig = protocolConfigs[opusProtocol];
 
   function randomInRange(min: number, max: number) {
     return Math.random() * (max - min) + min;
@@ -122,13 +112,13 @@ export default function Home() {
             <Icons.gift1 className="hidden group-hover:block" />
             <div className="absolute -right-36 -top-[13rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
               <DefiCard
-                key={strkfarmProtocol}
-                tokens={strkfarmConfig.tokens}
-                protocolIcon={strkfarmConfig.protocolIcon}
-                badges={strkfarmConfig.badges}
-                description={strkfarmConfig.description}
-                apy={yields[strkfarmProtocol]}
-                action={strkfarmConfig.action}
+                key={haikoProtocol}
+                tokens={haikoConfig.tokens}
+                protocolIcon={haikoConfig.protocolIcon}
+                badges={haikoConfig.badges}
+                description={haikoConfig.description}
+                apy={yields[haikoProtocol]}
+                action={haikoConfig.action}
               />
             </div>
           </div>
@@ -168,30 +158,16 @@ export default function Home() {
           <div className="group fixed bottom-0 right-[185px] z-20 hover:z-40">
             <Icons.gift4Faded className="group-hover:hidden" />
             <Icons.gift4 className="hidden group-hover:block" />
-            <div className="absolute -right-12 -top-[8rem] hidden w-56 flex-col items-start rounded-md border border-[#03624C] bg-white p-5 text-[#03624C] transition-all group-hover:flex">
-              Stake your STRK and <br /> receive xSTRK
-              <Button
-                className={cn(
-                  "mt-4 w-full rounded-xl px-4 py-2.5 text-sm font-medium transition-all",
-                  "bg-[#17876D] text-white hover:bg-[#146D57]",
-                )}
-                onClick={() => {
-                  if (!address) {
-                    return toast({
-                      description: (
-                        <div className="flex items-center gap-2">
-                          <Info className="size-5" />
-                          Please connect your wallet
-                        </div>
-                      ),
-                    });
-                  }
-                  setActiveTab("stake");
-                  setFocusStakeInput(true);
-                }}
-              >
-                Stake now
-              </Button>
+            <div className="absolute -right-28 -top-[13rem] hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+              <DefiCard
+                key={vesuProtocol}
+                tokens={vesuConfig.tokens}
+                protocolIcon={vesuConfig.protocolIcon}
+                badges={vesuConfig.badges}
+                description={nostraLendConfig.description}
+                apy={yields[vesuProtocol]}
+                action={vesuConfig.action}
+              />
             </div>
           </div>
 
@@ -214,15 +190,15 @@ export default function Home() {
           <div className="group fixed bottom-0 right-2 z-20 hover:z-40">
             <Icons.gift6Faded className="group-hover:hidden" />
             <Icons.gift6 className="hidden group-hover:block" />
-            <div className="absolute -top-[14.2rem] right-0 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
+            <div className="absolute -top-[13.7rem] right-0 hidden rounded-md border border-[#03624C] bg-white p-2 text-sm text-[#03624C] transition-all group-hover:flex">
               <DefiCard
-                key={vesuProtocol}
-                tokens={vesuConfig.tokens}
-                protocolIcon={vesuConfig.protocolIcon}
-                badges={vesuConfig.badges}
-                description={nostraLendConfig.description}
-                apy={yields[vesuProtocol]}
-                action={vesuConfig.action}
+                key={opusProtocol}
+                tokens={opusConfig.tokens}
+                protocolIcon={opusConfig.protocolIcon}
+                badges={opusConfig.badges}
+                description={opusConfig.description}
+                apy={yields[opusProtocol]}
+                action={opusConfig.action}
               />
             </div>
           </div>
