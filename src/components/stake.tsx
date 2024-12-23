@@ -193,6 +193,7 @@ const Stake = () => {
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -200,7 +201,7 @@ const Stake = () => {
       argentMobileOptions: {
         dappName: "Endur.fi",
         chainId: NETWORK,
-        url: window.location.hostname,
+        url: hostname,
       },
       dappName: "Endur.fi",
       connectors: getConnectors(isMobile) as StarknetkitConnector[],

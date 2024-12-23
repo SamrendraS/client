@@ -52,10 +52,11 @@ const font = Figtree({ subsets: ["latin-ext"] });
 export const CONNECTOR_NAMES = ["Braavos", "Argent X", "Argent (mobile)"];
 
 export function getConnectors(isMobile: boolean) {
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const mobileConnector = ArgentMobileConnector.init({
     options: {
       dappName: "Endurfi",
-      url: window.location.hostname,
+      url: hostname,
       chainId: constants.NetworkName.SN_MAIN,
     },
     inAppBrowserOptions: {},
@@ -130,6 +131,7 @@ const Navbar = ({ className }: { className?: string }) => {
   }, [address]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -137,7 +139,7 @@ const Navbar = ({ className }: { className?: string }) => {
       argentMobileOptions: {
         dappName: "Endur.fi",
         chainId: NETWORK,
-        url: window.location.hostname,
+        url: hostname,
       },
       dappName: "Endur.fi",
       connectors: getConnectors(isMobile) as StarknetkitConnector[],

@@ -115,15 +115,20 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
               Unstake
               <div className="absolute -bottom-[7.5px] left-3 hidden h-[2px] w-[3.3rem] rounded-full bg-black group-data-[state=active]:flex lg:-bottom-[5.5px] lg:left-3.5" />
             </TabsTrigger>
-            <TabsTrigger
-              value="withdraw"
-              className="group relative rounded-none border-none bg-transparent text-sm font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none lg:text-base"
-            >
-              Withdraw log
+            <div className="flex items-center">
+              <TabsTrigger
+                value="withdraw"
+                className="group relative rounded-none border-none bg-transparent text-sm font-medium text-[#8D9C9C] focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:border-t-0 data-[state=active]:shadow-none lg:text-base"
+              >
+                Withdraw log
+                <div className="absolute -bottom-[7.5px] left-3 hidden h-[2px] w-[5rem] rounded-full bg-black group-data-[state=active]:flex lg:-bottom-[5.5px] lg:left-[16px]" />
+              </TabsTrigger>
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
-                  <TooltipTrigger className="ml-1" tabIndex={-1}>
-                    <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                  <TooltipTrigger asChild>
+                    <span className="ml-1 cursor-pointer">
+                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                    </span>
                   </TooltipTrigger>
                   <TooltipContent
                     side="right"
@@ -140,8 +145,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime }) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <div className="absolute -bottom-[7.5px] left-3 hidden h-[2px] w-[5rem] rounded-full bg-black group-data-[state=active]:flex lg:-bottom-[5.5px] lg:left-[16px]" />
-            </TabsTrigger>
+            </div>
           </TabsList>
 
           <TabsContent
