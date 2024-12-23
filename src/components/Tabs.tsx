@@ -138,7 +138,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
               Withdraw log
               <TooltipProvider delayDuration={0}>
                 <Tooltip>
-                  <TooltipTrigger className="ml-1" tabIndex={-1}>
+                  <TooltipTrigger className="ml-1" tabIndex={-1} asChild>
                     <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
                   </TooltipTrigger>
                   <TooltipContent

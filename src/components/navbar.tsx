@@ -299,7 +299,7 @@ const Navbar = ({ className }: { className?: string }) => {
                   href={"https://dune.com/endurfi/xstrk-analytics"}
                   target="_blank"
                 >
-                  <div className="group/defi flex-co, pointer-events-none flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
+                  <div className="group/defi flex cursor-pointer flex-row items-center gap-2 rounded-md px-3 py-2 text-xl font-semibold text-[#03624C] transition-all hover:bg-[#17876D] hover:text-white">
                     <ChartPie className="size-5 shrink-0" />
                     <p className="flex flex-col gap-0">xSTRK Analytics </p>
                   </div>
