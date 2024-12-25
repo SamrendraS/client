@@ -67,7 +67,7 @@ const Tabs: React.FC<TabsProps> = ({ avgWaitTime: _ }) => {
   return (
     <div
       className={cn("z-30 flex h-full flex-col items-center", {
-        "lg:-ml-40": isPinned,
+        "lg:-ml-56": isPinned,
       })}
     >
       <div

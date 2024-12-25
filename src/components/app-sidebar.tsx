@@ -1,5 +1,6 @@
 "use client";
 
+import { useAtomValue } from "jotai";
 import {
   ChartLine,
   CircleGauge,
@@ -24,19 +25,27 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-
 import { DASHBOARD_URL } from "@/constants";
 import { cn } from "@/lib/utils";
+import { isMerryChristmasAtom } from "@/store/merry.store";
 
 import { Icons } from "./Icons";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 const font = Inter({ subsets: ["latin-ext"] });
 
-export function AppSidebar({ className }: { className?: string }) {
+export function AppSidebar() {
   const { open, isMobile, setOpen, isPinned, setIsPinned } = useSidebar();
 
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const isMerry = useAtomValue(isMerryChristmasAtom);
 
   const referrer = searchParams.get("referrer");
 
@@ -47,8 +56,9 @@ export function AppSidebar({ className }: { className?: string }) {
       variant="floating"
       onMouseOver={() => !isPinned && setOpen(true)}
       onMouseLeave={() => !isPinned && setOpen(false)}
-      containerClassname={cn("absolute group z-20", {
+      containerClassname={cn("absolute group z-40", {
         static: isPinned,
+        "z-20": isMerry,
       })}
     >
       <SidebarHeader className="p-0">
@@ -62,20 +72,33 @@ export function AppSidebar({ className }: { className?: string }) {
               },
             )}
           >
-            <Pin
-              className={cn(
-                "absolute right-2 top-3 hidden size-4 cursor-pointer text-muted-foreground transition-all group-hover:block",
-                {
-                  "block fill-[#17876D] text-[#17876D]": isPinned,
-                },
-              )}
-              onClick={() => setIsPinned(!isPinned)}
-            />
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Pin
+                    className={cn(
+                      "absolute right-2 top-3 hidden size-4 cursor-pointer text-muted-foreground transition-all group-hover:block",
+                      {
+                        "block fill-[#17876D] text-[#17876D]": isPinned && open,
+                      },
+                    )}
+                    onClick={() => setIsPinned(!isPinned)}
+                  />
+                </TooltipTrigger>
+
+                <TooltipContent
+                  side="right"
+                  className="rounded-md border border-[#03624C] bg-[#E3EEEC] text-[#03624C]"
+                >
+                  {isPinned ? "Unpin Sidebar (⌘B)" : "Pin Sidebar (⌘B)"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             <Icons.logo className="shrink-0" />
             <div
               className={cn("hidden group-hover:block", {
-                block: isPinned,
+                block: isPinned && open,
               })}
             >
               <Icons.endurNameOnlyLogo className="h-fit w-20" />
