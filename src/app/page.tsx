@@ -23,6 +23,8 @@ export default function Home() {
 
   // if (!isMounted) return null;
 
+  if (typeof window === "undefined") return null;
+
   const snowflake1 = document.createElement("img");
   snowflake1.src = "/snow1.svg";
   const snowflake2 = document.createElement("img");
