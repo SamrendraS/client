@@ -12,18 +12,16 @@ import Tabs from "@/components/Tabs";
 import { isMerryChristmasAtom, tabsAtom } from "@/store/merry.store";
 
 export default function Home() {
-  // const [isMounted, setIsMounted] = React.useState(false);
+  const [isMounted, setIsMounted] = React.useState(false);
 
   const activeTab = useAtomValue(tabsAtom);
   const isMerry = useAtomValue(isMerryChristmasAtom);
 
-  // React.useEffect(() => {
-  //   setIsMounted(true);
-  // }, []);
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-  // if (!isMounted) return null;
-
-  if (typeof window === "undefined") return null;
+  if (!isMounted) return null;
 
   const snowflake1 = document.createElement("img");
   snowflake1.src = "/snow1.svg";
@@ -48,16 +46,12 @@ export default function Home() {
         </>
       )}
 
-      <React.Suspense fallback={<div className="w-72">Loading sidebar...</div>}>
-        <AppSidebar />
-      </React.Suspense>
+      <AppSidebar />
 
       <div className="flex flex-1 flex-col justify-between">
         <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
-          <React.Suspense fallback={<div>Loading DeFi content...</div>}>
-            <Navbar />
-            <Tabs avgWaitTime={""} />
-          </React.Suspense>
+          <Navbar />
+          <Tabs avgWaitTime={""} />
         </div>
 
         <div className="lg:hidden">
