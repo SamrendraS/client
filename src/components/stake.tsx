@@ -61,6 +61,7 @@ import {
 } from "@/store/merry.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
+import { protocolYieldsAtom } from "@/store/defi.store";
 
 import { MyAnalytics } from "@/lib/analytics";
 import { Icons } from "./Icons";
@@ -110,6 +111,7 @@ const Stake: React.FC = () => {
   const exchangeRate = useAtomValue(exchangeRateAtom);
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const apy = useAtomValue(snAPYAtom);
+  const yields = useAtomValue(protocolYieldsAtom);
 
   const referrer = searchParams.get("referrer");
 
@@ -506,8 +508,8 @@ const Stake: React.FC = () => {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <PlatformCard
             name="Vesu"
-            logo="/vesu-logo.png"
-            apy="12.5%"
+            icon={<Icons.vesuLogo className="size-8 rounded-full" />}
+            apy={yields.vesu.value}
             isSelected={selectedPlatform === "vesu"}
             onClick={() =>
               setSelectedPlatform(selectedPlatform === "vesu" ? "none" : "vesu")
@@ -515,8 +517,8 @@ const Stake: React.FC = () => {
           />
           <PlatformCard
             name="Nostra"
-            logo="/nostra-logo.png"
-            apy="10.2%"
+            icon={<Icons.nostraLogo className="size-8 rounded-full" />}
+            apy={yields["nostra-lend"].value}
             isSelected={selectedPlatform === "nostra"}
             onClick={() =>
               setSelectedPlatform(
@@ -661,3 +663,4 @@ const Stake: React.FC = () => {
 };
 
 export default Stake;
+

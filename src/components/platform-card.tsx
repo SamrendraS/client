@@ -1,17 +1,17 @@
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
-import Image from "next/image"
 import { Check } from 'lucide-react'
+import { Icons } from "./Icons"
 
 interface PlatformCardProps {
   name: string
-  logo: string
-  apy: string
+  icon: React.ReactNode
+  apy: number | null
   isSelected: boolean
   onClick: () => void
 }
 
-export function PlatformCard({ name, logo, apy, isSelected, onClick }: PlatformCardProps) {
+export function PlatformCard({ name, icon, apy, isSelected, onClick }: PlatformCardProps) {
   return (
     <Card 
       onClick={onClick}
@@ -22,13 +22,7 @@ export function PlatformCard({ name, logo, apy, isSelected, onClick }: PlatformC
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Image
-            src={logo}
-            alt={name}
-            width={24}
-            height={24}
-            className="rounded-full"
-          />
+          {icon}
           <span className="font-medium text-[#03624C]">Use {name}</span>
         </div>
         {isSelected && (
@@ -37,9 +31,10 @@ export function PlatformCard({ name, logo, apy, isSelected, onClick }: PlatformC
       </div>
       <div className="mt-2 flex items-center gap-1">
         <span className="text-sm text-[#8D9C9C]">APY:</span>
-        <span className="text-sm font-semibold text-[#03624C]">{apy}</span>
+        <span className="text-sm font-semibold text-[#03624C]">
+          {apy ? `${apy.toFixed(2)}%` : 'Loading...'}
+        </span>
       </div>
     </Card>
   )
 }
-
