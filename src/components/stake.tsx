@@ -1,6 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useAccount,
@@ -9,8 +9,8 @@ import {
   useSendTransaction,
 } from "@starknet-react/core";
 import { useAtom, useAtomValue } from "jotai";
-import { Info } from "lucide-react";
-import { Figtree } from "next/font/google";
+import { Info } from 'lucide-react';
+import { Figtree } from 'next/font/google';
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import React from "react";
@@ -68,6 +68,7 @@ import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useSidebar } from "./ui/sidebar";
+import { PlatformCard } from "./platform-card";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 
@@ -83,8 +84,11 @@ const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
+type Platform = "none" | "vesu" | "nostra";
+
 const Stake: React.FC = () => {
   const [showShareModal, setShowShareModal] = React.useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState<Platform>("none");
 
   const searchParams = useSearchParams();
 
@@ -497,7 +501,33 @@ const Stake: React.FC = () => {
 
       <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
 
-      <div className="space-y-3 px-7">
+      <div className="px-7">
+        <h3 className="mb-3 text-sm font-medium text-[#06302B]">Select to lend</h3>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <PlatformCard
+            name="Vesu"
+            logo="/vesu-logo.png"
+            apy="12.5%"
+            isSelected={selectedPlatform === "vesu"}
+            onClick={() =>
+              setSelectedPlatform(selectedPlatform === "vesu" ? "none" : "vesu")
+            }
+          />
+          <PlatformCard
+            name="Nostra"
+            logo="/nostra-logo.png"
+            apy="10.2%"
+            isSelected={selectedPlatform === "nostra"}
+            onClick={() =>
+              setSelectedPlatform(
+                selectedPlatform === "nostra" ? "none" : "nostra",
+              )
+            }
+          />
+        </div>
+      </div>
+
+      <div className="space-y-3 px-7 mt-5">
         <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
           <p className="flex items-center gap-1">
             You will get
@@ -618,13 +648,11 @@ const Stake: React.FC = () => {
             disabled={
               Number(form.getValues("stakeAmount")) <= 0 ||
               isNaN(Number(form.getValues("stakeAmount")))
-                ? true
-                : false
             }
             onClick={form.handleSubmit(onSubmit)}
             className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
           >
-            Stake
+            {selectedPlatform === "none" ? "Stake" : "Stake & Lend"}
           </Button>
         )}
       </div>
