@@ -1,17 +1,18 @@
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 import { Check } from 'lucide-react'
-import { Icons } from "./Icons"
+import React from "react"
 
 interface PlatformCardProps {
   name: string
   icon: React.ReactNode
   apy: number | null
+  totalSupplied: number | null
   isSelected: boolean
   onClick: () => void
 }
 
-export function PlatformCard({ name, icon, apy, isSelected, onClick }: PlatformCardProps) {
+export function PlatformCard({ name, icon, apy, totalSupplied, isSelected, onClick }: PlatformCardProps) {
   return (
     <Card 
       onClick={onClick}
@@ -23,7 +24,7 @@ export function PlatformCard({ name, icon, apy, isSelected, onClick }: PlatformC
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {icon}
-          <span className="font-medium text-[#03624C]">Use {name}</span>
+          <span className="font-medium text-[#03624C]">Lend on {name}</span>
         </div>
         {isSelected && (
           <Check className="absolute right-3 top-3 h-4 w-4 text-[#17876D]" />
@@ -35,6 +36,14 @@ export function PlatformCard({ name, icon, apy, isSelected, onClick }: PlatformC
           {apy ? `${apy.toFixed(2)}%` : 'Loading...'}
         </span>
       </div>
+      {totalSupplied !== null && (
+        <div className="mt-1 flex items-center gap-1">
+          <span className="text-sm text-[#8D9C9C]">Total Supplied:</span>
+          <span className="text-sm font-semibold text-[#03624C]">
+            ${totalSupplied.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </span>
+        </div>
+      )}
     </Card>
   )
 }

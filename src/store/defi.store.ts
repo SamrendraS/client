@@ -13,6 +13,10 @@ interface VesuAPIResponse {
           value: string;
           decimals: number;
         };
+        totalSupplied: {
+          value: string;
+          decimals: number;
+        };
       };
     }>;
   };
@@ -52,8 +56,21 @@ interface NostraLendingResponse {
   };
 }
 
+interface MongoDBResponse {
+  documents: Array<{
+    timestamp: number;
+    assets: {
+      xSTRK: {
+        supply: string;
+        price: string;
+      }
+    }
+  }>;
+}
+
 interface ProtocolYield {
   value: number | null;
+  totalSupplied?: number | null;
   isLoading: boolean;
   error?: string;
 }
@@ -90,15 +107,21 @@ const vesuYieldQueryAtom = atomWithQuery(() => ({
         stats.defiSpringSupplyApr.value,
         stats.defiSpringSupplyApr.decimals,
       );
+      const totalSupplied = convertVesuValue(
+        stats.totalSupplied.value,
+        stats.totalSupplied.decimals,
+      );
 
       return {
         value: (supplyApy + defiSpringApr) * 100,
+        totalSupplied,
         isLoading: false,
       };
     } catch (error) {
       console.error("vesuYieldQueryAtom error:", error);
       return {
         value: null,
+        totalSupplied: null,
         isLoading: false,
         error: "Failed to fetch Vesu yield",
       };
@@ -188,31 +211,57 @@ const nostraLendYieldQueryAtom = atomWithQuery(() => ({
   queryKey: ["nostraLendYield"],
   queryFn: async (): Promise<ProtocolYield> => {
     try {
-      const response = await fetch(
-        "https://api.nostra.finance/openblock/supply_incentives",
-      );
-      const data: NostraLendingResponse = await response.json();
+      const [lendingResponse, mongoResponse] = await Promise.all([
+        fetch("https://api.nostra.finance/openblock/supply_incentives"),
+        fetch('https://us-east-2.aws.data.mongodb-api.com/app/data-yqlpb/endpoint/data/v1/action/find', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+          },
+          body: JSON.stringify({
+            dataSource: "nostra-production",
+            database: "lend-and-borrow-analytics-prod-b-nostra-db",
+            collection: "supplyAndBorrow",
+            filter: {
+              timestamp: {
+                $gte: Math.floor(Date.now() / 1000) - 86400 // 24 hours ago
+              }
+            },
+            sort: { timestamp: 1 }
+          })
+        })
+      ]);
 
-      if (!data.Nostra?.xSTRK?.length) {
+      const lendingData: NostraLendingResponse = await lendingResponse.json();
+      const mongoData: MongoDBResponse = await mongoResponse.json();
+
+      if (!lendingData.Nostra?.xSTRK?.length || !mongoData.documents?.length) {
         return {
           value: null,
+          totalSupplied: null,
           isLoading: false,
-          error: "xSTRK lending data not found",
+          error: "Data not found",
         };
       }
 
-      // Get the latest APR
-      const latestData = data.Nostra.xSTRK[data.Nostra.xSTRK.length - 1];
-      const apr = latestData.strk_grant_apr_ts * 100;
+      // Get latest MongoDB document
+      const latestDoc = mongoData.documents[mongoData.documents.length - 1];
+      const xSTRKData = latestDoc.assets.xSTRK;
+
+      const latestLendingData = lendingData.Nostra.xSTRK[lendingData.Nostra.xSTRK.length - 1];
+      const apr = latestLendingData.strk_grant_apr_ts * 100;
+      const totalSupplied = parseFloat(xSTRKData.supply);
 
       return {
         value: apr,
+        totalSupplied,
         isLoading: false,
       };
     } catch (error) {
       console.error("nostraLendYieldQueryAtom error:", error);
       return {
         value: null,
+        totalSupplied: null,
         isLoading: false,
         error: "Failed to fetch Nostra lending yield",
       };
@@ -274,6 +323,7 @@ export const vesuYieldAtom = atom((get) => {
   const { data, error } = get(vesuYieldQueryAtom);
   return {
     value: error || !data ? null : data.value,
+    totalSupplied: error || !data ? null : data.totalSupplied,
     error,
     isLoading: !data && !error,
   };
@@ -301,6 +351,7 @@ export const nostraLendYieldAtom = atom((get) => {
   const { data, error } = get(nostraLendYieldQueryAtom);
   return {
     value: error || !data ? null : data.value,
+    totalSupplied: error || !data ? null : data.totalSupplied,
     error,
     isLoading: !data && !error,
   };

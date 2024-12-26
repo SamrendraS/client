@@ -112,6 +112,7 @@ const Stake: React.FC = () => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const apy = useAtomValue(snAPYAtom);
   const yields = useAtomValue(protocolYieldsAtom);
+  console.log(yields);
 
   const referrer = searchParams.get("referrer");
 
