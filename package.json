@@ -39,6 +39,7 @@
     "jotai-tanstack-query": "^0.9.0",
     "lucide-react": "^0.456.0",
     "mixpanel-browser": "^2.58.0",
+    "motion": "^11.15.0",
     "next": "14.2.14",
     "react": "^18",
     "react-dom": "^18",

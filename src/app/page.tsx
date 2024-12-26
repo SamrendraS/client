@@ -46,7 +46,9 @@ export default function Home() {
         </>
       )}
 
-      <AppSidebar />
+      <React.Suspense fallback={<div className="w-72">Loading sidebar...</div>}>
+        <AppSidebar />
+      </React.Suspense>
 
       <div className="flex flex-1 flex-col justify-between">
         <div className="flex h-full w-full flex-col items-center overflow-hidden px-7 py-3 lg:py-0">
