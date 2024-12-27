@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   useAccount,
@@ -112,7 +112,6 @@ const Stake: React.FC = () => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const apy = useAtomValue(snAPYAtom);
   const yields = useAtomValue(protocolYieldsAtom);
-  console.log(yields);
 
   const referrer = searchParams.get("referrer");
 
@@ -132,6 +131,14 @@ const Stake: React.FC = () => {
   );
 
   const { sendAsync, data, isPending, error } = useSendTransaction({});
+
+  const sortedPlatforms = useMemo(() => {
+    return ["vesu", "nostra-lend"].sort((a, b) => {
+      const totalSuppliedA = yields[a]?.totalSupplied || 0;
+      const totalSuppliedB = yields[b]?.totalSupplied || 0;
+      return totalSuppliedB - totalSuppliedA;
+    });
+  }, [yields]);
 
   React.useEffect(() => {
     (async () => {
@@ -505,28 +512,19 @@ const Stake: React.FC = () => {
       <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="px-7">
-        <h3 className="mb-3 text-sm font-medium text-[#06302B]">Select to lend</h3>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <PlatformCard
-            name="Vesu"
-            icon={<Icons.vesuLogo className="size-8 rounded-full" />}
-            apy={yields.vesu.value}
-            isSelected={selectedPlatform === "vesu"}
-            onClick={() =>
-              setSelectedPlatform(selectedPlatform === "vesu" ? "none" : "vesu")
-            }
-          />
-          <PlatformCard
-            name="Nostra"
-            icon={<Icons.nostraLogo className="size-8 rounded-full" />}
-            apy={yields["nostra-lend"].value}
-            isSelected={selectedPlatform === "nostra"}
-            onClick={() =>
-              setSelectedPlatform(
-                selectedPlatform === "nostra" ? "none" : "nostra",
-              )
-            }
-          />
+        <h3 className="mb-2 text-sm font-medium text-[#06302B]">Select to lend (optional)</h3>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {sortedPlatforms.map((platform) => (
+            <PlatformCard
+              key={platform}
+              name={platform === "vesu" ? "Vesu" : "Nostra"}
+              icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6" /> : <Icons.nostraLogo className="h-6 w-6" />}
+              apy={yields[platform].value}
+              xstrkLent={yields[platform].totalSupplied}
+              isSelected={selectedPlatform === platform}
+              onClick={() => setSelectedPlatform(selectedPlatform === platform ? "none" : platform as Platform)}
+            />
+          ))}
         </div>
       </div>
 

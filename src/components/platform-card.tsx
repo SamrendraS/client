@@ -1,49 +1,77 @@
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
-import { Check } from 'lucide-react'
-import React from "react"
 
 interface PlatformCardProps {
   name: string
   icon: React.ReactNode
   apy: number | null
-  totalSupplied: number | null
+  xstrkLent: number | null
   isSelected: boolean
   onClick: () => void
 }
 
-export function PlatformCard({ name, icon, apy, totalSupplied, isSelected, onClick }: PlatformCardProps) {
+export function PlatformCard({ name, icon, apy, xstrkLent, isSelected, onClick }: PlatformCardProps) {
   return (
     <Card 
       onClick={onClick}
       className={cn(
-        "relative cursor-pointer border p-4 transition-all hover:border-[#17876D]",
-        isSelected && "border-[#17876D] bg-[#E9F3F0]"
+        "group relative cursor-pointer border p-3 transition-all duration-200",
+        "bg-white/50 hover:bg-white",
+        "border-gray-100 hover:border-[#17876D]",
+        "shadow-sm hover:shadow",
+        isSelected && "!bg-white !border-[#17876D] !shadow"
       )}
     >
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {icon}
-          <span className="font-medium text-[#03624C]">Lend on {name}</span>
+        <div className="flex items-center gap-2.5">
+          <div className={cn(
+            "transition-opacity duration-200",
+            "opacity-40 group-hover:opacity-100",
+            isSelected && "opacity-100"
+          )}>
+            {icon}
+          </div>
+          <div>
+            <div className={cn(
+              "text-sm font-medium transition-colors duration-200",
+              "text-gray-400 group-hover:text-[#03624C]",
+              isSelected && "text-[#03624C]"
+            )}>
+              {name}
+            </div>
+            <div className={cn(
+              "text-xs transition-colors duration-200",
+              "text-gray-400 group-hover:text-gray-500",
+              isSelected && "text-gray-500"
+            )}>
+              APY: {apy 
+                ? `${apy.toFixed(2)}%`
+                : <span className="inline-block h-3 w-10 animate-pulse rounded bg-gray-200" />
+              }
+            </div>
+          </div>
         </div>
-        {isSelected && (
-          <Check className="absolute right-3 top-3 h-4 w-4 text-[#17876D]" />
-        )}
-      </div>
-      <div className="mt-2 flex items-center gap-1">
-        <span className="text-sm text-[#8D9C9C]">APY:</span>
-        <span className="text-sm font-semibold text-[#03624C]">
-          {apy ? `${apy.toFixed(2)}%` : 'Loading...'}
-        </span>
-      </div>
-      {totalSupplied !== null && (
-        <div className="mt-1 flex items-center gap-1">
-          <span className="text-sm text-[#8D9C9C]">Total Supplied:</span>
-          <span className="text-sm font-semibold text-[#03624C]">
-            ${totalSupplied.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-          </span>
+        <div className="text-right">
+          <div className={cn(
+            "text-lg font-semibold transition-colors duration-200",
+            "text-gray-400 group-hover:text-[#03624C]",
+            isSelected && "text-[#03624C]"
+          )}>
+            {xstrkLent 
+              ? `${(xstrkLent / 1e6).toFixed(2)}M`
+              : <span className="inline-block h-5 w-12 animate-pulse rounded bg-gray-200" />
+            }
+          </div>
+          <div className={cn(
+            "text-xs transition-colors duration-200",
+            "text-gray-400 group-hover:text-gray-500",
+            isSelected && "text-gray-500"
+          )}>
+            xSTRK Lent
+          </div>
         </div>
-      )}
+      </div>
     </Card>
   )
 }
+
