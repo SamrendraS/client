@@ -8,7 +8,7 @@ import {
   useSendTransaction,
 } from "@starknet-react/core";
 import { useAtomValue } from "jotai";
-import { Info } from "lucide-react";
+import { Info } from 'lucide-react';
 import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -60,6 +60,7 @@ import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useSidebar } from "./ui/sidebar";
+import { dexRatioAtom } from "@/store/dex.store";
 
 const formSchema = z.object({
   unstakeAmount: z.string().refine(
@@ -88,6 +89,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const currentXSTRKBalance = useAtomValue(userXSTRKBalanceAtom);
   const apy = useAtomValue(snAPYAtom);
+  const dexRatio = useAtomValue(dexRatioAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -199,11 +201,11 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
     if (form.getValues("unstakeAmount") && txnDapp === "endur") {
       return (Number(form.getValues("unstakeAmount")) * exRate.rate).toFixed(2);
     } else if (form.getValues("unstakeAmount") && txnDapp === "dex") {
-      return (Number(form.getValues("unstakeAmount")) * 0.9).toFixed(2);
+      return (Number(form.getValues("unstakeAmount")) * dexRatio.value).toFixed(2);
     }
 
     return "0";
-  }, [exRate.rate, form.watch("unstakeAmount"), txnDapp]);
+  }, [exRate.rate, form.watch("unstakeAmount"), txnDapp, dexRatio.value]);
 
   async function connectWallet(config = connectorConfig) {
     try {
@@ -435,7 +437,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
 
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
               <p>Waiting time:</p>
-              <p>~ {convertTimeString(avgWaitTime)}</p>
+              <p>~ {avgWaitTime}</p>
             </div>
           </TabsTrigger>
 
@@ -454,7 +456,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
 
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939394]">
               <p>Rate:</p>
-              <p>1:0.9</p>
+              <p>{dexRatio.isLoading ? "Loading..." : `1:${dexRatio.value.toFixed(4)}`}</p>
             </div>
 
             <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
@@ -480,8 +482,6 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  {/* Burnt <strong>xSTRK</strong> is the amount of xSTRK that
-                      will be redeemed to unstake the requested STRK */}
                   You will receive the equivalent amount of STRK for the xSTRK
                   you are unstaking. The amount of STRK you receive will be
                   based on the current exchange rate of xSTRK to STRK.
@@ -562,3 +562,4 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
 };
 
 export default Unstake;
+
