@@ -396,13 +396,22 @@ const Stake: React.FC = () => {
                   side="right"
                   className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  Estimated current compounded annualised yield on staking in
-                  terms of STRK.
+                  {selectedPlatform === "none"
+            ? "Estimated current compounded annualised yield on staking in terms of STRK."
+            : `Estimated yield including both staking and lending on ${selectedPlatform === "vesu" ? "Vesu" : "Nostra"}.`
+          }
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </span>
-          ~{(apy.value * 100).toFixed(2)}%
+          <span className="flex items-center gap-1">
+            ~{(apy.value * 100).toFixed(2)}%
+            {selectedPlatform !== "none" && (
+              <span className="text-[#17876D] font-medium">
+                + {yields[selectedPlatform === "vesu" ? "vesu" : "nostra-lend"].value.toFixed(2)}%
+              </span>
+            )}
+          </span>
         </p>
 
         <div className="flex flex-col items-end text-xs font-bold text-[#3F6870] lg:flex-row lg:items-center lg:gap-2 lg:text-[#8D9C9C]">
@@ -531,7 +540,7 @@ const Stake: React.FC = () => {
       <div className="space-y-3 px-7 mt-5">
         <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
           <p className="flex items-center gap-1">
-            You will get
+            {selectedPlatform === "none" ? "You will get" : "You will lend"}
             <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger>
@@ -541,8 +550,16 @@ const Stake: React.FC = () => {
                   side="right"
                   className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                 >
-                  <strong>xSTRK</strong> is the liquid staking token (LST) of
-                  Endur, representing your staked STRK.{" "}
+                  {selectedPlatform === "none" ? (
+                    <>
+                      <strong>xSTRK</strong> is the liquid staking token (LST) of
+                      Endur, representing your staked STRK.{" "}
+                    </>
+                  ) : (
+                    <>
+                      {`This is the amount of xSTRK you're lending on ${selectedPlatform}. `}
+                    </>
+                  )}
                   <Link
                     target="_blank"
                     href="https://docs.endur.fi/docs"
@@ -653,7 +670,7 @@ const Stake: React.FC = () => {
             onClick={form.handleSubmit(onSubmit)}
             className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
           >
-            {selectedPlatform === "none" ? "Stake" : "Stake & Lend"}
+            {selectedPlatform === "none" ? "Stake STRK" : `Stake & Lend on ${selectedPlatform === "vesu" ? "Vesu" : "Nostra"}`}
           </Button>
         )}
       </div>
