@@ -45,6 +45,7 @@ import {
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
+import { dexRatioAtom } from "@/store/dex.store";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -60,7 +61,6 @@ import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useSidebar } from "./ui/sidebar";
-import { dexRatioAtom } from "@/store/dex.store";
 
 const formSchema = z.object({
   unstakeAmount: z.string().refine(
@@ -75,7 +75,7 @@ const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
-  const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("endur");
+  const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("dex");
 
   const { address } = useAccount();
   const { connect: connectSnReact } = useConnect();
@@ -351,7 +351,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
         </div>
 
         <div className="mt-px flex flex-col items-end">
-          <div className="hidden text-[#8D9C9C] lg:block">
+        <div className="hidden text-[#8D9C9C] lg:block">
             <button
               onClick={() => handleQuickUnstakePrice(25)}
               className="rounded-md rounded-r-none border border-[#8D9C9C33] px-2 py-1 text-xs font-semibold text-[#8D9C9C] transition-all hover:bg-[#8D9C9C33]"
@@ -398,7 +398,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
 
       <Tabs
         value={txnDapp}
-        defaultValue="endur"
+        defaultValue="dex"
         className="w-full max-w-none pt-1"
         onValueChange={(value) => setTxnDapp(value as "endur" | "dex")}
       >
@@ -409,7 +409,6 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
           >
             <div className="flex w-full items-center justify-between font-semibold">
               <p>Use Endur</p>
-
               <Icons.endurLogo className="size-6" />
             </div>
 
@@ -423,7 +422,7 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
                     </TooltipTrigger>
                     <TooltipContent
                       side="right"
-                      className="ounded-md border border-[#03624C] bg-white text-[#03624C]"
+                      className="rounded-md border border-[#03624C] bg-white text-[#03624C]"
                     >
                       {exRate.rate === 0
                         ? "-"
@@ -443,10 +442,10 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
 
           <TabsTrigger
             value="dex"
-            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D]"
+            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D] bg-[#E9F3F0] data-[state=active]:bg-[#D0E6E0]"
           >
             <div className="flex w-full items-center justify-between font-semibold">
-              <p>Use DEX</p>
+              <p>Use DEX (Recommended)</p>
               <div className="flex items-center">
                 <Icons.ekuboLogo className="size-6 rounded-full" />
                 <Icons.nostraLogo className="-ml-3 size-[26px]" />
@@ -454,14 +453,17 @@ const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
               </div>
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939394]">
+            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
               <p>Rate:</p>
               <p>{dexRatio.isLoading ? "Loading..." : `1:${dexRatio.value.toFixed(4)}`}</p>
             </div>
 
             <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
               <p>Waiting time:</p>
-              <p>~ Instant</p>
+              <p className="flex items-center gap-1">
+                <Icons.zap className="h-4 w-4" />
+                Instant
+              </p>
             </div>
           </TabsTrigger>
         </TabsList>
