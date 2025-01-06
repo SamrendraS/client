@@ -488,7 +488,7 @@ const Unstake = () => {
 
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
               <p>Waiting time:</p>
-              <p>~ {avgWaitTime}</p>
+              <p>~4h</p> {/* TODO: fetch avg wait time from backend */}
             </div>
           </TabsTrigger>
 
