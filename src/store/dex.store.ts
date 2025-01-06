@@ -118,10 +118,13 @@ const fetchDEXRates = async (amount: string): Promise<DexRate[]> => {
     fetchAvnuRate(amount)
   ]);
 
-  return [
-    { dex: 'ekubo', rate: ekuboRate, timestamp },
-    { dex: 'avnu', rate: avnuRate, timestamp }
-  ].filter(quote => quote.rate > 0)
+  const rates: DexRate[] = [
+    { dex: 'ekubo' as const, rate: ekuboRate, timestamp },
+    { dex: 'avnu' as const, rate: avnuRate, timestamp }
+  ];
+
+  return rates
+    .filter(quote => quote.rate > 0)
     .sort((a, b) => b.rate - a.rate);
 };
 

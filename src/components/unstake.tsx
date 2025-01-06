@@ -53,6 +53,9 @@ import {
 } from "@/constants";
 import { formatNumber } from "@/lib/utils";
 
+import { MyAnalytics } from "@/lib/analytics";
+import { isMerryChristmasAtom } from "@/store/merry.store";
+
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
 import { Button } from "./ui/button";
@@ -132,6 +135,7 @@ const Unstake = () => {
   const { connect: connectSnReact } = useConnect();
   const { isMobile } = useSidebar();
   const { dismiss } = useToast();
+  const [isMerry, setIsMerry] = useAtom(isMerryChristmasAtom);
 
   // Atoms
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
@@ -239,7 +243,19 @@ const Unstake = () => {
     })();
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
+  React.useEffect(() => {
+    if (form.getValues("unstakeAmount").toLowerCase() === "xstrk") {
+      setIsMerry(true);
+      MyAnalytics.track("Activated Merry Christmas Theme", {
+        address,
+        tab: "unstake",
+      });
+    }
+  }, [form.getValues("unstakeAmount"), form]);
+
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
+    const hostname =
+      typeof window !== "undefined" ? window.location.hostname : "";
     return {
       modalMode: "canAsk",
       modalTheme: "light",
@@ -247,7 +263,7 @@ const Unstake = () => {
       argentMobileOptions: {
         dappName: "Endur.fi",
         chainId: NETWORK,
-        url: window.location.hostname,
+        url: hostname,
       },
       dappName: "Endur.fi",
       connectors: getConnectors(isMobile) as StarknetkitConnector[],
@@ -328,7 +344,12 @@ const Unstake = () => {
   };
 
   return (
-    <div className="h-full w-full">
+    <div className="relative h-full w-full">
+    {isMerry && (
+      <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden transition-all duration-500 lg:block">
+        <Icons.cloud />
+      </div>
+    )}
       <div className="flex items-center justify-between px-3 py-2 lg:px-6">
         <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
           <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
