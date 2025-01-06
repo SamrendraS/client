@@ -125,7 +125,7 @@ const DexRouteCard = ({
   );
 };
 
-const Unstake = ({ avgWaitTime }: { avgWaitTime: string }) => {
+const Unstake = () => {
   const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("dex");
 
   const { address } = useAccount();

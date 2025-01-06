@@ -61,16 +61,7 @@ const fetchEkuboRate = async (amount: string): Promise<number> => {
   if (!formattedAmount) return 0;
 
   try {
-    const response = await fetch(
-      `https://quoter-mainnet-api.ekubo.org/${formattedAmount.decimal}/${XSTRK_TOKEN}/${STRK_TOKEN}`,
-      {
-        headers: {
-          'accept': '*/*',
-          'origin': 'https://app.ekubo.org',
-          'referer': 'https://app.ekubo.org/'
-        }
-      }
-    );
+    const response = await fetch(`https://quoter-mainnet-api.ekubo.org/${formattedAmount.decimal}/${XSTRK_TOKEN}/${STRK_TOKEN}`);
 
     if (!response.ok) throw new Error('Ekubo API error');
 
