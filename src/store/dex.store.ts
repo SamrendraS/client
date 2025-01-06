@@ -85,9 +85,7 @@ const fetchAvnuRate = async (amount: string): Promise<number> => {
       `https://starknet.api.avnu.fi/internal/swap/quotes-with-prices?` +
       `sellTokenAddress=${XSTRK_TOKEN}&` +
       `buyTokenAddress=${STRK_TOKEN}&` +
-      `sellAmount=${formattedAmount.hex}&` +
-      `takerAddress=0x06058fd211ebc489b5f5fa98d92354a4be295ff007b211f72478702a6830c21f&` +
-      `size=3`
+      `sellAmount=${formattedAmount.hex}`
     );
 
     if (!response.ok) throw new Error('AVNU API error');
