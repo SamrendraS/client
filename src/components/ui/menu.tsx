@@ -1,51 +1,43 @@
 "use client";
 
-import { type Variants, motion, useAnimation } from "motion/react";
+import type { Variants } from "motion/react";
+import { motion, useAnimation } from "motion/react";
 import React from "react";
 
 import { cn } from "@/lib/utils";
 
 import { CustomIconProps } from "./twitter";
 
-const frameVariants: Variants = {
-  visible: { opacity: 1 },
-  hidden: { opacity: 1 },
-};
-
 const lineVariants: Variants = {
-  visible: { pathLength: 1, opacity: 1 },
-  hidden: { pathLength: 0, opacity: 0 },
+  normal: {
+    rotate: 0,
+    y: 0,
+    opacity: 1,
+  },
+  animate: (custom: number) => ({
+    rotate: custom === 1 ? 45 : custom === 3 ? -45 : 0,
+    y: custom === 1 ? 6 : custom === 3 ? -6 : 0,
+    opacity: custom === 2 ? 0 : 1,
+    transition: {
+      type: "spring",
+      stiffness: 260,
+      damping: 20,
+    },
+  }),
 };
 
-const ChartColumnDecreasingIcon: React.FC<CustomIconProps> = ({
+const MenuIcon: React.FC<CustomIconProps> = ({
   className,
   triggerAnimation,
   asIcon = false,
 }) => {
   const controls = useAnimation();
 
-  const handleHoverStart = async () => {
-    await controls.start((i) => ({
-      pathLength: 0,
-      opacity: 0,
-      transition: { delay: i * 0.1, duration: 0.3 },
-    }));
-    await controls.start((i) => ({
-      pathLength: 1,
-      opacity: 1,
-      transition: { delay: i * 0.1, duration: 0.3 },
-    }));
-  };
-
-  const handleHoverEnd = () => {
-    controls.start("visible");
-  };
-
   React.useEffect(() => {
     if (triggerAnimation) {
-      handleHoverStart();
+      controls.start("animate");
     } else {
-      handleHoverEnd();
+      controls.start("normal");
     }
   }, [triggerAnimation]);
 
@@ -69,31 +61,36 @@ const ChartColumnDecreasingIcon: React.FC<CustomIconProps> = ({
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        <motion.path
+        <motion.line
+          x1="4"
+          y1="6"
+          x2="20"
+          y2="6"
           variants={lineVariants}
-          initial="visible"
           animate={controls}
           custom={1}
-          d="M13 17V9"
         />
-        <motion.path
+        <motion.line
+          x1="4"
+          y1="12"
+          x2="20"
+          y2="12"
           variants={lineVariants}
-          initial="visible"
           animate={controls}
           custom={2}
-          d="M18 17v-3"
         />
-        <motion.path variants={frameVariants} d="M3 3v16a2 2 0 0 0 2 2h16" />
-        <motion.path
+        <motion.line
+          x1="4"
+          y1="18"
+          x2="20"
+          y2="18"
           variants={lineVariants}
-          initial="visible"
           animate={controls}
-          custom={0}
-          d="M8 17V5"
+          custom={3}
         />
       </svg>
     </div>
   );
 };
 
-export { ChartColumnDecreasingIcon };
+export { MenuIcon };
