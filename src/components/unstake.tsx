@@ -7,7 +7,7 @@ import {
   useSendTransaction,
 } from "@starknet-react/core";
 import { useAtom, useAtomValue } from "jotai";
-import { Info } from 'lucide-react';
+import { Info } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -27,14 +27,18 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
+import { formatNumber } from "@/lib/utils";
+import { amountAtom, dexRatesAtom } from "@/store/dex.store";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -44,17 +48,6 @@ import {
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
-import { amountAtom, dexRatesAtom } from "@/store/dex.store";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  NETWORK,
-  REWARD_FEES,
-  getProvider,
-} from "@/constants";
-import { formatNumber } from "@/lib/utils";
-
-import { MyAnalytics } from "@/lib/analytics";
-import { isMerryChristmasAtom } from "@/store/merry.store";
 
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
@@ -64,7 +57,7 @@ import { useSidebar } from "./ui/sidebar";
 
 // Types
 interface DexRoute {
-  dex: 'ekubo' | 'avnu';
+  dex: "ekubo" | "avnu";
   exchangeRate: number;
   logo: React.ReactNode;
   name: string;
@@ -85,22 +78,24 @@ export type FormValues = z.infer<typeof formSchema>;
 
 const DexRouteCard = ({
   route,
-  unstakeAmount
+  unstakeAmount,
 }: {
   route: DexRoute;
   unstakeAmount: string;
 }) => {
   const handleClick = () => {
-    const baseUrl = route.dex === 'ekubo'
-      ? 'https://app.ekubo.org/'
-      : 'https://app.avnu.fi/en/xstrk-strk';
+    const baseUrl =
+      route.dex === "ekubo"
+        ? "https://app.ekubo.org/"
+        : "https://app.avnu.fi/en/xstrk-strk";
 
-    const params = route.dex === 'ekubo'
-      ? `?inputCurrency=xSTRK&amount=${unstakeAmount}&outputCurrency=STRK`
-      : `?inputCurrency=xSTRK&outputCurrency=STRK&amount=${unstakeAmount}`;
+    const params =
+      route.dex === "ekubo"
+        ? `?inputCurrency=xSTRK&amount=${unstakeAmount}&outputCurrency=STRK`
+        : `?inputCurrency=xSTRK&outputCurrency=STRK&amount=${unstakeAmount}`;
 
     const dexUrl = `${baseUrl}${params}`;
-    window.open(dexUrl, '_blank');
+    window.open(dexUrl, "_blank");
   };
 
   const outputAmount = Number(unstakeAmount) * route.exchangeRate;
@@ -108,15 +103,17 @@ const DexRouteCard = ({
   return (
     <button
       onClick={handleClick}
-      className="w-full flex flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 bg-[#E9F3F0] hover:bg-[#D0E6E0] transition-colors"
+      className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] bg-[#E9F3F0] px-4 py-2.5 transition-colors hover:bg-[#D0E6E0]"
     >
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-2">
           {route.logo}
-          <span className="text-base font-semibold text-[#075A5A]">{route.name}</span>
+          <span className="text-base font-semibold text-[#075A5A]">
+            {route.name}
+          </span>
         </div>
         <div className="flex flex-col items-end">
-          <span className="text-lg lg:text-xl font-bold text-[#03624C]">
+          <span className="text-lg font-bold text-[#03624C] lg:text-xl">
             {outputAmount.toFixed(2)} STRK
           </span>
           <span className="text-xs text-[#8D9C9C]">
@@ -135,9 +132,8 @@ const Unstake = () => {
   const { connect: connectSnReact } = useConnect();
   const { isMobile } = useSidebar();
   const { dismiss } = useToast();
-  const [isMerry, setIsMerry] = useAtom(isMerryChristmasAtom);
 
-  // Atoms
+  // const [isMerry, setIsMerry] = useAtom(isMerryChristmasAtom);
   const currentStaked = useAtomValue(userSTRKBalanceAtom);
   const exRate = useAtomValue(exchangeRateAtom);
   const totalStaked = useAtomValue(totalStakedAtom);
@@ -157,9 +153,9 @@ const Unstake = () => {
 
   // Update amount atom when form value changes
   React.useEffect(() => {
-    const amount = form.watch('unstakeAmount');
+    const amount = form.watch("unstakeAmount");
     setAmount(amount);
-  }, [form.watch('unstakeAmount'), setAmount]);
+  }, [form.watch("unstakeAmount"), setAmount]);
 
   const provider = getProvider();
   const contract = new Contract(
@@ -243,15 +239,15 @@ const Unstake = () => {
     })();
   }, [data, data?.transaction_hash, error?.name, form, isPending]);
 
-  React.useEffect(() => {
-    if (form.getValues("unstakeAmount").toLowerCase() === "xstrk") {
-      setIsMerry(true);
-      MyAnalytics.track("Activated Merry Christmas Theme", {
-        address,
-        tab: "unstake",
-      });
-    }
-  }, [form.getValues("unstakeAmount"), form]);
+  // React.useEffect(() => {
+  //   if (form.getValues("unstakeAmount").toLowerCase() === "xstrk") {
+  //     setIsMerry(true);
+  //     MyAnalytics.track("Activated Merry Christmas Theme", {
+  //       address,
+  //       tab: "unstake",
+  //     });
+  //   }
+  // }, [form.getValues("unstakeAmount"), form]);
 
   const connectorConfig: ConnectOptionsWithConnectors = React.useMemo(() => {
     const hostname =
@@ -345,11 +341,12 @@ const Unstake = () => {
 
   return (
     <div className="relative h-full w-full">
-    {isMerry && (
-      <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden transition-all duration-500 lg:block">
-        <Icons.cloud />
-      </div>
-    )}
+      {/* {isMerry && (
+        <div className="pointer-events-none absolute -left-[15px] -top-[7.5rem] hidden transition-all duration-500 lg:block">
+          <Icons.cloud />
+        </div>
+      )} */}
+
       <div className="flex items-center justify-between px-3 py-2 lg:px-6">
         <p className="flex flex-col items-center text-xs font-semibold lg:flex-row lg:gap-2">
           <span className="flex items-center gap-1 text-xs font-semibold text-[#3F6870] lg:text-[#8D9C9C]">
@@ -409,13 +406,22 @@ const Unstake = () => {
                   <FormItem className="relative space-y-1">
                     <FormControl>
                       <div className="relative">
-                        <Input className="h-fit border-none px-0 pr-1 text-2xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0 lg:pr-0 lg:!text-3xl"
+                        <Input
+                          className="h-fit border-none px-0 pr-1 text-2xl shadow-none outline-none placeholder:text-[#8D9C9C] focus-visible:ring-0 lg:pr-0 lg:!text-3xl"
                           placeholder="0.00"
                           {...field}
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="absolute -bottom-3 left-1 text-xs" />
+                    <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
+                    {/* {form.getValues("unstakeAmount").toLowerCase() ===
+                    "xstrk" ? (
+                      <p className="absolute -bottom-4 left-0 text-xs font-medium text-green-500 transition-all lg:left-1 lg:-ml-1">
+                        Merry Christmas!
+                      </p>
+                    ) : (
+                      <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
+                    )}{" "} */}
                   </FormItem>
                 )}
               />
@@ -462,7 +468,9 @@ const Unstake = () => {
             <Icons.wallet className="size-3 lg:size-5" />
             <span className="hidden md:block">Balance:</span>
             <span className="font-bold">
-              {formatNumber(currentXSTRKBalance.value.toEtherToFixedDecimals(2))}{" "}
+              {formatNumber(
+                currentXSTRKBalance.value.toEtherToFixedDecimals(2),
+              )}{" "}
               xSTRK
             </span>
           </div>
@@ -515,7 +523,7 @@ const Unstake = () => {
 
           <TabsTrigger
             value="dex"
-            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D] bg-[#E9F3F0] data-[state=active]:bg-[#D0E6E0]"
+            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] bg-[#E9F3F0] px-4 py-2.5 data-[state=active]:border-[#17876D] data-[state=active]:bg-[#D0E6E0]"
           >
             <div className="flex w-full items-center justify-between font-semibold">
               <p>Use DEX (Recommended)</p>
@@ -527,7 +535,13 @@ const Unstake = () => {
 
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
               <p>Best Rate:</p>
-              <p>{ratesLoading ? "Loading..." : (rates?.[0]?.rate ? `1:${rates[0].rate.toFixed(4)}` : "-")}</p>
+              <p>
+                {ratesLoading
+                  ? "Loading..."
+                  : rates?.[0]?.rate
+                    ? `1:${rates[0].rate.toFixed(4)}`
+                    : "-"}
+              </p>
             </div>
 
             <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
@@ -557,9 +571,10 @@ const Unstake = () => {
                       side="right"
                       className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                     >
-                      You will receive the equivalent amount of STRK for the xSTRK
-                      you are unstaking. The amount of STRK you receive will be
-                      based on the current exchange rate of xSTRK to STRK.
+                      You will receive the equivalent amount of STRK for the
+                      xSTRK you are unstaking. The amount of STRK you receive
+                      will be based on the current exchange rate of xSTRK to
+                      STRK.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -579,9 +594,9 @@ const Unstake = () => {
                       side="right"
                       className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
                     >
-                      This fee applies exclusively to your staking rewards and does
-                      NOT affect your staked amount. You might qualify for a future
-                      fee rebate.{" "}
+                      This fee applies exclusively to your staking rewards and
+                      does NOT affect your staked amount. You might qualify for
+                      a future fee rebate.{" "}
                       <Link
                         target="_blank"
                         href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
@@ -643,15 +658,19 @@ const Unstake = () => {
                     route={{
                       dex: route.dex,
                       exchangeRate: route.rate,
-                      name: route.dex === 'ekubo' ? 'Ekubo' : 'AVNU',
-                      logo: route.dex === 'ekubo'
-                        ? <Icons.ekuboLogo className="size-6 rounded-full" />
-                        : <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />,
-                      link: route.dex === 'ekubo'
-                        ? 'https://app.ekubo.org/swap'
-                        : 'https://app.avnu.fi'
+                      name: route.dex === "ekubo" ? "Ekubo" : "AVNU",
+                      logo:
+                        route.dex === "ekubo" ? (
+                          <Icons.ekuboLogo className="size-6 rounded-full" />
+                        ) : (
+                          <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />
+                        ),
+                      link:
+                        route.dex === "ekubo"
+                          ? "https://app.ekubo.org/swap"
+                          : "https://app.avnu.fi",
                     }}
-                    unstakeAmount={form.getValues('unstakeAmount')}
+                    unstakeAmount={form.getValues("unstakeAmount")}
                   />
                 ))
               ) : ratesLoading && form.getValues("unstakeAmount") ? (
@@ -660,7 +679,9 @@ const Unstake = () => {
                 </div>
               ) : (
                 <div className="rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 text-center text-sm text-[#8D9C9C]">
-                  {form.getValues("unstakeAmount") ? "No routes available" : "Enter an amount to see available routes"}
+                  {form.getValues("unstakeAmount")
+                    ? "No routes available"
+                    : "Enter an amount to see available routes"}
                 </div>
               )}
             </div>
