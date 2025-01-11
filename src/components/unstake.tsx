@@ -415,10 +415,11 @@ const Unstake = () => {
     const initializeAvnuQuote = async () => {
       setAvnuLoading(true);
       try {
-        const quotes = await getAvnuQuotes(BigInt(100 * 1e18).toString(), "0x0");
+        const quotes = await getAvnuQuotes("1000", "0x0");
         setAvnuQuote(quotes[0] || null);
         setAvnuError(null);
       } catch (error) {
+        console.error("Error fetching initial Avnu quote:", error);
         setAvnuError((error as Error).message);
         setAvnuQuote(null);
       } finally {
@@ -710,14 +711,16 @@ const Unstake = () => {
               <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm">
-              <p>Best Rate:</p>
+            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
+              <p>Rate:</p>
               <p className={getBetterRate() === 'dex' ? 'font-semibold text-[#17876D]' : 'font-thin text-[#939494]'}>
                 {avnuLoading 
                   ? "Loading..."
-                  : avnuQuote
-                    ? `1:${(Number(avnuQuote.buyAmount) / Number(avnuQuote.sellAmount)).toFixed(4)}`
-                    : "-"}
+                  : avnuError
+                    ? "Error fetching rate"
+                    : avnuQuote
+                      ? `1:${dexRate.toFixed(4)}`
+                      : "No quote available"}
               </p>
             </div>
 
