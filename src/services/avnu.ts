@@ -1,22 +1,19 @@
 import { LST_ADDRRESS, RECEPIEINT_FEE_ADDRESS, STRK_TOKEN } from "@/constants";
 import { Quote, QuoteRequest, fetchQuotes, executeSwap } from "@avnu/avnu-sdk";
 import { AccountInterface } from "starknet";
+import QuickLRU from 'quick-lru';
 
-interface CacheEntry {
-  quotes: Quote[];
-  timestamp: number;
-}
-
-const quoteCache = new Map<string, CacheEntry>();
-const CACHE_DURATION = 5000; 
+const quoteCache = new QuickLRU<string, Quote[]>({
+  maxSize: 1000,
+  maxAge: 5000 
+});
 
 export async function getAvnuQuotes(amount: string, takerAddress: string): Promise<Quote[]> {
   const cacheKey = `${amount}-${takerAddress}`;
-  const now = Date.now();
   
-  const cachedEntry = quoteCache.get(cacheKey);
-  if (cachedEntry && (now - cachedEntry.timestamp) < CACHE_DURATION) {
-    return cachedEntry.quotes;
+  const cachedQuotes = quoteCache.get(cacheKey);
+  if (cachedQuotes) {
+    return cachedQuotes;
   }
 
   try {
@@ -32,12 +29,7 @@ export async function getAvnuQuotes(amount: string, takerAddress: string): Promi
     };
 
     const quotes = await fetchQuotes(params);
-    
-    quoteCache.set(cacheKey, {
-      quotes,
-      timestamp: now
-    });
-
+    quoteCache.set(cacheKey, quotes);
     return quotes;
   } catch (error) {
     console.error("Error fetching Avnu quotes:", error);

@@ -295,14 +295,6 @@ const Unstake = () => {
     mode: "onChange",
   });
 
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      const amount = form.watch("unstakeAmount");
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [form.watch("unstakeAmount")]);
-
   const provider = getProvider();
   const contract = new Contract(
     erc4626Abi,
