@@ -44,6 +44,7 @@ import {
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
   userXSTRKBalanceAtom,
+  withdrawalQueueStateAtom,
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
@@ -166,6 +167,32 @@ const YouWillGetSection = ({
   </div>
 );
 
+const calculateWaitingTime = (queueState: any, unstakeAmount: string) => {
+  if (!queueState || !unstakeAmount) return "-";
+  
+  try {
+    const amount = MyNumber.fromEther(unstakeAmount, 18);
+    const pendingQueue = new MyNumber(queueState.unprocessed_withdraw_queue_amount || '0', 18);
+    
+    const currentAmount = BigInt(amount.toString());
+    const queueAmount = BigInt(pendingQueue.toString());
+    const totalAmount = currentAmount + queueAmount;
+
+    const THRESHOLD = BigInt(70000) * BigInt(10 ** 18);
+    
+    if (totalAmount <= THRESHOLD) {
+      return "1-2 hours";
+    } else if (totalAmount <= THRESHOLD * BigInt(2)) {
+      return "1-2 days";
+    } else {
+      return "~21 days";
+    }
+  } catch (error) {
+    console.error("Error calculating waiting time:", error);
+    return "-";
+  }
+};
+
 const Unstake = () => {
   const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("dex");
 
@@ -181,6 +208,7 @@ const Unstake = () => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const currentXSTRKBalance = useAtomValue(userXSTRKBalanceAtom);
   const apy = useAtomValue(snAPYAtom);
+  const queueState = useAtomValue(withdrawalQueueStateAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -385,12 +413,10 @@ const Unstake = () => {
   const [avnuError, setAvnuError] = useAtom(avnuErrorAtom);
 
   React.useEffect(() => {
-    if (!address) return;
-    
     const initializeAvnuQuote = async () => {
       setAvnuLoading(true);
       try {
-        const quotes = await getAvnuQuotes("100", address);
+        const quotes = await getAvnuQuotes(BigInt(100 * 1e18).toString(), "0x0");
         setAvnuQuote(quotes[0] || null);
         setAvnuError(null);
       } catch (error) {
@@ -402,15 +428,18 @@ const Unstake = () => {
     };
 
     initializeAvnuQuote();
-  }, [address]);
+  }, []);
 
   React.useEffect(() => {
-    if (!address || !form.getValues("unstakeAmount")) return;
+    if (!form.getValues("unstakeAmount")) return;
     
     const fetchQuote = async () => {
       setAvnuLoading(true);
       try {
-        const quotes = await getAvnuQuotes(form.getValues("unstakeAmount"), address);
+        const quotes = await getAvnuQuotes(
+          form.getValues("unstakeAmount"), 
+          address || "0x0"
+        );
         setAvnuQuote(quotes[0] || null);
         setAvnuError(null);
       } catch (error) {
@@ -420,7 +449,7 @@ const Unstake = () => {
         setAvnuLoading(false);
       }
     };
-  
+
     fetchQuote();
   }, [address, form.watch("unstakeAmount")]);
 
@@ -473,6 +502,13 @@ const Unstake = () => {
     if (!avnuQuote) return 0;
     return Number(avnuQuote.buyAmount) / Number(avnuQuote.sellAmount);
   }, [avnuQuote]);
+
+  const waitingTime = useMemo(() => {
+    return calculateWaitingTime(
+      queueState.value,
+      form.getValues("unstakeAmount")
+    );
+  }, [queueState.value, form.watch("unstakeAmount")]);
 
   return (
     <div className="relative h-full w-full">
@@ -652,7 +688,7 @@ const Unstake = () => {
 
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
               <p>Waiting time:</p>
-              <p>~4h</p> {/* TODO: fetch avg wait time from backend */}
+              <p>{waitingTime}</p>
             </div>
           </TabsTrigger>
 
@@ -728,7 +764,6 @@ const Unstake = () => {
                 )}
                 tooltipContent="Instant unstaking via Avnu DEX. The amount you receive will be based on current market rates."
               />
-              <FeeSection />
             </div>
           </div>
           <div className="mt-6 px-5">
