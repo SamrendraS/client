@@ -1,9 +1,6 @@
-import { RECEPIEINT_FEE_ADDRESS } from "@/constants";
+import { LST_ADDRRESS, RECEPIEINT_FEE_ADDRESS, STRK_TOKEN } from "@/constants";
 import { Quote, QuoteRequest, fetchQuotes, executeSwap } from "@avnu/avnu-sdk";
 import { AccountInterface } from "starknet";
-
-const XSTRK_TOKEN = "0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a";
-const STRK_TOKEN = "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 
 interface CacheEntry {
   quotes: Quote[];
@@ -24,7 +21,7 @@ export async function getAvnuQuotes(amount: string, takerAddress: string): Promi
 
   try {
     const params: QuoteRequest = {
-      sellTokenAddress: XSTRK_TOKEN,
+      sellTokenAddress: LST_ADDRRESS,
       buyTokenAddress: STRK_TOKEN,
       sellAmount: BigInt(Math.floor(Number(amount) * 1e18)),
       takerAddress,

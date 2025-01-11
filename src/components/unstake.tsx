@@ -184,9 +184,8 @@ const calculateWaitingTime = (queueState: any, unstakeAmount: string) => {
       return "1-2 hours";
     } else if (totalAmount <= THRESHOLD * BigInt(2)) {
       return "1-2 days";
-    } else {
-      return "~21 days";
-    }
+    } 
+    return "~21 days";
   } catch (error) {
     console.error("Error calculating waiting time:", error);
     return "-";
@@ -483,7 +482,7 @@ const Unstake = () => {
         (error) => {
           toast({
             itemID: "unstake",
-            variant: "error",
+            variant: "destructive",
             description: (
               <div className="flex items-center gap-2">
                 <Info className="size-5" />
