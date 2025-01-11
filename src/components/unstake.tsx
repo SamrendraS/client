@@ -9,7 +9,7 @@ import {
 import { useAtom, useAtomValue } from "jotai";
 import { Info } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Contract } from "starknet";
 import {
@@ -38,7 +38,7 @@ import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { formatNumber } from "@/lib/utils";
-import { amountAtom, rateAtom } from "@/store/dex.store";
+import { amountAtom } from "@/store/dex.store";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -48,6 +48,9 @@ import {
 } from "@/store/lst.store";
 import { snAPYAtom } from "@/store/staking.store";
 import { isTxAccepted } from "@/store/transactions.atom";
+import { getAvnuQuotes, executeAvnuSwap } from "@/services/avnu";
+import { avnuQuoteAtom, avnuLoadingAtom, avnuErrorAtom } from "@/store/avnu.store";
+import { AccountInterface } from "starknet";
 
 import { Icons } from "./Icons";
 import { getConnectors } from "./navbar";
@@ -74,45 +77,6 @@ const formSchema = z.object({
 });
 
 export type FormValues = z.infer<typeof formSchema>;
-
-const DexRouteCard = ({
-  route,
-  unstakeAmount,
-}: {
-  route: DexRoute;
-  unstakeAmount: string;
-}) => {
-  const handleClick = () => {
-    const dexUrl = `https://app.avnu.fi/en/xstrk-strk?inputCurrency=xSTRK&outputCurrency=STRK&amount=${unstakeAmount}`;
-    window.open(dexUrl, "_blank");
-  };
-
-  const outputAmount = Number(unstakeAmount) * route.exchangeRate;
-
-  return (
-    <button
-      onClick={handleClick}
-      className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] bg-[#E9F3F0] px-4 py-2.5 transition-colors hover:bg-[#D0E6E0]"
-    >
-      <div className="flex w-full items-center justify-between">
-        <div className="flex items-center gap-2">
-          {route.logo}
-          <span className="text-base font-semibold text-[#075A5A]">
-            {route.name}
-          </span>
-        </div>
-        <div className="flex flex-col items-end">
-          <span className="text-lg font-bold text-[#03624C] lg:text-xl">
-            {outputAmount.toFixed(2)} STRK
-          </span>
-          <span className="text-xs text-[#8D9C9C]">
-            Rate: 1:{route.exchangeRate.toFixed(4)}
-          </span>
-        </div>
-      </div>
-    </button>
-  );
-};
 
 const StyledButton = ({
   onClick,
@@ -206,7 +170,7 @@ const YouWillGetSection = ({
 const Unstake = () => {
   const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("dex");
 
-  const { address } = useAccount();
+  const { account, address } = useAccount();
   const { connect: connectSnReact } = useConnect();
   const { isMobile } = useSidebar();
   const { dismiss } = useToast();
@@ -218,8 +182,6 @@ const Unstake = () => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const currentXSTRKBalance = useAtomValue(userXSTRKBalanceAtom);
   const apy = useAtomValue(snAPYAtom);
-  const { data: rate, isLoading: ratesLoading } = useAtomValue(rateAtom);
-  const rates = rate ? [{ rate }] : [];
   const [, setAmount] = useAtom(amountAtom);
 
   const form = useForm<FormValues>({
@@ -421,6 +383,80 @@ const Unstake = () => {
     sendAsync([call1]);
   };
 
+  const [avnuQuote, setAvnuQuote] = useAtom(avnuQuoteAtom);
+  const [avnuLoading, setAvnuLoading] = useAtom(avnuLoadingAtom);
+  const [avnuError, setAvnuError] = useAtom(avnuErrorAtom);
+
+  React.useEffect(() => {
+    if (!address || !form.getValues("unstakeAmount")) return;
+    
+    const fetchQuote = async () => {
+      setAvnuLoading(true);
+      try {
+        const quotes = await getAvnuQuotes(form.getValues("unstakeAmount"), address || "");
+        setAvnuQuote(quotes[0] || null);
+        setAvnuError(null);
+      } catch (error) {
+        setAvnuError((error as Error).message);
+        setAvnuQuote(null);
+      } finally {
+        setAvnuLoading(false);
+      }
+    };
+  
+    fetchQuote();
+  }, [address, form.watch("unstakeAmount")]);  
+
+  const handleDexSwap = async () => {
+    if (!address || !avnuQuote) return;
+
+    setAvnuLoading(true);
+    try {
+      await executeAvnuSwap(
+        account as AccountInterface,
+        avnuQuote,
+        () => {
+          toast({
+            itemID: "unstake",
+            variant: "complete",
+            duration: 3000,
+            description: (
+              <div className="flex items-center gap-2 border-none">
+                <Icons.toastSuccess />
+                <div className="flex flex-col items-start gap-2 text-sm font-medium text-[#3F6870]">
+                  <span className="text-[18px] font-semibold text-[#075A5A]">
+                    Success 🎉
+                  </span>
+                  Unstaked {form.getValues("unstakeAmount")} STRK via Avnu
+                </div>
+              </div>
+            ),
+          });
+          form.reset();
+        },
+        (error) => {
+          toast({
+            itemID: "unstake",
+            variant: "error",
+            description: (
+              <div className="flex items-center gap-2">
+                <Info className="size-5" />
+                {error.message}
+              </div>
+            ),
+          });
+        }
+      );
+    } finally {
+      setAvnuLoading(false);
+    }
+  };
+
+  const dexRate = useMemo(() => {
+    if (!avnuQuote) return 0;
+    return Number(avnuQuote.buyAmount) / Number(avnuQuote.sellAmount);
+  }, [avnuQuote]);
+
   return (
     <div className="relative h-full w-full">
       {/* {isMerry && (
@@ -615,10 +651,10 @@ const Unstake = () => {
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
               <p>Best Rate:</p>
               <p>
-                {ratesLoading
+                {avnuLoading 
                   ? "Loading..."
-                  : rates?.[0]?.rate
-                    ? `1:${rates[0].rate.toFixed(4)}`
+                  : avnuQuote
+                    ? `1:${(Number(avnuQuote.buyAmount) / Number(avnuQuote.sellAmount)).toFixed(4)}`
                     : "-"}
               </p>
             </div>
@@ -670,7 +706,7 @@ const Unstake = () => {
             <div className="flex w-full flex-col gap-3">
               <YouWillGetSection
                 amount={formatNumber(
-                  (Number(form.getValues("unstakeAmount") || 0) * (rates?.[0]?.rate || 0)),
+                  (Number(form.getValues("unstakeAmount") || 0) * (avnuQuote ? dexRate : 0)),
                   2
                 )}
                 tooltipContent="Instant unstaking via Avnu DEX. The amount you receive will be based on current market rates."
@@ -685,16 +721,22 @@ const Unstake = () => {
               </StyledButton>
             ) : (
               <StyledButton
-                onClick={() => {
-                  const dexUrl = `https://app.avnu.fi/en/xstrk-strk?inputCurrency=xSTRK&outputCurrency=STRK&amount=${form.getValues("unstakeAmount")}`;
-                  window.open(dexUrl, "_blank");
-                }}
+                onClick={handleDexSwap}
                 disabled={
                   Number(form.getValues("unstakeAmount")) <= 0 ||
-                  isNaN(Number(form.getValues("unstakeAmount")))
+                  isNaN(Number(form.getValues("unstakeAmount"))) ||
+                  avnuLoading ||
+                  !avnuQuote
                 }
               >
-                Unstake Instantly
+                {avnuLoading ? (
+                  <span className="flex items-center gap-2">
+                    {/* <Icons.loader className="size-4 animate-spin" /> */}
+                    {form.getValues("unstakeAmount") ? "Fetching quote..." : "Processing..."}
+                  </span>
+                ) : (
+                  "Unstake Instantly"
+                )}
               </StyledButton>
             )}
           </div>
