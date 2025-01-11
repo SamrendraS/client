@@ -38,7 +38,7 @@ import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { formatNumber } from "@/lib/utils";
-import { amountAtom, dexRatesAtom } from "@/store/dex.store";
+import { amountAtom, rateAtom } from "@/store/dex.store";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -57,7 +57,7 @@ import { useSidebar } from "./ui/sidebar";
 
 // Types
 interface DexRoute {
-  dex: "ekubo" | "avnu";
+  dex: "avnu";
   exchangeRate: number;
   logo: React.ReactNode;
   name: string;
@@ -84,17 +84,7 @@ const DexRouteCard = ({
   unstakeAmount: string;
 }) => {
   const handleClick = () => {
-    const baseUrl =
-      route.dex === "ekubo"
-        ? "https://app.ekubo.org/"
-        : "https://app.avnu.fi/en/xstrk-strk";
-
-    const params =
-      route.dex === "ekubo"
-        ? `?inputCurrency=xSTRK&amount=${unstakeAmount}&outputCurrency=STRK`
-        : `?inputCurrency=xSTRK&outputCurrency=STRK&amount=${unstakeAmount}`;
-
-    const dexUrl = `${baseUrl}${params}`;
+    const dexUrl = `https://app.avnu.fi/en/xstrk-strk?inputCurrency=xSTRK&outputCurrency=STRK&amount=${unstakeAmount}`;
     window.open(dexUrl, "_blank");
   };
 
@@ -140,7 +130,8 @@ const Unstake = () => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const currentXSTRKBalance = useAtomValue(userXSTRKBalanceAtom);
   const apy = useAtomValue(snAPYAtom);
-  const { rates, isLoading: ratesLoading } = useAtomValue(dexRatesAtom);
+  const { data: rate, isLoading: ratesLoading } = useAtomValue(rateAtom);
+  const rates = rate ? [{ rate }] : [];
   const [, setAmount] = useAtom(amountAtom);
 
   const form = useForm<FormValues>({
@@ -527,10 +518,7 @@ const Unstake = () => {
           >
             <div className="flex w-full items-center justify-between font-semibold">
               <p>Use DEX (Recommended)</p>
-              <div className="flex items-center">
-                <Icons.ekuboLogo className="size-6 rounded-full" />
-                <Icons.avnuLogo className="-ml-3 size-[26px] rounded-full border border-[#8D9C9C20]" />
-              </div>
+              <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />
             </div>
 
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
@@ -652,27 +640,16 @@ const Unstake = () => {
           <div className="px-7">
             <div className="space-y-2">
               {form.getValues("unstakeAmount") && rates?.length > 0 ? (
-                rates.map((route) => (
-                  <DexRouteCard
-                    key={route.dex}
-                    route={{
-                      dex: route.dex,
-                      exchangeRate: route.rate,
-                      name: route.dex === "ekubo" ? "Ekubo" : "AVNU",
-                      logo:
-                        route.dex === "ekubo" ? (
-                          <Icons.ekuboLogo className="size-6 rounded-full" />
-                        ) : (
-                          <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />
-                        ),
-                      link:
-                        route.dex === "ekubo"
-                          ? "https://app.ekubo.org/swap"
-                          : "https://app.avnu.fi",
-                    }}
-                    unstakeAmount={form.getValues("unstakeAmount")}
-                  />
-                ))
+                <DexRouteCard
+                  route={{
+                    dex: "avnu",
+                    exchangeRate: rates[0].rate,
+                    name: "AVNU",
+                    logo: <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />,
+                    link: "https://app.avnu.fi",
+                  }}
+                  unstakeAmount={form.getValues("unstakeAmount")}
+                />
               ) : ratesLoading && form.getValues("unstakeAmount") ? (
                 <div className="rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 text-center text-sm text-[#8D9C9C]">
                   Loading available routes...
