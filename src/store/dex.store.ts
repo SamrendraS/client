@@ -50,7 +50,7 @@ export const amountAtom = atom<string>('0');
 
 export const rateAtom = atomWithQuery((get) => ({
   queryKey: ['rate', get(amountAtom)],
-  queryFn: () => fetchRate(get(amountAtom)),
+  queryFn: () => fetchRate(get(amountAtom) || '100'),
   refetchInterval: QUOTE_REFRESH_INTERVAL,
-  enabled: Number(get(amountAtom)) > 0,
+  enabled: true,
 }));

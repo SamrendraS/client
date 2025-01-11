@@ -144,8 +144,12 @@ const Unstake = () => {
 
   // Update amount atom when form value changes
   React.useEffect(() => {
-    const amount = form.watch("unstakeAmount");
-    setAmount(amount);
+    const timer = setTimeout(() => {
+      const amount = form.watch("unstakeAmount");
+      setAmount(amount);
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timer);
   }, [form.watch("unstakeAmount"), setAmount]);
 
   const provider = getProvider();
@@ -567,7 +571,7 @@ const Unstake = () => {
                   </Tooltip>
                 </TooltipProvider>
               </p>
-              <span className="text-lg lg:text-xl">{youWillGet} STRK</span>
+              <span className="text-lg lg:text-xl">{formatNumber(youWillGet, 2)} STRK</span>
             </div>
 
             <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
@@ -629,7 +633,7 @@ const Unstake = () => {
                 }
                 className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
               >
-                Unstake
+                Unstake via Endur
               </Button>
             )}
           </div>
@@ -638,30 +642,93 @@ const Unstake = () => {
         <>
           <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
           <div className="px-7">
-            <div className="space-y-2">
-              {form.getValues("unstakeAmount") && rates?.length > 0 ? (
-                <DexRouteCard
-                  route={{
-                    dex: "avnu",
-                    exchangeRate: rates[0].rate,
-                    name: "AVNU",
-                    logo: <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />,
-                    link: "https://app.avnu.fi",
-                  }}
-                  unstakeAmount={form.getValues("unstakeAmount")}
-                />
-              ) : ratesLoading && form.getValues("unstakeAmount") ? (
-                <div className="rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 text-center text-sm text-[#8D9C9C]">
-                  Loading available routes...
-                </div>
-              ) : (
-                <div className="rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 text-center text-sm text-[#8D9C9C]">
-                  {form.getValues("unstakeAmount")
-                    ? "No routes available"
-                    : "Enter an amount to see available routes"}
-                </div>
-              )}
+            <div className="flex w-full flex-col gap-3">
+              <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
+                <p className="flex items-center gap-1">
+                  You will get
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="right"
+                        className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                      >
+                        Instant unstaking via Avnu DEX. The amount you receive will be based on current market rates.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </p>
+                <span className="text-lg lg:text-xl">
+                  {formatNumber((Number(form.getValues("unstakeAmount") || 0) * (rates?.[0]?.rate || 0)), 2) || 0} STRK</span>
+              </div>
+
+              <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+                <p className="flex items-center gap-1">
+                  Reward fees
+                  <TooltipProvider delayDuration={0}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="right"
+                        className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+                      >
+                        This fee applies exclusively to your staking rewards and
+                        does NOT affect your staked amount. You might qualify for
+                        a future fee rebate.{" "}
+                        <Link
+                          target="_blank"
+                          href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+                          className="text-blue-600 underline"
+                        >
+                          Learn more
+                        </Link>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </p>
+                <p>
+                  <span className="line-through">{REWARD_FEES}%</span>{" "}
+                  <Link
+                    target="_blank"
+                    href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+                    className="underline"
+                  >
+                    Fee Rebate
+                  </Link>
+                </p>
+              </div>
             </div>
+          </div>
+          <div className="mt-6 px-5">
+            {!address && (
+              <Button
+                onClick={() => connectWallet()}
+                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+              >
+                Connect Wallet
+              </Button>
+            )}
+
+            {address && (
+              <Button
+                type="submit"
+                onClick={() => {
+                  const dexUrl = `https://app.avnu.fi/en/xstrk-strk?inputCurrency=xSTRK&outputCurrency=STRK&amount=${form.getValues("unstakeAmount")}`;
+                  window.open(dexUrl, "_blank");
+                }}
+                disabled={
+                  Number(form.getValues("unstakeAmount")) <= 0 ||
+                  isNaN(Number(form.getValues("unstakeAmount")))
+                }
+                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+              >
+                Unstake Instantly
+              </Button>
+            )}
           </div>
         </>
       )}
