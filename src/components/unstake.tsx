@@ -192,6 +192,84 @@ const calculateWaitingTime = (queueState: any, unstakeAmount: string) => {
   }
 };
 
+interface UnstakeOptionCardProps {
+  isActive: boolean;
+  title: string;
+  logo: React.ReactNode;
+  rate: string | number;
+  waitingTime: string;
+  isLoading?: boolean;
+  isRecommended?: boolean;
+  isBestRate?: boolean;
+  bgColor?: string;
+}
+
+const UnstakeOptionCard = ({
+  isActive,
+  title,
+  logo,
+  rate,
+  waitingTime,
+  isLoading,
+  isRecommended,
+  isBestRate,
+  bgColor = "#E9F3F0"
+}: UnstakeOptionCardProps) => (
+  <TabsTrigger
+    value={title.toLowerCase().includes("endur") ? "endur" : "dex"}
+    className={`flex w-full flex-col gap-1.5 rounded-[15px] border border-[#8D9C9C20] px-4 py-3 ${
+      isActive ? "border-[#17876D]" : ""
+    }`}
+    style={{ backgroundColor: isActive ? "#D0E6E0" : bgColor }}
+  >
+    <div className="flex w-full items-center justify-between">
+      <p className="text-sm font-semibold">
+        {title}
+        {isRecommended && " (Recommended)"}
+      </p>
+      {logo}
+    </div>
+
+    <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
+      <div className="flex items-center gap-0.5">
+        Rate
+        {title.toLowerCase().includes("endur") && (
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                className="rounded-md border border-[#03624C] bg-white text-[#03624C]"
+              >
+                {typeof rate === 'number' && rate === 0
+                  ? "-"
+                  : `1 xSTRK = ${Number(rate).toFixed(4)} STRK`}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
+      <p className={isBestRate ? 'font-semibold text-[#17876D]' : ''}>
+        {isLoading ? "Loading..." : `1=${Number(rate).toFixed(4)}`}
+      </p>
+    </div>
+
+    <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
+      <p>Waiting time</p>
+      {title.toLowerCase().includes("dex") ? (
+        <p className="flex items-center gap-1 font-semibold text-[#17876D]">
+          <Icons.zap className="h-4 w-4" />
+          {waitingTime}
+        </p>
+      ) : (
+        <p>{waitingTime}</p>
+      )}
+    </div>
+  </TabsTrigger>
+);
+
 const Unstake = () => {
   const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("dex");
 
@@ -663,75 +741,26 @@ const Unstake = () => {
         onValueChange={(value) => setTxnDapp(value as "endur" | "dex")}
       >
         <TabsList className="flex h-full w-full flex-col items-center justify-between gap-2 bg-transparent px-5 md:flex-row">
-          <TabsTrigger
-            value="endur"
-            className="flex w-full flex-col gap-1.5 rounded-[15px] border border-[#8D9C9C20] px-4 py-3 data-[state=active]:border-[#17876D]"
-          >
-            <div className="flex w-full items-center justify-between">
-              <p className="text-sm font-semibold">Use Endur</p>
-              <Icons.endurLogo className="size-6" />
-            </div>
-
-            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
-              <div className="flex items-center gap-0.5">
-                Rate
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      className="rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                    >
-                      {exRate.rate === 0
-                        ? "-"
-                        : `1 xSTRK = ${exRate.rate.toFixed(4)} STRK`}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>
-              <p className={getBetterRate() === 'endur' ? 'font-semibold text-[#17876D]' : ''}>
-                {exRate.rate === 0 ? "-" : `1=${exRate.rate.toFixed(4)}`}
-              </p>
-            </div>
-
-            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
-              <p>Waiting time</p>
-              <p>{waitingTime}</p>
-            </div>
-          </TabsTrigger>
-
-          <TabsTrigger
-            value="dex"
-            className="flex w-full flex-col gap-1.5 rounded-[15px] border border-[#8D9C9C20] bg-[#E9F3F0] px-4 py-3 data-[state=active]:border-[#17876D] data-[state=active]:bg-[#D0E6E0]"
-          >
-            <div className="flex w-full items-center justify-between">
-              <p className="text-sm font-semibold">Use DEX (Recommended)</p>
-              <Icons.avnuLogo className="size-6 rounded-full border border-[#8D9C9C20]" />
-            </div>
-
-            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
-              <p>Rate</p>
-              <p className={getBetterRate() === 'dex' ? 'font-semibold text-[#17876D]' : ''}>
-                {avnuLoading 
-                  ? "Loading..."
-                  : avnuError
-                    ? "Error fetching rate"
-                    : avnuQuote
-                      ? `1=${dexRate.toFixed(4)}`
-                      : "No quote available"}
-              </p>
-            </div>
-
-            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
-              <p>Waiting time</p>
-              <p className="flex items-center gap-1 font-semibold text-[#17876D]">
-                <Icons.zap className="h-4 w-4" />
-                Instant
-              </p>
-            </div>
-          </TabsTrigger>
+          <UnstakeOptionCard
+            isActive={txnDapp === "endur"}
+            title="Use Endur"
+            logo={<Icons.endurLogo className="size-6" />}
+            rate={exRate.rate}
+            waitingTime={waitingTime}
+            isBestRate={getBetterRate() === 'endur'}
+            bgColor="transparent"
+          />
+          
+          <UnstakeOptionCard
+            isActive={txnDapp === "dex"}
+            title="Use DEX"
+            logo={<Icons.avnuLogo className="size-6 rounded-full border border-[#8D9C9C20]" />}
+            rate={dexRate}
+            waitingTime="Instant"
+            isLoading={avnuLoading}
+            isRecommended
+            isBestRate={getBetterRate() === 'dex'}
+          />
         </TabsList>
       </Tabs>
 
