@@ -38,7 +38,6 @@ import { getProvider, NETWORK, REWARD_FEES } from "@/constants";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { formatNumber } from "@/lib/utils";
-import { amountAtom } from "@/store/dex.store";
 import {
   exchangeRateAtom,
   totalStakedAtom,
@@ -182,7 +181,6 @@ const Unstake = () => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const currentXSTRKBalance = useAtomValue(userXSTRKBalanceAtom);
   const apy = useAtomValue(snAPYAtom);
-  const [, setAmount] = useAtom(amountAtom);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -195,11 +193,10 @@ const Unstake = () => {
   React.useEffect(() => {
     const timer = setTimeout(() => {
       const amount = form.watch("unstakeAmount");
-      setAmount(amount);
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [form.watch("unstakeAmount"), setAmount]);
+  }, [form.watch("unstakeAmount")]);
 
   const provider = getProvider();
   const contract = new Contract(

@@ -1,12 +1,6 @@
 import { Quote, QuoteRequest, fetchQuotes, executeSwap } from "@avnu/avnu-sdk";
 import { AccountInterface } from "starknet";
 
-const AVNU_OPTIONS = { 
-  baseUrl: process.env.NEXT_PUBLIC_CHAIN_ID === "SN_MAIN" 
-    ? "https://api.avnu.fi" 
-    : "https://sepolia.api.avnu.fi"
-};
-
 const XSTRK_TOKEN = "0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a";
 const STRK_TOKEN = "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 
@@ -34,7 +28,7 @@ export async function executeAvnuSwap(
   onError?: (error: Error) => void
 ) {
   try {
-    const response = await executeSwap(account, quote, {}, AVNU_OPTIONS);
+    const response = await executeSwap(account, quote);
     onSuccess?.();
     return response;
   } catch (error) {
