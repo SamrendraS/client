@@ -4,7 +4,23 @@ import { AccountInterface } from "starknet";
 const XSTRK_TOKEN = "0x28d709c875c0ceac3dce7065bec5328186dc89fe254527084d1689910954b0a";
 const STRK_TOKEN = "0x4718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d";
 
+interface CacheEntry {
+  quotes: Quote[];
+  timestamp: number;
+}
+
+const quoteCache = new Map<string, CacheEntry>();
+const CACHE_DURATION = 5000; 
+
 export async function getAvnuQuotes(amount: string, takerAddress: string): Promise<Quote[]> {
+  const cacheKey = `${amount}-${takerAddress}`;
+  const now = Date.now();
+  
+  const cachedEntry = quoteCache.get(cacheKey);
+  if (cachedEntry && (now - cachedEntry.timestamp) < CACHE_DURATION) {
+    return cachedEntry.quotes;
+  }
+
   try {
     const params: QuoteRequest = {
       sellTokenAddress: XSTRK_TOKEN,
@@ -14,7 +30,14 @@ export async function getAvnuQuotes(amount: string, takerAddress: string): Promi
       size: 1
     };
 
-    return await fetchQuotes(params);
+    const quotes = await fetchQuotes(params);
+    
+    quoteCache.set(cacheKey, {
+      quotes,
+      timestamp: now
+    });
+
+    return quotes;
   } catch (error) {
     console.error("Error fetching Avnu quotes:", error);
     return [];

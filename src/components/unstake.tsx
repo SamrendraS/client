@@ -385,12 +385,32 @@ const Unstake = () => {
   const [avnuError, setAvnuError] = useAtom(avnuErrorAtom);
 
   React.useEffect(() => {
+    if (!address) return;
+    
+    const initializeAvnuQuote = async () => {
+      setAvnuLoading(true);
+      try {
+        const quotes = await getAvnuQuotes("100", address);
+        setAvnuQuote(quotes[0] || null);
+        setAvnuError(null);
+      } catch (error) {
+        setAvnuError((error as Error).message);
+        setAvnuQuote(null);
+      } finally {
+        setAvnuLoading(false);
+      }
+    };
+
+    initializeAvnuQuote();
+  }, [address]);
+
+  React.useEffect(() => {
     if (!address || !form.getValues("unstakeAmount")) return;
     
     const fetchQuote = async () => {
       setAvnuLoading(true);
       try {
-        const quotes = await getAvnuQuotes(form.getValues("unstakeAmount"), address || "");
+        const quotes = await getAvnuQuotes(form.getValues("unstakeAmount"), address);
         setAvnuQuote(quotes[0] || null);
         setAvnuError(null);
       } catch (error) {
@@ -402,7 +422,7 @@ const Unstake = () => {
     };
   
     fetchQuote();
-  }, [address, form.watch("unstakeAmount")]);  
+  }, [address, form.watch("unstakeAmount")]);
 
   const handleDexSwap = async () => {
     if (!address || !avnuQuote) return;
