@@ -55,7 +55,6 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useSidebar } from "./ui/sidebar";
 
-// Types
 interface DexRoute {
   dex: "avnu";
   exchangeRate: number;
@@ -115,6 +114,95 @@ const DexRouteCard = ({
   );
 };
 
+const StyledButton = ({
+  onClick,
+  disabled,
+  children,
+}: {
+  onClick?: () => void;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) => (
+  <Button
+    onClick={onClick}
+    disabled={disabled}
+    className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
+  >
+    {children}
+  </Button>
+);
+
+const InfoTooltip = ({
+  content,
+  side = "right",
+}: {
+  content: React.ReactNode;
+  side?: "right" | "left" | "top" | "bottom";
+}) => (
+  <TooltipProvider delayDuration={0}>
+    <Tooltip>
+      <TooltipTrigger>
+        <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+      </TooltipTrigger>
+      <TooltipContent
+        side={side}
+        className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
+      >
+        {content}
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
+);
+
+const FeeSection = () => (
+  <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+    <p className="flex items-center gap-1">
+      Reward fees
+      <InfoTooltip
+        content={
+          <>
+            This fee applies exclusively to your staking rewards and does NOT affect
+            your staked amount. You might qualify for a future fee rebate.{" "}
+            <Link
+              target="_blank"
+              href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+              className="text-blue-600 underline"
+            >
+              Learn more
+            </Link>
+          </>
+        }
+      />
+    </p>
+    <p>
+      <span className="line-through">{REWARD_FEES}%</span>{" "}
+      <Link
+        target="_blank"
+        href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
+        className="underline"
+      >
+        Fee Rebate
+      </Link>
+    </p>
+  </div>
+);
+
+const YouWillGetSection = ({
+  amount,
+  tooltipContent,
+}: {
+  amount: string;
+  tooltipContent: React.ReactNode;
+}) => (
+  <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
+    <p className="flex items-center gap-1">
+      You will get
+      <InfoTooltip content={tooltipContent} />
+    </p>
+    <span className="text-lg lg:text-xl">{amount} STRK</span>
+  </div>
+);
+
 const Unstake = () => {
   const [txnDapp, setTxnDapp] = React.useState<"endur" | "dex">("dex");
 
@@ -142,12 +230,11 @@ const Unstake = () => {
     mode: "onChange",
   });
 
-  // Update amount atom when form value changes
   React.useEffect(() => {
     const timer = setTimeout(() => {
       const amount = form.watch("unstakeAmount");
       setAmount(amount);
-    }, 500); // 500ms debounce
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [form.watch("unstakeAmount"), setAmount]);
@@ -551,90 +638,28 @@ const Unstake = () => {
         <>
           <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
           <div className="space-y-3 px-7">
-            <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
-              <p className="flex items-center gap-1">
-                You will get
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                    >
-                      You will receive the equivalent amount of STRK for the
-                      xSTRK you are unstaking. The amount of STRK you receive
-                      will be based on the current exchange rate of xSTRK to
-                      STRK.
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </p>
-              <span className="text-lg lg:text-xl">{formatNumber(youWillGet, 2)} STRK</span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
-              <p className="flex items-center gap-1">
-                Reward fees
-                <TooltipProvider delayDuration={0}>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="right"
-                      className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                    >
-                      This fee applies exclusively to your staking rewards and
-                      does NOT affect your staked amount. You might qualify for
-                      a future fee rebate.{" "}
-                      <Link
-                        target="_blank"
-                        href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
-                        className="text-blue-600 underline"
-                      >
-                        Learn more
-                      </Link>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </p>
-              <p>
-                <span className="line-through">{REWARD_FEES}%</span>{" "}
-                <Link
-                  target="_blank"
-                  href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
-                  className="underline"
-                >
-                  Fee Rebate
-                </Link>
-              </p>
-            </div>
+            <YouWillGetSection
+              amount={formatNumber(youWillGet, 2)}
+              tooltipContent="You will receive the equivalent amount of STRK for the xSTRK you are unstaking. The amount of STRK you receive will be based on the current exchange rate of xSTRK to STRK."
+            />
+            <FeeSection />
           </div>
 
           <div className="mt-6 px-5">
-            {!address && (
-              <Button
-                onClick={() => connectWallet()}
-                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
-              >
+            {!address ? (
+              <StyledButton onClick={() => connectWallet()}>
                 Connect Wallet
-              </Button>
-            )}
-
-            {address && (
-              <Button
-                type="submit"
+              </StyledButton>
+            ) : (
+              <StyledButton
                 onClick={form.handleSubmit(onSubmit)}
                 disabled={
                   Number(form.getValues("unstakeAmount")) <= 0 ||
                   isNaN(Number(form.getValues("unstakeAmount")))
                 }
-                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
               >
                 Unstake via Endur
-              </Button>
+              </StyledButton>
             )}
           </div>
         </>
@@ -643,79 +668,23 @@ const Unstake = () => {
           <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
           <div className="px-7">
             <div className="flex w-full flex-col gap-3">
-              <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
-                <p className="flex items-center gap-1">
-                  You will get
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="right"
-                        className="max-w-56 rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                      >
-                        Instant unstaking via Avnu DEX. The amount you receive will be based on current market rates.
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </p>
-                <span className="text-lg lg:text-xl">
-                  {formatNumber((Number(form.getValues("unstakeAmount") || 0) * (rates?.[0]?.rate || 0)), 2) || 0} STRK</span>
-              </div>
-
-              <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
-                <p className="flex items-center gap-1">
-                  Reward fees
-                  <TooltipProvider delayDuration={0}>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="right"
-                        className="max-w-60 rounded-md border border-[#03624C] bg-white text-[#03624C]"
-                      >
-                        This fee applies exclusively to your staking rewards and
-                        does NOT affect your staked amount. You might qualify for
-                        a future fee rebate.{" "}
-                        <Link
-                          target="_blank"
-                          href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
-                          className="text-blue-600 underline"
-                        >
-                          Learn more
-                        </Link>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </p>
-                <p>
-                  <span className="line-through">{REWARD_FEES}%</span>{" "}
-                  <Link
-                    target="_blank"
-                    href="https://blog.endur.fi/endur-reimagining-value-distribution-in-liquid-staking-on-starknet"
-                    className="underline"
-                  >
-                    Fee Rebate
-                  </Link>
-                </p>
-              </div>
+              <YouWillGetSection
+                amount={formatNumber(
+                  (Number(form.getValues("unstakeAmount") || 0) * (rates?.[0]?.rate || 0)),
+                  2
+                )}
+                tooltipContent="Instant unstaking via Avnu DEX. The amount you receive will be based on current market rates."
+              />
+              <FeeSection />
             </div>
           </div>
           <div className="mt-6 px-5">
-            {!address && (
-              <Button
-                onClick={() => connectWallet()}
-                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
-              >
+            {!address ? (
+              <StyledButton onClick={() => connectWallet()}>
                 Connect Wallet
-              </Button>
-            )}
-
-            {address && (
-              <Button
-                type="submit"
+              </StyledButton>
+            ) : (
+              <StyledButton
                 onClick={() => {
                   const dexUrl = `https://app.avnu.fi/en/xstrk-strk?inputCurrency=xSTRK&outputCurrency=STRK&amount=${form.getValues("unstakeAmount")}`;
                   window.open(dexUrl, "_blank");
@@ -724,10 +693,9 @@ const Unstake = () => {
                   Number(form.getValues("unstakeAmount")) <= 0 ||
                   isNaN(Number(form.getValues("unstakeAmount")))
                 }
-                className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
               >
                 Unstake Instantly
-              </Button>
+              </StyledButton>
             )}
           </div>
         </>
