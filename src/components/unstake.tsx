@@ -510,6 +510,14 @@ const Unstake = () => {
     );
   }, [queueState.value, form.watch("unstakeAmount")]);
 
+  const getBetterRate = () => {
+    const endurRate = exRate.rate;
+    const dexRate = avnuQuote ? Number(avnuQuote.buyAmount) / Number(avnuQuote.sellAmount) : 0;
+    
+    if (endurRate === 0 || dexRate === 0) return 'none';
+    return endurRate > dexRate ? 'endur' : 'dex';
+  };
+
   return (
     <div className="relative h-full w-full">
       {/* {isMerry && (
@@ -664,7 +672,7 @@ const Unstake = () => {
               <Icons.endurLogo className="size-6" />
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
+            <div className="flex w-full items-center justify-between text-sm">
               <div className="flex items-center gap-0.5">
                 Rate
                 <TooltipProvider delayDuration={0}>
@@ -683,7 +691,9 @@ const Unstake = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <p>{exRate.rate === 0 ? "-" : `1=${exRate.rate.toFixed(4)}`}</p>
+              <p className={getBetterRate() === 'endur' ? 'font-semibold text-[#17876D]' : 'font-thin text-[#939494]'}>
+                {exRate.rate === 0 ? "-" : `1=${exRate.rate.toFixed(4)}`}
+              </p>
             </div>
 
             <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
@@ -701,9 +711,9 @@ const Unstake = () => {
               <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
+            <div className="flex w-full items-center justify-between text-sm">
               <p>Best Rate:</p>
-              <p>
+              <p className={getBetterRate() === 'dex' ? 'font-semibold text-[#17876D]' : 'font-thin text-[#939494]'}>
                 {avnuLoading 
                   ? "Loading..."
                   : avnuQuote
