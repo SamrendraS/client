@@ -158,12 +158,12 @@ const YouWillGetSection = ({
   amount: string;
   tooltipContent: React.ReactNode;
 }) => (
-  <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
+  <div className="flex items-center justify-between rounded-md text-xs font-bold text-[#03624C] lg:text-[13px]">
     <p className="flex items-center gap-1">
       You will get
       <InfoTooltip content={tooltipContent} />
     </p>
-    <span className="text-lg lg:text-xl">{amount} STRK</span>
+    <span className="text-xs lg:text-[13px]">{amount} STRK</span>
   </div>
 );
 
@@ -662,17 +662,17 @@ const Unstake = () => {
         className="w-full max-w-none pt-1"
         onValueChange={(value) => setTxnDapp(value as "endur" | "dex")}
       >
-        <TabsList className="flex h-full w-full flex-col items-center justify-between gap-3 bg-transparent px-6 md:flex-row">
+        <TabsList className="flex h-full w-full flex-col items-center justify-between gap-2 bg-transparent px-5 md:flex-row">
           <TabsTrigger
             value="endur"
-            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] px-4 py-2.5 data-[state=active]:border-[#17876D]"
+            className="flex w-full flex-col gap-1.5 rounded-[15px] border border-[#8D9C9C20] px-4 py-3 data-[state=active]:border-[#17876D]"
           >
-            <div className="flex w-full items-center justify-between font-semibold">
-              <p>Use Endur</p>
+            <div className="flex w-full items-center justify-between">
+              <p className="text-sm font-semibold">Use Endur</p>
               <Icons.endurLogo className="size-6" />
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm">
+            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
               <div className="flex items-center gap-0.5">
                 Rate
                 <TooltipProvider delayDuration={0}>
@@ -691,42 +691,42 @@ const Unstake = () => {
                   </Tooltip>
                 </TooltipProvider>
               </div>
-              <p className={getBetterRate() === 'endur' ? 'font-semibold text-[#17876D]' : 'font-thin text-[#939494]'}>
+              <p className={getBetterRate() === 'endur' ? 'font-semibold text-[#17876D]' : ''}>
                 {exRate.rate === 0 ? "-" : `1=${exRate.rate.toFixed(4)}`}
               </p>
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
-              <p>Waiting time:</p>
+            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
+              <p>Waiting time</p>
               <p>{waitingTime}</p>
             </div>
           </TabsTrigger>
 
           <TabsTrigger
             value="dex"
-            className="flex w-full flex-col gap-1.5 rounded-[15.89px] border border-[#8D9C9C20] bg-[#E9F3F0] px-4 py-2.5 data-[state=active]:border-[#17876D] data-[state=active]:bg-[#D0E6E0]"
+            className="flex w-full flex-col gap-1.5 rounded-[15px] border border-[#8D9C9C20] bg-[#E9F3F0] px-4 py-3 data-[state=active]:border-[#17876D] data-[state=active]:bg-[#D0E6E0]"
           >
-            <div className="flex w-full items-center justify-between font-semibold">
-              <p>Use DEX (Recommended)</p>
-              <Icons.avnuLogo className="size-[26px] rounded-full border border-[#8D9C9C20]" />
+            <div className="flex w-full items-center justify-between">
+              <p className="text-sm font-semibold">Use DEX (Recommended)</p>
+              <Icons.avnuLogo className="size-6 rounded-full border border-[#8D9C9C20]" />
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm font-thin text-[#939494]">
-              <p>Rate:</p>
-              <p className={getBetterRate() === 'dex' ? 'font-semibold text-[#17876D]' : 'font-thin text-[#939494]'}>
+            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
+              <p>Rate</p>
+              <p className={getBetterRate() === 'dex' ? 'font-semibold text-[#17876D]' : ''}>
                 {avnuLoading 
                   ? "Loading..."
                   : avnuError
                     ? "Error fetching rate"
                     : avnuQuote
-                      ? `1:${dexRate.toFixed(4)}`
+                      ? `1=${dexRate.toFixed(4)}`
                       : "No quote available"}
               </p>
             </div>
 
-            <div className="flex w-full items-center justify-between text-sm font-semibold text-[#17876D]">
-              <p>Waiting time:</p>
-              <p className="flex items-center gap-1">
+            <div className="flex w-full items-center justify-between text-xs text-[#939494] lg:text-[13px]">
+              <p>Waiting time</p>
+              <p className="flex items-center gap-1 font-semibold text-[#17876D]">
                 <Icons.zap className="h-4 w-4" />
                 Instant
               </p>
@@ -737,7 +737,7 @@ const Unstake = () => {
 
       {txnDapp === "endur" ? (
         <>
-          <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
+          <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
           <div className="space-y-3 px-7">
             <YouWillGetSection
               amount={formatNumber(youWillGet, 2)}
@@ -766,16 +766,30 @@ const Unstake = () => {
         </>
       ) : (
         <>
-          <div className="mb-5 mt-[14px] h-px w-full rounded-full bg-[#AACBC480]" />
-          <div className="px-7">
-            <div className="flex w-full flex-col gap-3">
-              <YouWillGetSection
-                amount={formatNumber(
-                  (Number(form.getValues("unstakeAmount") || 0) * (avnuQuote ? dexRate : 0)),
-                  2
+          <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
+          <div className="space-y-3 px-7">
+            <YouWillGetSection
+              amount={formatNumber(
+                (Number(form.getValues("unstakeAmount") || 0) * (avnuQuote ? dexRate : 0)),
+                2
+              )}
+              tooltipContent="Instant unstaking via Avnu DEX. The amount you receive will be based on current market rates."
+            />
+            <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+              <p className="flex items-center gap-1">
+                Waiting time
+                <InfoTooltip content="Time until your unstaking request is processed" />
+              </p>
+              <p className="flex items-center gap-1">
+                {txnDapp === "dex" ? (
+                  <span className="flex items-center gap-1 font-semibold text-[#17876D]">
+                    <Icons.zap className="h-4 w-4" />
+                    Instant
+                  </span>
+                ) : (
+                  waitingTime
                 )}
-                tooltipContent="Instant unstaking via Avnu DEX. The amount you receive will be based on current market rates."
-              />
+              </p>
             </div>
           </div>
           <div className="mt-6 px-5">
