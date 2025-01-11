@@ -1,3 +1,4 @@
+import { RECEPIEINT_FEE_ADDRESS } from "@/constants";
 import { Quote, QuoteRequest, fetchQuotes, executeSwap } from "@avnu/avnu-sdk";
 import { AccountInterface } from "starknet";
 
@@ -27,7 +28,10 @@ export async function getAvnuQuotes(amount: string, takerAddress: string): Promi
       buyTokenAddress: STRK_TOKEN,
       sellAmount: BigInt(Math.floor(Number(amount) * 1e18)),
       takerAddress,
-      size: 1
+      size: 1,
+      integratorFees: BigInt(3),
+      integratorFeeRecipient: RECEPIEINT_FEE_ADDRESS,
+      integratorName: "Endur"
     };
 
     const quotes = await fetchQuotes(params);
