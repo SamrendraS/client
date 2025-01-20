@@ -574,6 +574,7 @@ const Unstake = () => {
   }, [avnuQuote]);
 
   const waitingTime = useMemo(() => {
+    return "~21 days";
     return calculateWaitingTime(
       queueState.value,
       form.getValues("unstakeAmount")
@@ -798,20 +799,27 @@ const Unstake = () => {
             />
             <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
               <p className="flex items-center gap-1">
+                Unstake DEX fee
+                <InfoTooltip content="Avnu and Endur service fee for using DEX unstake" />
+              </p>
+              <p>0.05%</p>
+            </div>
+            {/* <div className="flex items-center justify-between rounded-md text-xs font-medium text-[#939494] lg:text-[13px]">
+              <p className="flex items-center gap-1">
                 Waiting time
                 <InfoTooltip content="Time until your unstaking request is processed" />
               </p>
               <p className="flex items-center gap-1">
                 {txnDapp === "dex" ? (
-                  <span className="flex items-center gap-1 font-semibold text-[#17876D]">
-                    <Icons.zap className="h-4 w-4" />
-                    Instant
-                  </span>
+                <span className="flex items-center gap-1 font-semibold text-[#17876D]">
+                  <Icons.zap className="h-4 w-4" />
+                  Instant
+                </span>
                 ) : (
                   waitingTime
                 )}
               </p>
-            </div>
+            </div> */}
           </div>
           <div className="mt-6 px-5">
             {!address ? (
