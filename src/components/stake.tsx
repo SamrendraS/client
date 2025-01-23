@@ -524,14 +524,40 @@ const Stake: React.FC = () => {
         </div>
       </div>
 
-      <div className="px-7 pt-5">
-        <Collapsible open={isLendingOpen} onOpenChange={setIsLendingOpen}>
+      <div className="px-7 pt-1">
+        <Collapsible 
+          open={isLendingOpen} 
+          onOpenChange={(open) => {
+            setIsLendingOpen(open);
+            if (!open) {
+              setSelectedPlatform("none");
+            }
+          }}
+        >
           <div className="flex items-center gap-2">
             <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[#06302B] hover:opacity-80">
               <h3>Stake & Earn</h3>
               <span className="text-[#8D9C9C]">(optional)</span>
               <ChevronDown className="size-3 text-[#8D9C9C] transition-transform duration-200 data-[state=open]:rotate-180" />
             </CollapsibleTrigger>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="size-3 text-[#3F6870] lg:text-[#8D9C9C]" />
+                </TooltipTrigger>
+                <TooltipContent
+                  side="right"
+                  className="max-w-72 rounded-md border border-[#03624C] bg-white p-3 text-[#03624C]"
+                >
+                  <p className="mb-2">
+                    You can earn additional yield by lending your xSTRK on DeFi platforms. Your base staking rewards will continue to accumulate.
+                  </p>
+                  <p className="text-xs text-[#8D9C9C]">
+                    Note: These are third-party protocols not affiliated with Endur. Please DYOR and understand the risks before using any DeFi platform.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           <CollapsibleContent className="mt-2">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -541,6 +567,7 @@ const Stake: React.FC = () => {
                   name={platform === "vesu" ? "Vesu" : "Nostra"}
                   icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6 rounded-full" /> : <Icons.nostraLogo className="h-6 w-6" />}
                   apy={yields[platform].value}
+                  baseApy={apy.value}
                   xstrkLent={yields[platform].totalSupplied}
                   isSelected={selectedPlatform === platform}
                   onClick={() => setSelectedPlatform(selectedPlatform === platform ? "none" : platform as Platform)}

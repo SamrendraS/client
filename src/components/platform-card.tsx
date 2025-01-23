@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 
@@ -8,9 +9,10 @@ interface PlatformCardProps {
   xstrkLent: number | null
   isSelected: boolean
   onClick: () => void
+  baseApy?: number | null
 }
 
-export function PlatformCard({ name, icon, apy, xstrkLent, isSelected, onClick }: PlatformCardProps) {
+export function PlatformCard({ name, icon, apy, xstrkLent, isSelected, onClick, baseApy }: PlatformCardProps) {
   return (
     <Card 
       onClick={onClick}
@@ -44,8 +46,16 @@ export function PlatformCard({ name, icon, apy, xstrkLent, isSelected, onClick }
               "text-gray-400 group-hover:text-gray-500",
               isSelected && "text-gray-500"
             )}>
-              APY: {apy 
-                ? `${apy.toFixed(2)}%`
+              APY: {apy && baseApy
+                ? (
+                  <span className={cn(
+                    "text-gray-400 transition-colors duration-200",
+                    "group-hover:text-[#03624C]",
+                    isSelected && "text-[#03624C]"
+                  )}>
+                    {(baseApy*100).toFixed(2)}% + {apy.toFixed(2)}%
+                  </span>
+                )
                 : <span className="inline-block h-3 w-10 animate-pulse rounded bg-gray-200" />
               }
             </div>
