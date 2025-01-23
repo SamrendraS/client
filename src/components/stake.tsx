@@ -9,7 +9,7 @@ import {
   useSendTransaction,
 } from "@starknet-react/core";
 import { useAtom, useAtomValue } from "jotai";
-import { Info } from 'lucide-react';
+import { Info, ChevronDown } from 'lucide-react';
 import { Figtree } from 'next/font/google';
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -69,6 +69,11 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useSidebar } from "./ui/sidebar";
 import { PlatformCard } from "./platform-card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 
@@ -521,20 +526,30 @@ const Stake: React.FC = () => {
       <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
 
       <div className="px-7">
-        <h3 className="mb-2 text-sm font-medium text-[#06302B]">Select to lend (optional)</h3>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {sortedPlatforms.map((platform) => (
-            <PlatformCard
-              key={platform}
-              name={platform === "vesu" ? "Vesu" : "Nostra"}
-              icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6" /> : <Icons.nostraLogo className="h-6 w-6" />}
-              apy={yields[platform].value}
-              xstrkLent={yields[platform].totalSupplied}
-              isSelected={selectedPlatform === platform}
-              onClick={() => setSelectedPlatform(selectedPlatform === platform ? "none" : platform as Platform)}
-            />
-          ))}
-        </div>
+        <Collapsible>
+          <div className="flex items-center gap-2">
+            <CollapsibleTrigger className="flex items-center gap-2 text-xs text-[#06302B] hover:opacity-80">
+              <h3>Select to lend</h3>
+              <span className="text-[#8D9C9C]">(optional)</span>
+              <ChevronDown className="size-3 text-[#8D9C9C]" />
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent className="mt-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              {sortedPlatforms.map((platform) => (
+                <PlatformCard
+                  key={platform}
+                  name={platform === "vesu" ? "Vesu" : "Nostra"}
+                  icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6" /> : <Icons.nostraLogo className="h-6 w-6" />}
+                  apy={yields[platform].value}
+                  xstrkLent={yields[platform].totalSupplied}
+                  isSelected={selectedPlatform === platform}
+                  onClick={() => setSelectedPlatform(selectedPlatform === platform ? "none" : platform as Platform)}
+                />
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       </div>
 
       <div className="space-y-3 px-7 mt-5">
