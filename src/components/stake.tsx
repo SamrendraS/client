@@ -25,6 +25,8 @@ import {
 import * as z from "zod";
 
 import erc4626Abi from "@/abi/erc4626.abi.json";
+import vxstrkAbi from "@/abi/vxstrk.abi.json";
+import ixstrkAbi from "@/abi/ixstrk.abi.json";
 import {
   Dialog,
   DialogContent,
@@ -45,7 +47,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN } from "@/constants";
+import { getEndpoint, NETWORK, REWARD_FEES, STRK_TOKEN, VESU_vXSTRK_ADDRESS, NOSTRA_iXSTRK_ADDRESS, LST_ADDRRESS } from "@/constants";
 import { toast, useToast } from "@/hooks/use-toast";
 import MyNumber from "@/lib/MyNumber";
 import { cn, formatNumber, formatNumberWithCommas } from "@/lib/utils";
@@ -325,25 +327,58 @@ const Stake: React.FC = () => {
       });
     }
 
+    const xstrkAmount = MyNumber.fromEther(values.stakeAmount, 18)
+      .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
+      .operate("div", exchangeRate.preciseRate.toString());
+
     const call1 = contractSTRK.populate("approve", [
       contract.address,
       MyNumber.fromEther(values.stakeAmount, 18),
     ]);
 
-    if (referrer) {
-      const call2 = contract.populate("deposit_with_referral", [
-        MyNumber.fromEther(values.stakeAmount, 18),
-        address,
-        referrer,
+    const call2 = referrer
+      ? contract.populate("deposit_with_referral", [
+          MyNumber.fromEther(values.stakeAmount, 18),
+          address,
+          referrer,
+        ])
+      : contract.populate("deposit", [
+          MyNumber.fromEther(values.stakeAmount, 18),
+          address,
+        ]);
+
+    const calls = [call1, call2];
+
+    if (selectedPlatform !== "none") {
+      const lstContract = new Contract(erc4626Abi, LST_ADDRRESS);
+      
+      const lendingAddress = selectedPlatform === "vesu" 
+        ? VESU_vXSTRK_ADDRESS 
+        : NOSTRA_iXSTRK_ADDRESS;
+
+      const approveCall = lstContract.populate("approve", [
+        lendingAddress,
+        xstrkAmount,
       ]);
-      await sendAsync([call1, call2]);
-    } else {
-      const call2 = contract.populate("deposit", [
-        MyNumber.fromEther(values.stakeAmount, 18),
-        address,
-      ]);
-      await sendAsync([call1, call2]);
+
+      if (selectedPlatform === "vesu") {
+        const vesuContract = new Contract(vxstrkAbi, VESU_vXSTRK_ADDRESS);
+        const lendingCall = vesuContract.populate("deposit", [
+          xstrkAmount,
+          address,
+        ]);
+        calls.push(approveCall, lendingCall);
+      } else {
+        const nostraContract = new Contract(ixstrkAbi, NOSTRA_iXSTRK_ADDRESS);
+        const lendingCall = nostraContract.populate("mint", [
+          address,
+          xstrkAmount,
+        ]);
+        calls.push(approveCall, lendingCall);
+      }
     }
+
+    await sendAsync(calls);
   };
 
   return (
@@ -617,7 +652,10 @@ const Stake: React.FC = () => {
           <span className="text-xs lg:text-[13px]">
             {form.watch("stakeAmount")
               ? formatNumberWithCommas(
-                  Number(form.watch("stakeAmount")) / exchangeRate.rate,
+                  MyNumber.fromEther(form.watch("stakeAmount"), 18)
+                    .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
+                    .operate("div", exchangeRate.preciseRate.toString())
+                    .toEtherStr()
                 )
               : 0}{" "}
             xSTRK
