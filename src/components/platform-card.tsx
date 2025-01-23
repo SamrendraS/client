@@ -1,6 +1,6 @@
 import React from "react";
-import { cn } from "@/lib/utils"
-import { Card } from "@/components/ui/card"
+import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
 
 interface PlatformCardProps {
   name: string
@@ -82,6 +82,6 @@ export function PlatformCard({ name, icon, apy, xstrkLent, isSelected, onClick, 
         </div>
       </div>
     </Card>
-  )
+  );
 }
 

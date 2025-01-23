@@ -92,7 +92,14 @@ const formSchema = z.object({
 
 export type FormValues = z.infer<typeof formSchema>;
 
-type Platform = "none" | "vesu" | "nostra";
+type Platform = "none" | "vesu" | "nostra-lend";
+
+const PLATFORMS = {
+  VESU: "vesu",
+  NOSTRA: "nostra-lend",
+} as const;
+
+type ValidPlatform = typeof PLATFORMS[keyof typeof PLATFORMS];
 
 const Stake: React.FC = () => {
   const [showShareModal, setShowShareModal] = React.useState(false);
@@ -140,8 +147,14 @@ const Stake: React.FC = () => {
 
   const { sendAsync, data, isPending, error } = useSendTransaction({});
 
+  const getPlatformYield = (platform: Platform) => {
+    if (platform === "none") return 0;
+    const key = platform === "vesu" ? "vesu" : "nostra-lend";
+    return yields[key]?.value ?? 0;
+  };
+
   const sortedPlatforms = useMemo(() => {
-    return ["vesu", "nostra-lend"].sort((a, b) => {
+    return Object.values(PLATFORMS).sort((a, b) => {
       const totalSuppliedA = yields[a]?.totalSupplied || 0;
       const totalSuppliedB = yields[b]?.totalSupplied || 0;
       return totalSuppliedB - totalSuppliedA;
@@ -478,7 +491,7 @@ const Stake: React.FC = () => {
             ~{(apy.value * 100).toFixed(2)}%
             {selectedPlatform !== "none" && (
               <span className="text-[#17876D] font-medium">
-                + {yields[selectedPlatform === "vesu" ? "vesu" : "nostra-lend"].value.toFixed(2)}%
+                + {getPlatformYield(selectedPlatform).toFixed(2)}%
               </span>
             )}
           </span>
