@@ -490,7 +490,7 @@ const Stake: React.FC = () => {
           <span className="flex items-center gap-1">
             ~{(apy.value * 100).toFixed(2)}%
             {selectedPlatform !== "none" && (
-              <span className="text-[#17876D] font-medium">
+              <span className="text-[#17876D] font-semibold">
                 + {getPlatformYield(selectedPlatform).toFixed(2)}%
               </span>
             )}
@@ -524,8 +524,13 @@ const Stake: React.FC = () => {
 
       <div className="flex w-full items-center px-7 pb-1.5 pt-5 lg:gap-2">
         <div className="flex flex-1 flex-col items-start">
-          <p className="text-xs text-[#06302B]">Enter Amount (STRK)</p>
           <Form {...form}>
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-[#06302B]">Enter Amount (STRK)</p>
+              {form.formState.errors.stakeAmount && (
+                <p className="text-xs text-destructive">{form.formState.errors.stakeAmount.message}</p>
+              )}
+            </div>
             <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
               <FormField
                 control={form.control}
@@ -541,7 +546,6 @@ const Stake: React.FC = () => {
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="absolute -bottom-5 left-0 text-xs lg:left-1" />
                     {/* {form.getValues("stakeAmount").toLowerCase() === "xstrk" ? (
                       <p className="absolute -bottom-4 left-0 text-xs font-medium text-green-500 transition-all lg:left-1 lg:-ml-1">
                         Merry Christmas!
@@ -602,7 +606,7 @@ const Stake: React.FC = () => {
         </div>
       </div>
 
-      <div className="px-7 pt-5">
+      <div className="px-7">
         <Collapsible 
           open={isLendingOpen} 
           onOpenChange={(open) => {
@@ -613,8 +617,8 @@ const Stake: React.FC = () => {
           }}
         >
           <div className="flex items-center gap-2">
-            <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[#06302B] hover:opacity-80">
-              <h3>Stake & Earn</h3>
+            <CollapsibleTrigger className="flex items-center gap-1 text-sm font-medium text-[#17876D] hover:opacity-80">
+              <h3 className="font-semibold">Stake & Earn</h3>
               <span className="text-[#8D9C9C]">(optional)</span>
               <ChevronDown className="size-3 text-[#8D9C9C] transition-transform duration-200 data-[state=open]:rotate-180" />
             </CollapsibleTrigger>

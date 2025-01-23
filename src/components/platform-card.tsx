@@ -53,7 +53,7 @@ export function PlatformCard({ name, icon, apy, xstrkLent, isSelected, onClick, 
                     "group-hover:text-[#03624C]",
                     isSelected && "text-[#03624C]"
                   )}>
-                    {(baseApy*100).toFixed(2)}% + {apy.toFixed(2)}%
+                    {(baseApy*100).toFixed(2)}% <span className="font-semibold text-[#17876D]">+ {apy.toFixed(2)}%</span>
                   </span>
                 )
                 : <span className="inline-block h-3 w-10 animate-pulse rounded bg-gray-200" />
