@@ -1,6 +1,6 @@
 "use client";
 
-import type { Transition } from "motion/react";
+import type { Variants } from "motion/react";
 import { motion, useAnimation } from "motion/react";
 import React from "react";
 
@@ -8,14 +8,24 @@ import { cn } from "@/lib/utils";
 
 import { CustomIconProps } from "./twitter";
 
-const defaultTransition: Transition = {
-  type: "spring",
-  stiffness: 160,
-  damping: 17,
-  mass: 1,
+const pathVariants: Variants = {
+  normal: {
+    pathLength: 1,
+    opacity: 1,
+    pathOffset: 0,
+  },
+  animate: {
+    opacity: [0, 1],
+    pathLength: [0, 1],
+    transition: {
+      delay: 0.1,
+      duration: 0.4,
+      opacity: { duration: 0.1, delay: 0.1 },
+    },
+  },
 };
 
-const GaugeIcon: React.FC<CustomIconProps> = ({
+const FlameIcon: React.FC<CustomIconProps> = ({
   className,
   triggerAnimation,
   asIcon = false,
@@ -33,7 +43,7 @@ const GaugeIcon: React.FC<CustomIconProps> = ({
   return (
     <div
       className={cn(
-        "flex cursor-pointer select-none items-center justify-center rounded-md",
+        "flex shrink-0 cursor-pointer select-none items-center justify-center rounded-md",
         className,
       )}
       onMouseEnter={() => asIcon && controls.start("animate")}
@@ -51,22 +61,15 @@ const GaugeIcon: React.FC<CustomIconProps> = ({
         strokeLinejoin="round"
       >
         <motion.path
-          d="m12 14 4-4"
-          variants={{
-            animate: { translateX: 0.5, translateY: 3, rotate: 72 },
-            normal: {
-              translateX: 0,
-              rotate: 0,
-              translateY: 0,
-            },
-          }}
+          variants={pathVariants}
+          initial="normal"
           animate={controls}
-          transition={defaultTransition}
+          fill="none"
+          d="M8.9 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"
         />
-        <path d="M3.34 19a10 10 0 1 1 17.32 0" />
       </svg>
     </div>
   );
 };
 
-export { GaugeIcon };
+export { FlameIcon };
