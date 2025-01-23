@@ -94,6 +94,7 @@ type Platform = "none" | "vesu" | "nostra";
 const Stake: React.FC = () => {
   const [showShareModal, setShowShareModal] = React.useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<Platform>("none");
+  const [isLendingOpen, setIsLendingOpen] = useState(false);
 
   const searchParams = useSearchParams();
 
@@ -523,15 +524,13 @@ const Stake: React.FC = () => {
         </div>
       </div>
 
-      <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
-
-      <div className="px-7">
-        <Collapsible>
+      <div className="px-7 pt-5">
+        <Collapsible open={isLendingOpen} onOpenChange={setIsLendingOpen}>
           <div className="flex items-center gap-2">
-            <CollapsibleTrigger className="flex items-center gap-2 text-xs text-[#06302B] hover:opacity-80">
-              <h3>Select to lend</h3>
+            <CollapsibleTrigger className="flex items-center gap-1 text-xs text-[#06302B] hover:opacity-80">
+              <h3>Stake & Earn</h3>
               <span className="text-[#8D9C9C]">(optional)</span>
-              <ChevronDown className="size-3 text-[#8D9C9C]" />
+              <ChevronDown className="size-3 text-[#8D9C9C] transition-transform duration-200 data-[state=open]:rotate-180" />
             </CollapsibleTrigger>
           </div>
           <CollapsibleContent className="mt-2">
@@ -540,7 +539,7 @@ const Stake: React.FC = () => {
                 <PlatformCard
                   key={platform}
                   name={platform === "vesu" ? "Vesu" : "Nostra"}
-                  icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6" /> : <Icons.nostraLogo className="h-6 w-6" />}
+                  icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6 rounded-full" /> : <Icons.nostraLogo className="h-6 w-6" />}
                   apy={yields[platform].value}
                   xstrkLent={yields[platform].totalSupplied}
                   isSelected={selectedPlatform === platform}
@@ -552,9 +551,11 @@ const Stake: React.FC = () => {
         </Collapsible>
       </div>
 
+      <div className="my-5 h-px w-full rounded-full bg-[#AACBC480]" />
+
       <div className="space-y-3 px-7 mt-5">
-        <div className="flex items-center justify-between rounded-md text-base font-bold text-[#03624C] lg:text-lg">
-          <p className="flex items-center gap-1">
+        <div className="flex items-center justify-between rounded-md text-xs font-bold text-[#03624C] lg:text-[13px]">
+        <p className="flex items-center gap-1">
             {selectedPlatform === "none" ? "You will get" : "You will lend"}
             <TooltipProvider delayDuration={0}>
               <Tooltip>
