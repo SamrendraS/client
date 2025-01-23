@@ -82,10 +82,11 @@ const font = Figtree({ subsets: ["latin-ext"] });
 const formSchema = z.object({
   stakeAmount: z.string().refine(
     (v) => {
+      if (!v) return false;
       const n = Number(v);
-      return !isNaN(n) && v?.length > 0 && n > 0;
+      return !isNaN(n) && n > 0 && n < Number.MAX_SAFE_INTEGER;
     },
-    { message: "Invalid input" },
+    { message: "Please enter a valid amount" },
   ),
 });
 
@@ -305,7 +306,20 @@ const Stake: React.FC = () => {
   };
 
   const onSubmit = async (values: FormValues) => {
-    if (Number(values.stakeAmount) > Number(balance?.formatted)) {
+    const stakeAmount = Number(values.stakeAmount);
+    
+    if (isNaN(stakeAmount) || !Number.isFinite(stakeAmount) || stakeAmount <= 0) {
+      return toast({
+        description: (
+          <div className="flex items-center gap-2">
+            <Info className="size-5" />
+            Invalid stake amount
+          </div>
+        ),
+      });
+    }
+
+    if (stakeAmount > Number(balance?.formatted)) {
       return toast({
         description: (
           <div className="flex items-center gap-2">
@@ -379,6 +393,22 @@ const Stake: React.FC = () => {
     }
 
     await sendAsync(calls);
+  };
+
+  const getCalculatedXSTRK = () => {
+    const amount = form.watch("stakeAmount");
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) return "0";
+    
+    try {
+      return formatNumberWithCommas(
+        MyNumber.fromEther(amount, 18)
+          .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
+          .operate("div", exchangeRate.preciseRate.toString())
+          .toEtherStr()
+      );
+    } catch (error) {
+      return "0";
+    }
   };
 
   return (
@@ -559,7 +589,7 @@ const Stake: React.FC = () => {
         </div>
       </div>
 
-      <div className="px-7 pt-1">
+      <div className="px-7 pt-5">
         <Collapsible 
           open={isLendingOpen} 
           onOpenChange={(open) => {
@@ -596,18 +626,22 @@ const Stake: React.FC = () => {
           </div>
           <CollapsibleContent className="mt-2">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {sortedPlatforms.map((platform) => (
-                <PlatformCard
-                  key={platform}
-                  name={platform === "vesu" ? "Vesu" : "Nostra"}
-                  icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6 rounded-full" /> : <Icons.nostraLogo className="h-6 w-6" />}
-                  apy={yields[platform].value}
-                  baseApy={apy.value}
-                  xstrkLent={yields[platform].totalSupplied}
-                  isSelected={selectedPlatform === platform}
-                  onClick={() => setSelectedPlatform(selectedPlatform === platform ? "none" : platform as Platform)}
-                />
-              ))}
+              {sortedPlatforms.map((platform) => {
+                const platformKey = platform === "vesu" ? "vesu" : "nostra-lend" as const;
+                const yieldData = yields[platformKey];
+                return (
+                  <PlatformCard
+                    key={platform}
+                    name={platform === "vesu" ? "Vesu" : "Nostra"}
+                    icon={platform === "vesu" ? <Icons.vesuLogo className="h-6 w-6 rounded-full" /> : <Icons.nostraLogo className="h-6 w-6" />}
+                    apy={yieldData?.value ?? 0}
+                    baseApy={apy.value}
+                    xstrkLent={yieldData?.totalSupplied ?? 0}
+                    isSelected={selectedPlatform === platform}
+                    onClick={() => setSelectedPlatform(selectedPlatform === platform ? "none" : platform as Platform)}
+                  />
+                );
+              })}
             </div>
           </CollapsibleContent>
         </Collapsible>
@@ -650,15 +684,7 @@ const Stake: React.FC = () => {
             </TooltipProvider>
           </p>
           <span className="text-xs lg:text-[13px]">
-            {form.watch("stakeAmount")
-              ? formatNumberWithCommas(
-                  MyNumber.fromEther(form.watch("stakeAmount"), 18)
-                    .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
-                    .operate("div", exchangeRate.preciseRate.toString())
-                    .toEtherStr()
-                )
-              : 0}{" "}
-            xSTRK
+            {getCalculatedXSTRK()} xSTRK
           </span>
         </div>
 
@@ -745,8 +771,10 @@ const Stake: React.FC = () => {
           <Button
             type="submit"
             disabled={
+              !form.getValues("stakeAmount") ||
+              isNaN(Number(form.getValues("stakeAmount"))) ||
               Number(form.getValues("stakeAmount")) <= 0 ||
-              isNaN(Number(form.getValues("stakeAmount")))
+              !!form.formState.errors.stakeAmount
             }
             onClick={form.handleSubmit(onSubmit)}
             className="w-full rounded-2xl bg-[#17876D] py-6 text-sm font-semibold text-white hover:bg-[#17876D] disabled:bg-[#03624C4D] disabled:text-[#17876D] disabled:opacity-90"
