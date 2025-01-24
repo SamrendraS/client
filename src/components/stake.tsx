@@ -53,6 +53,7 @@ import MyNumber from "@/lib/MyNumber";
 import { cn, formatNumber, formatNumberWithCommas } from "@/lib/utils";
 import {
   exchangeRateAtom,
+  getLSTContract,
   totalStakedAtom,
   totalStakedUSDAtom,
   userSTRKBalanceAtom,
@@ -76,6 +77,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { providerAtom } from "@/store/common.store";
 
 const font = Figtree({ subsets: ["latin-ext"] });
 
@@ -127,6 +129,7 @@ const Stake: React.FC = () => {
   const totalStakedUSD = useAtomValue(totalStakedUSDAtom);
   const apy = useAtomValue(snAPYAtom);
   const yields = useAtomValue(protocolYieldsAtom);
+  const rpcProvider = useAtomValue(providerAtom);
 
   const referrer = searchParams.get("referrer");
 
@@ -140,10 +143,7 @@ const Stake: React.FC = () => {
 
   const contractSTRK = new Contract(erc4626Abi, STRK_TOKEN);
 
-  const contract = new Contract(
-    erc4626Abi,
-    process.env.NEXT_PUBLIC_LST_ADDRESS as string,
-  );
+  const contract = rpcProvider ? getLSTContract(rpcProvider) : null;
 
   const { sendAsync, data, isPending, error } = useSendTransaction({});
 
@@ -354,23 +354,23 @@ const Stake: React.FC = () => {
       });
     }
 
-    const xstrkAmount = MyNumber.fromEther(values.stakeAmount, 18)
-      .operate("multipliedBy", MyNumber.fromEther("1", 18).toString())
-      .operate("div", exchangeRate.preciseRate.toString());
+    const strkAmount = MyNumber.fromEther(values.stakeAmount, 18);
+    const previewCall = await contract?.preview_deposit(strkAmount.toString());
+    const xstrkAmount = previewCall?.toString() || "0";
 
     const call1 = contractSTRK.populate("approve", [
-      contract.address,
-      MyNumber.fromEther(values.stakeAmount, 18),
+      LST_ADDRRESS,
+      strkAmount,
     ]);
 
     const call2 = referrer
-      ? contract.populate("deposit_with_referral", [
-          MyNumber.fromEther(values.stakeAmount, 18),
+      ? contract?.populate("deposit_with_referral", [
+          strkAmount,
           address,
           referrer,
         ])
-      : contract.populate("deposit", [
-          MyNumber.fromEther(values.stakeAmount, 18),
+      : contract?.populate("deposit", [
+          strkAmount,
           address,
         ]);
 
